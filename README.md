@@ -34,16 +34,17 @@ docs.wheelofheaven.world/
 ├── mise.toml
 ├── content/                    # site content (markdown)
 ├── static/                     # static assets served at /
-├── themes/
-│   └── docs-theme/             # custom theme — templates + SCSS
-└── .github/workflows/
-    └── deploy.yml              # build + deploy to gh-pages branch
+└── themes/
+    └── docs-theme/             # custom theme — templates + SCSS
 ```
 
 ## Deploy
 
-CI builds on push to `main` and deploys `/public` to the `gh-pages` branch.
-Cloudflare Pages watches `gh-pages` and rebuilds the live site.
+Cloudflare Pages watches `main` and builds the site directly on every push.
+The build command downloads Zola at the pinned version (`config.toml` →
+Cloudflare Pages dashboard → Settings → Build & deployments) and runs
+`zola build`. Output: `public/`. Same pattern as `www-wheelofheaven-io`
+and the other org-level Pages projects.
 
 ## License
 
