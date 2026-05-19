@@ -1,0 +1,26 @@
+base_url = "https://docs.wheelofheaven.world"
+default_language = "en"
+theme = "docs-theme"
+title = "Wheel of Heaven Docs"
+description = "Author, contributor, and developer documentation for the Wheel of Heaven knowledge base."
+
+compile_sass = true
+build_search_index = true
+generate_feeds = false
+minify_html = true
+
+[markdown]
+smart_punctuation = true
+external_links_target_blank = true
+external_links_no_referrer = true
+# Syntax-highlight CSS is added in Phase 2 (theme buildout). The
+# minimal pre/code styling in main.scss is good enough until then.
+
+[search]
+index_format = "fuse_json"
+truncate_content_length = 2000
+
+[extra]
+author = "Wheel of Heaven"
+github_repo = "https://github.com/wheelofheaven/docs.wheelofheaven.world"
+upstream_site = "https://www.wheelofheaven.world"

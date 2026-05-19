@@ -1,0 +1,26 @@
+min_version = "2025.8.3"
+
+[tools]
+zola = "0.22.1"
+
+[tasks.build]
+description = "Compile site statically with Zola"
+run = "zola build"
+
+[tasks.serve]
+description = "Run dev server (live reload, auto-selects free port)"
+run = """
+port=${ZOLA_PORT:-1112}
+while lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; do port=$((port + 1)); done
+echo "Serving on http://127.0.0.1:$port"
+zola serve --port $port --interface 0.0.0.0 --base-url http://127.0.0.1
+"""
+raw = true
+
+[tasks.check]
+description = "Run diagnostics without writing files"
+run = "zola check"
+
+[tasks.clean]
+description = "Wipe public directory"
+run = "rm -rf public || true"

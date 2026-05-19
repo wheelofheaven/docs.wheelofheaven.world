@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{{ section.title }} &middot; {{ config.title }}{% endblock title %}
+{% block description %}{{ section.description | default(value=config.description) }}{% endblock description %}
+
+{% block content %}
+<article class="docs-page docs-page--section">
+    <header class="docs-page__header">
+        <h1 class="docs-page__title">{{ section.title }}</h1>
+        {% if section.description %}
+        <p class="docs-page__lede">{{ section.description }}</p>
+        {% endif %}
+    </header>
+
+    {% if section.content %}
+    <div class="docs-page__content">
+        {{ section.content | safe }}
+    </div>
+    {% endif %}
+
+    {% if section.pages %}
+    <ul class="docs-page__index">
+        {% for page in section.pages %}
+        <li>
+            <a href="{{ page.permalink }}">{{ page.title }}</a>
+            {% if page.description %}
+            <span class="docs-page__index-desc">{{ page.description }}</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</article>
+{% endblock content %}

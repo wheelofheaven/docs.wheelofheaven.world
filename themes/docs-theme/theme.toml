@@ -1,0 +1,16 @@
+name = "Docs Theme"
+description = "Documentation-site theme for the Wheel of Heaven project"
+license = "CC0-1.0"
+homepage = "https://github.com/wheelofheaven/docs.wheelofheaven.world"
+min_version = "0.22.0"
+demo = "https://docs.wheelofheaven.world"
+
+[author]
+name = "Wheel of Heaven"
+homepage = "https://www.wheelofheaven.world"
+
+[extra]
+multilingual = false
+dark_mode = true
+search = true
+responsive = true

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+
+    <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
+
+    <link rel="canonical" href="{{ current_url | default(value=config.base_url) | safe }}">
+
+    {% if config.generate_feeds %}
+    <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path='atom.xml', trailing_slash=false) | safe }}">
+    {% endif %}
+
+    {# Theme CSS — emitted by Zola because compile_sass = true #}
+    <link rel="stylesheet" href="{{ get_url(path='main.css', cachebust=true) | safe }}">
+
+    {% block head_extra %}{% endblock head_extra %}
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a href="{{ config.base_url }}" class="site-header__brand">
+                <span class="site-header__title">{{ config.title }}</span>
+            </a>
+            {% block header_nav %}{% endblock header_nav %}
+        </div>
+    </header>
+
+    <main id="main" class="site-main">
+        {% block content %}{% endblock content %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner">
+            <p>
+                <a href="{{ config.extra.upstream_site }}">{{ config.extra.upstream_site | replace(from="https://", to="") }}</a>
+                &middot;
+                <a href="{{ config.extra.github_repo }}">Source on GitHub</a>
+                &middot;
+                <span>Public domain (CC0-1.0)</span>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
