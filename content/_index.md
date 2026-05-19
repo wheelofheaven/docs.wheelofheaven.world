@@ -30,6 +30,6 @@ Until then, the source material lives in
 |---|---|---|
 | 1 | Bootstrap & deploy pipeline | Done |
 | 2 | Theme buildout (sidebar nav, sticky ToC, code-block chrome, search) | Done |
-| 3 | Migrate & restructure existing content | **Pending** |
-| 4 | Write missing connective tissue (Quickstart, Project Map, etc.) | Pending |
+| 3 | Migrate & restructure existing content | Done |
+| 4 | Write missing connective tissue (Quickstart, Project Map, etc.) | **Pending** |
 | 5 | Cutover (archive old docs repo, update cross-references) | Pending |
