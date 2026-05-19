@@ -1,0 +1,59 @@
+@use "../abstracts/tokens" as t;
+
+body {
+    font-family: t.$font-family-sans;
+    font-size: t.$font-size-base;
+    line-height: t.$line-height-body;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: t.$font-family-display;
+    line-height: 1.2;
+    letter-spacing: -0.005em;
+    margin: 0;
+}
+
+a {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-strong);
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 0.08em;
+    transition: text-decoration-color t.$transition-base;
+}
+a:hover { text-decoration-color: var(--color-text); }
+
+p { margin: t.$spacing-md 0; }
+
+ul, ol {
+    margin: t.$spacing-md 0;
+    padding-left: t.$spacing-lg;
+
+    li { margin: t.$spacing-xs 0; }
+}
+
+blockquote {
+    margin: t.$spacing-lg 0;
+    padding: t.$spacing-sm t.$spacing-lg;
+    border-left: 3px solid var(--color-accent-strong);
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: t.$spacing-lg 0;
+    font-size: t.$font-size-sm;
+
+    th, td {
+        padding: t.$spacing-sm t.$spacing-md;
+        text-align: left;
+        border-bottom: 1px solid var(--color-border);
+    }
+    th {
+        font-family: t.$font-family-display;
+        font-weight: 600;
+        background: var(--color-surface);
+    }
+}

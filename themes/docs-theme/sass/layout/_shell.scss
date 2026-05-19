@@ -1,0 +1,86 @@
+@use "../abstracts/tokens" as t;
+
+// Site shell: header + 3-column body (sidebar | content | toc) + footer.
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: t.$z-navbar;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: saturate(180%) blur(8px);
+
+    &__inner {
+        max-width: 100%;
+        padding: t.$spacing-sm t.$spacing-lg;
+        display: flex;
+        align-items: center;
+        gap: t.$spacing-md;
+    }
+
+    &__brand {
+        font-family: t.$font-family-display;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--color-text);
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    &__title {
+        font-size: 1.1rem;
+    }
+
+    &__spacer { flex: 1; }
+
+    &__nav-toggle {
+        display: none;
+        background: none;
+        border: 1px solid var(--color-border);
+        color: var(--color-text);
+        padding: t.$spacing-xs t.$spacing-sm;
+        border-radius: t.$border-radius-sm;
+        cursor: pointer;
+        font-family: t.$font-family-sans;
+        font-size: t.$font-size-sm;
+
+        @media (max-width: t.$breakpoint-collapse-sidebar - 1) {
+            display: inline-flex;
+        }
+    }
+}
+
+.site-body {
+    display: grid;
+    grid-template-columns: t.$sidebar-width minmax(0, 1fr) t.$toc-width;
+    gap: t.$spacing-xl;
+    max-width: 100%;
+    padding: 0 t.$spacing-lg;
+    align-items: start;
+
+    @media (max-width: t.$breakpoint-collapse-toc - 1) {
+        grid-template-columns: t.$sidebar-width minmax(0, 1fr);
+    }
+
+    @media (max-width: t.$breakpoint-collapse-sidebar - 1) {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+}
+
+.site-main {
+    padding: t.$spacing-2xl 0 t.$spacing-3xl;
+    min-width: 0;
+}
+
+.site-footer {
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    margin-top: t.$spacing-3xl;
+
+    &__inner {
+        padding: t.$spacing-lg;
+        font-size: t.$font-size-sm;
+        max-width: 100%;
+    }
+}

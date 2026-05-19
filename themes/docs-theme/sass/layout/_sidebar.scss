@@ -1,0 +1,100 @@
+@use "../abstracts/tokens" as t;
+
+// Left sidebar — section nav tree. Always visible on desktop, drawer
+// on mobile (controlled by the .site-body[data-nav-open] attribute set
+// by site-header__nav-toggle).
+
+.sidebar {
+    position: sticky;
+    top: 4rem;
+    max-height: calc(100vh - 5rem);
+    overflow-y: auto;
+    padding: t.$spacing-xl 0;
+    font-size: t.$font-size-sm;
+
+    @media (max-width: t.$breakpoint-collapse-sidebar - 1) {
+        position: fixed;
+        top: 3.25rem;
+        left: 0;
+        bottom: 0;
+        width: min(85%, 320px);
+        background: var(--color-surface);
+        border-right: 1px solid var(--color-border);
+        padding: t.$spacing-md t.$spacing-lg;
+        transform: translateX(-100%);
+        transition: transform t.$transition-base;
+        z-index: t.$z-dropdown;
+
+        .site-body[data-nav-open] & {
+            transform: translateX(0);
+        }
+    }
+
+    &__section {
+        margin-bottom: t.$spacing-lg;
+    }
+
+    &__heading {
+        font-family: t.$font-family-display;
+        font-size: t.$font-size-sm;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        margin: 0 0 t.$spacing-xs;
+        padding: 0 t.$spacing-sm;
+    }
+
+    &__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__item {
+        margin: 0;
+    }
+
+    &__link {
+        display: block;
+        padding: t.$spacing-2xs t.$spacing-sm;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        border-left: 2px solid transparent;
+        line-height: 1.4;
+        transition: all t.$transition-fast;
+
+        &:hover {
+            color: var(--color-text);
+            background: var(--color-surface);
+        }
+
+        &[aria-current="page"] {
+            color: var(--color-text);
+            border-left-color: var(--color-accent-strong);
+            background: var(--color-surface);
+            font-weight: 500;
+        }
+    }
+
+    &__sublist {
+        list-style: none;
+        margin: 0 0 0 t.$spacing-md;
+        padding: 0;
+    }
+}
+
+// Drawer backdrop on mobile.
+.sidebar-backdrop {
+    display: none;
+
+    @media (max-width: t.$breakpoint-collapse-sidebar - 1) {
+        .site-body[data-nav-open] & {
+            display: block;
+            position: fixed;
+            inset: 3.25rem 0 0 0;
+            background: rgba(0,0,0,0.4);
+            z-index: t.$z-dropdown - 1;
+        }
+    }
+}

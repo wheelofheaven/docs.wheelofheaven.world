@@ -1,0 +1,70 @@
+@use "../abstracts/tokens" as t;
+
+// Theme CSS custom properties. Two color schemes (light/dark) selected
+// via either the `data-theme` attribute on <html> (set by the toggle
+// script) OR the `prefers-color-scheme` media query (when no explicit
+// preference is set).
+
+:root {
+    color-scheme: light dark;
+
+    // Light scheme as default.
+    --color-bg: #{t.$gray-100};
+    --color-surface: #ffffff;
+    --color-surface-2: #{t.$gray-200};
+    --color-text: #{t.$gray-900};
+    --color-text-muted: #{t.$gray-700};
+    --color-border: #{t.$gray-300};
+    --color-accent: #{t.$cyan-300};
+    --color-accent-strong: #{t.$mauve-300};
+    --color-code-bg: #{t.$gray-200};
+    --color-code-text: #{t.$gray-900};
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+// Dark scheme via OS preference, when user hasn't explicitly chosen.
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --color-bg: #{t.$gray-950};
+        --color-surface: #{t.$gray-900};
+        --color-surface-2: #{t.$gray-800};
+        --color-text: #{t.$gray-100};
+        --color-text-muted: #{t.$gray-300};
+        --color-border: #{t.$gray-800};
+        --color-accent: #{t.$cyan-300};
+        --color-accent-strong: #{t.$lavender-300};
+        --color-code-bg: #{t.$gray-800};
+        --color-code-text: #{t.$gray-100};
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    }
+}
+
+// Dark scheme via explicit toggle.
+:root[data-theme="dark"] {
+    --color-bg: #{t.$gray-950};
+    --color-surface: #{t.$gray-900};
+    --color-surface-2: #{t.$gray-800};
+    --color-text: #{t.$gray-100};
+    --color-text-muted: #{t.$gray-300};
+    --color-border: #{t.$gray-800};
+    --color-accent: #{t.$cyan-300};
+    --color-accent-strong: #{t.$lavender-300};
+    --color-code-bg: #{t.$gray-800};
+    --color-code-text: #{t.$gray-100};
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+// Light scheme via explicit toggle (overrides OS preference).
+:root[data-theme="light"] {
+    --color-bg: #{t.$gray-100};
+    --color-surface: #ffffff;
+    --color-surface-2: #{t.$gray-200};
+    --color-text: #{t.$gray-900};
+    --color-text-muted: #{t.$gray-700};
+    --color-border: #{t.$gray-300};
+    --color-accent: #{t.$cyan-300};
+    --color-accent-strong: #{t.$mauve-300};
+    --color-code-bg: #{t.$gray-200};
+    --color-code-text: #{t.$gray-900};
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+}

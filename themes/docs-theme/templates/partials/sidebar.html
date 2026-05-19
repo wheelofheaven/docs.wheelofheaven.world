@@ -1,0 +1,59 @@
+{# Sidebar navigation — walks the top-level sections in config order. #}
+
+{% set top_level = [
+    "getting-started",
+    "contributing/content",
+    "contributing/dev",
+    "architecture",
+    "reference",
+] %}
+
+{% for path in top_level %}
+    {% set section_path = path ~ "/_index.md" %}
+    {% set s = get_section(path=section_path, metadata_only=false) %}
+    {% if s %}
+    <nav class="sidebar__section" aria-labelledby="sidebar-{{ path | slugify }}">
+        <h3 class="sidebar__heading" id="sidebar-{{ path | slugify }}">
+            <a class="sidebar__link" href="{{ s.permalink }}">{{ s.title }}</a>
+        </h3>
+
+        {% if s.pages %}
+        <ul class="sidebar__list">
+            {% for p in s.pages %}
+            <li class="sidebar__item">
+                <a class="sidebar__link"
+                   href="{{ p.permalink }}"
+                   {% if current_path and current_path == p.path %}aria-current="page"{% endif %}>
+                    {{ p.title }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if s.subsections %}
+        <ul class="sidebar__list">
+            {% for sub_path in s.subsections %}
+                {% set sub = get_section(path=sub_path) %}
+                <li class="sidebar__item">
+                    <a class="sidebar__link" href="{{ sub.permalink }}">{{ sub.title }}</a>
+                    {% if sub.pages %}
+                    <ul class="sidebar__sublist">
+                        {% for p in sub.pages %}
+                        <li class="sidebar__item">
+                            <a class="sidebar__link"
+                               href="{{ p.permalink }}"
+                               {% if current_path and current_path == p.path %}aria-current="page"{% endif %}>
+                                {{ p.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </nav>
+    {% endif %}
+{% endfor %}

@@ -1,0 +1,36 @@
+@use "../abstracts/tokens" as t;
+
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: t.$spacing-xs t.$spacing-sm;
+    border-radius: t.$border-radius-sm;
+    cursor: pointer;
+    font-family: t.$font-family-sans;
+    font-size: t.$font-size-sm;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+
+    &:hover {
+        background: var(--color-surface-2);
+    }
+
+    // Hide one icon depending on resolved theme.
+    &__icon { font-size: 1rem; }
+    &__icon--light { display: none; }
+    &__icon--dark { display: inline; }
+
+    :root[data-theme="dark"] & {
+        .theme-toggle__icon--light { display: inline; }
+        .theme-toggle__icon--dark { display: none; }
+    }
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) & {
+            .theme-toggle__icon--light { display: inline; }
+            .theme-toggle__icon--dark { display: none; }
+        }
+    }
+}

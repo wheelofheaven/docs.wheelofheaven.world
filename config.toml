@@ -13,8 +13,12 @@ minify_html = true
 smart_punctuation = true
 external_links_target_blank = true
 external_links_no_referrer = true
-# Syntax-highlight CSS is added in Phase 2 (theme buildout). The
-# minimal pre/code styling in main.scss is good enough until then.
+bottom_footnotes = true
+insert_anchor_links = "right"
+# Syntax highlighting deferred — Zola 0.22 emits HTML span structure
+# that needs paired theme CSS; for now we render plain <code> blocks
+# styled by themes/docs-theme/sass/components/_code.scss. Revisit
+# when prose-heavy code samples need it.
 
 [search]
 index_format = "fuse_json"

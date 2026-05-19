@@ -1,0 +1,63 @@
+@use "../abstracts/tokens" as t;
+
+// Inline code + code blocks. Syntax highlighting is provided by Zola's
+// built-in syntect (highlight_code = true in config.toml [markdown]).
+
+code, pre, kbd, samp {
+    font-family: t.$font-family-mono;
+    font-size: 0.92em;
+}
+
+:not(pre) > code {
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
+    padding: 0.1em 0.35em;
+    border-radius: t.$border-radius-sm;
+    font-size: 0.88em;
+}
+
+pre {
+    position: relative;
+    background: var(--color-code-bg);
+    color: var(--color-code-text);
+    padding: t.$spacing-md;
+    border-radius: t.$border-radius-md;
+    overflow-x: auto;
+    margin: t.$spacing-md 0;
+    border: 1px solid var(--color-border);
+    line-height: 1.5;
+
+    code {
+        background: none;
+        padding: 0;
+        font-size: 0.92em;
+        white-space: pre;
+    }
+}
+
+// Copy button injected by static/js/code-copy.js
+.code-copy-btn {
+    position: absolute;
+    top: t.$spacing-xs;
+    right: t.$spacing-xs;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: t.$border-radius-sm;
+    padding: 0.2rem 0.55rem;
+    font-family: t.$font-family-sans;
+    font-size: t.$font-size-xs;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity t.$transition-base, color t.$transition-base;
+
+    pre:hover & { opacity: 1; }
+    pre &:focus-visible { opacity: 1; outline: 2px solid var(--color-accent-strong); }
+
+    &:hover { color: var(--color-text); }
+
+    &[data-copied] {
+        color: var(--color-text);
+        border-color: var(--color-accent-strong);
+    }
+}

@@ -3,9 +3,22 @@
 {% block title %}{{ section.title }} &middot; {{ config.title }}{% endblock title %}
 {% block description %}{{ section.description | default(value=config.description) }}{% endblock description %}
 
+{% block aside %}{# section index pages skip the right ToC #}{% endblock aside %}
+
 {% block content %}
 <article class="docs-page docs-page--section">
     <header class="docs-page__header">
+        {% if section.ancestors and section.ancestors | length > 1 %}
+        <nav class="docs-page__breadcrumbs" aria-label="Breadcrumb">
+            {% for ancestor in section.ancestors %}
+                {% if not loop.first %}
+                    {% set sec = get_section(path=ancestor, metadata_only=true) %}
+                    <a href="{{ sec.permalink }}">{{ sec.title }}</a> /
+                {% endif %}
+            {% endfor %}
+        </nav>
+        {% endif %}
+
         <h1 class="docs-page__title">{{ section.title }}</h1>
         {% if section.description %}
         <p class="docs-page__lede">{{ section.description }}</p>
@@ -18,13 +31,22 @@
     </div>
     {% endif %}
 
-    {% if section.pages %}
+    {% if section.pages or section.subsections %}
     <ul class="docs-page__index">
-        {% for page in section.pages %}
+        {% for sub_path in section.subsections %}
+            {% set sub = get_section(path=sub_path) %}
+            <li>
+                <a href="{{ sub.permalink }}">{{ sub.title }}</a>
+                {% if sub.description %}
+                <span class="docs-page__index-desc">{{ sub.description }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+        {% for p in section.pages %}
         <li>
-            <a href="{{ page.permalink }}">{{ page.title }}</a>
-            {% if page.description %}
-            <span class="docs-page__index-desc">{{ page.description }}</span>
+            <a href="{{ p.permalink }}">{{ p.title }}</a>
+            {% if p.description %}
+            <span class="docs-page__index-desc">{{ p.description }}</span>
             {% endif %}
         </li>
         {% endfor %}

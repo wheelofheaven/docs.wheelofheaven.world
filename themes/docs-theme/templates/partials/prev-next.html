@@ -1,0 +1,24 @@
+{# Prev/next page footer — based on Zola's page.lower / page.higher
+   (set automatically per section when sort_by is configured). #}
+
+{% if page and (page.lower or page.higher) %}
+<nav class="prev-next" aria-label="Previous and next pages">
+    {% if page.lower %}
+    <a class="prev-next__link prev-next__link--prev" href="{{ page.lower.permalink }}" rel="prev">
+        <span class="prev-next__label">Previous</span>
+        <span class="prev-next__title">{{ page.lower.title }}</span>
+    </a>
+    {% else %}
+    <span></span>
+    {% endif %}
+
+    {% if page.higher %}
+    <a class="prev-next__link prev-next__link--next" href="{{ page.higher.permalink }}" rel="next">
+        <span class="prev-next__label">Next</span>
+        <span class="prev-next__title">{{ page.higher.title }}</span>
+    </a>
+    {% else %}
+    <span></span>
+    {% endif %}
+</nav>
+{% endif %}

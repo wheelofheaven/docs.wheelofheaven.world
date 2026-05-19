@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{% block title %}{{ config.title }}{% endblock title %}</title>
-
     <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
 
     <link rel="canonical" href="{{ current_url | default(value=config.base_url) | safe }}">
 
-    {% if config.generate_feeds %}
-    <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path='atom.xml', trailing_slash=false) | safe }}">
-    {% endif %}
+    {# Read theme preference before paint so we don't flash light → dark #}
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('docs-theme');
+                if (t === 'light' || t === 'dark') {
+                    document.documentElement.setAttribute('data-theme', t);
+                }
+            } catch (_) {}
+        })();
+    </script>
 
-    {# Theme CSS — emitted by Zola because compile_sass = true #}
     <link rel="stylesheet" href="{{ get_url(path='main.css', cachebust=true) | safe }}">
 
     {% block head_extra %}{% endblock head_extra %}
@@ -24,16 +30,40 @@
 
     <header class="site-header">
         <div class="site-header__inner">
+            <button class="site-header__nav-toggle" type="button" aria-label="Open navigation" aria-controls="site-body" aria-expanded="false">Menu</button>
+
             <a href="{{ config.base_url }}" class="site-header__brand">
                 <span class="site-header__title">{{ config.title }}</span>
             </a>
-            {% block header_nav %}{% endblock header_nav %}
+
+            <div class="site-header__spacer"></div>
+
+            {% include "partials/search.html" ignore missing %}
+
+            <button class="theme-toggle" type="button" aria-label="Toggle color theme">
+                <span class="theme-toggle__icon theme-toggle__icon--dark" aria-hidden="true">◑</span>
+                <span class="theme-toggle__icon theme-toggle__icon--light" aria-hidden="true">◐</span>
+            </button>
         </div>
     </header>
 
-    <main id="main" class="site-main">
-        {% block content %}{% endblock content %}
-    </main>
+    <div class="site-body" id="site-body">
+        <div class="sidebar-backdrop" aria-hidden="true"></div>
+
+        <aside class="sidebar" aria-label="Section navigation">
+            {% include "partials/sidebar.html" %}
+        </aside>
+
+        <main id="main" class="site-main" role="main">
+            {% block content %}{% endblock content %}
+        </main>
+
+        {% block aside %}
+        <aside class="toc" aria-label="On this page">
+            {% include "partials/toc.html" %}
+        </aside>
+        {% endblock aside %}
+    </div>
 
     <footer class="site-footer">
         <div class="site-footer__inner">
@@ -46,5 +76,13 @@
             </p>
         </div>
     </footer>
+
+    <script src="{{ get_url(path='js/theme-toggle.js', cachebust=true) | safe }}" defer></script>
+    <script src="{{ get_url(path='js/code-copy.js', cachebust=true) | safe }}" defer></script>
+    <script src="{{ get_url(path='js/nav-toggle.js', cachebust=true) | safe }}" defer></script>
+    <script src="{{ get_url(path='js/toc-active.js', cachebust=true) | safe }}" defer></script>
+    {% if config.build_search_index %}
+    <script src="{{ get_url(path='js/search.js', cachebust=true) | safe }}" defer></script>
+    {% endif %}
 </body>
 </html>

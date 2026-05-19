@@ -1,0 +1,3 @@
+[submodule "themes/bifrost"]
+	path = themes/bifrost
+	url = https://github.com/wheelofheaven/bifrost.git

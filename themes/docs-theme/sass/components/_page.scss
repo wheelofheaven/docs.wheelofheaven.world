@@ -1,0 +1,104 @@
+@use "../abstracts/tokens" as t;
+
+// The actual prose / docs page styling.
+
+.docs-page {
+    max-width: t.$content-max-width;
+    margin: 0;
+
+    &__header {
+        margin-bottom: t.$spacing-xl;
+        padding-bottom: t.$spacing-lg;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    &__breadcrumbs {
+        font-size: t.$font-size-sm;
+        color: var(--color-text-muted);
+        margin-bottom: t.$spacing-sm;
+
+        a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+
+            &:hover { color: var(--color-text); }
+        }
+    }
+
+    &__title {
+        font-size: 2.25rem;
+        margin: 0 0 t.$spacing-sm;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+    }
+
+    &__lede {
+        font-size: 1.15rem;
+        color: var(--color-text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    &__content {
+        h2 {
+            margin-top: t.$spacing-2xl;
+            margin-bottom: t.$spacing-sm;
+            font-size: 1.5rem;
+            padding-bottom: t.$spacing-xs;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        h3 {
+            margin-top: t.$spacing-xl;
+            margin-bottom: t.$spacing-sm;
+            font-size: 1.2rem;
+        }
+
+        h4 {
+            margin-top: t.$spacing-lg;
+            margin-bottom: t.$spacing-xs;
+            font-size: 1.05rem;
+        }
+
+        // Anchor links on headings (zola "insert_anchor_links")
+        h2 a.zola-anchor,
+        h3 a.zola-anchor,
+        h4 a.zola-anchor {
+            opacity: 0;
+            margin-left: t.$spacing-xs;
+            text-decoration: none;
+            color: var(--color-text-muted);
+            transition: opacity t.$transition-base;
+        }
+        h2:hover a.zola-anchor,
+        h3:hover a.zola-anchor,
+        h4:hover a.zola-anchor {
+            opacity: 0.6;
+        }
+    }
+
+    &__index {
+        list-style: none;
+        padding: 0;
+        margin: t.$spacing-xl 0 0;
+
+        li {
+            padding: t.$spacing-md 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        a {
+            font-family: t.$font-family-display;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+    }
+
+    &__index-desc {
+        display: block;
+        color: var(--color-text-muted);
+        font-size: 0.95rem;
+        margin-top: 0.25em;
+    }
+}

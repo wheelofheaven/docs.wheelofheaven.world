@@ -6,6 +6,17 @@
 {% block content %}
 <article class="docs-page">
     <header class="docs-page__header">
+        {% if page.ancestors and page.ancestors | length > 1 %}
+        <nav class="docs-page__breadcrumbs" aria-label="Breadcrumb">
+            {% for ancestor in page.ancestors %}
+                {% if not loop.first %}
+                    {% set sec = get_section(path=ancestor, metadata_only=true) %}
+                    <a href="{{ sec.permalink }}">{{ sec.title }}</a> /
+                {% endif %}
+            {% endfor %}
+        </nav>
+        {% endif %}
+
         <h1 class="docs-page__title">{{ page.title }}</h1>
         {% if page.description %}
         <p class="docs-page__lede">{{ page.description }}</p>
@@ -15,5 +26,7 @@
     <div class="docs-page__content">
         {{ page.content | safe }}
     </div>
+
+    {% include "partials/prev-next.html" %}
 </article>
 {% endblock content %}
