@@ -1,0 +1,26 @@
+@use "../abstracts/tokens" as t;
+
+// Visible focus rings everywhere a keyboard user could land. The
+// default browser ring varies wildly across UA/OS and gets clobbered
+// by some normalizers; this guarantees a consistent, brand-tinted
+// outline that's high-contrast against both color schemes.
+
+:focus-visible {
+    outline: 2px solid var(--color-accent-strong);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+// Inputs already have their own border treatment on focus; just bump
+// it slightly.
+input:focus-visible,
+textarea:focus-visible {
+    outline-offset: 0;
+    outline-width: 2px;
+}
+
+// Buttons + links can use a subtler offset.
+button:focus-visible,
+a:focus-visible {
+    outline-offset: 3px;
+}

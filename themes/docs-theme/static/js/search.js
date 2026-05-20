@@ -4,6 +4,19 @@
     var results = document.getElementById('search-results');
     if (!input || !results) return;
 
+    // Show Ctrl+K instead of ⌘K on non-Apple platforms. We check both
+    // userAgentData (modern) and platform (fallback) since Safari/iOS
+    // don't expose userAgentData.
+    var hint = document.getElementById('search-shortcut');
+    if (hint) {
+        var isMac = /Mac|iPhone|iPad|iPod/.test(
+            (navigator.userAgentData && navigator.userAgentData.platform) ||
+            navigator.platform ||
+            ''
+        );
+        hint.textContent = isMac ? '⌘K' : 'Ctrl K';
+    }
+
     var fuse = null;
     var loading = false;
     var highlightIndex = -1;

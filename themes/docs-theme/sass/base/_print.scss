@@ -1,0 +1,107 @@
+@use "../abstracts/tokens" as t;
+
+// Print stylesheet. Optimized for offline reading + PDF export.
+
+@media print {
+    :root {
+        // Force light scheme on paper.
+        --color-bg: #ffffff;
+        --color-surface: #ffffff;
+        --color-surface-2: #f5f5f5;
+        --color-text: #000000;
+        --color-text-muted: #4a4a4a;
+        --color-border: #cccccc;
+        --color-accent: #4a4a4a;
+        --color-accent-strong: #4a4a4a;
+        --color-code-bg: #f5f5f5;
+        --color-code-text: #000000;
+        --shadow-sm: none;
+    }
+
+    body {
+        font-size: 11pt;
+        line-height: 1.45;
+        background: white;
+        color: black;
+    }
+
+    // Strip site chrome — keep just the content.
+    .site-header,
+    .sidebar,
+    .sidebar-backdrop,
+    .toc,
+    .site-footer,
+    .theme-toggle,
+    .site-header__nav-toggle,
+    .search,
+    .skip-link,
+    .code-copy-btn,
+    .prev-next {
+        display: none !important;
+    }
+
+    .site-body {
+        display: block;
+        padding: 0;
+    }
+
+    .site-main {
+        padding: 0;
+        max-width: none;
+    }
+
+    .docs-page {
+        max-width: none;
+
+        &__header {
+            border-bottom: 1px solid #999;
+            margin-bottom: 1em;
+        }
+
+        &__title {
+            font-size: 22pt;
+        }
+
+        &__lede {
+            font-size: 12pt;
+            color: #444;
+        }
+
+        &__content {
+            h2 { font-size: 16pt; border-bottom: 1px solid #999; }
+            h3 { font-size: 13pt; }
+            h4 { font-size: 11pt; }
+        }
+    }
+
+    // Show URLs after external links so the printed page is still
+    // useful. Internal links keep their short form.
+    .docs-page__content a[href^="http"]:not([href*="wheelofheaven."]):after {
+        content: " (" attr(href) ")";
+        font-size: 0.85em;
+        color: #555;
+        word-break: break-all;
+    }
+
+    // Code blocks: keep on the same page when possible.
+    pre {
+        page-break-inside: avoid;
+        border: 1px solid #999;
+        background: #f5f5f5;
+        color: black;
+    }
+
+    h2, h3, h4 {
+        page-break-after: avoid;
+    }
+
+    img {
+        max-width: 100%;
+        page-break-inside: avoid;
+    }
+
+    // Anchors / heading link icons add visual noise on paper.
+    a.zola-anchor {
+        display: none !important;
+    }
+}

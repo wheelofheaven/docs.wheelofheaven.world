@@ -1,0 +1,52 @@
+@use "../abstracts/tokens" as t;
+
+// <details>/<summary> styling for collapsible content in markdown.
+// Authors get sane defaults without writing custom HTML.
+
+.docs-page__content details {
+    margin: t.$spacing-md 0;
+    padding: t.$spacing-sm t.$spacing-md;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: t.$border-radius-md;
+    transition: background t.$transition-base;
+
+    &[open] {
+        background: var(--color-surface-2);
+    }
+}
+
+.docs-page__content summary {
+    cursor: pointer;
+    font-family: t.$font-family-display;
+    font-weight: 500;
+    margin: -0.5rem -0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: t.$border-radius-sm;
+    list-style: none;
+    user-select: none;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    &::before {
+        content: "▸";
+        display: inline-block;
+        margin-right: 0.4em;
+        color: var(--color-text-muted);
+        transition: transform t.$transition-base;
+    }
+
+    details[open] > &::before {
+        transform: rotate(90deg);
+    }
+
+    &:hover {
+        background: var(--color-surface-2);
+    }
+}
+
+.docs-page__content details[open] summary {
+    margin-bottom: t.$spacing-sm;
+}

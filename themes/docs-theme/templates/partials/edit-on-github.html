@@ -1,0 +1,20 @@
+{# "Edit on GitHub" link. Surfaces the source file for the current
+   page directly in the GitHub web editor. Works for both pages and
+   sections via the relative_path variable each one carries. #}
+
+{% if page and page.relative_path %}
+    {% set rel = page.relative_path %}
+{% elif section and section.relative_path %}
+    {% set rel = section.relative_path %}
+{% endif %}
+
+{% if rel %}
+<p class="edit-on-github">
+    <a href="https://github.com/wheelofheaven/docs.wheelofheaven.world/edit/main/content/{{ rel }}"
+       rel="noopener external"
+       target="_blank">
+        Edit this page on GitHub
+        <span class="edit-on-github__icon" aria-hidden="true">↗</span>
+    </a>
+</p>
+{% endif %}

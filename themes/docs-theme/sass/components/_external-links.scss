@@ -1,0 +1,15 @@
+@use "../abstracts/tokens" as t;
+
+// External-link indicator. Markdown rendered through Zola gets
+// rel="external" on outbound links (we set external_links_target_blank
+// in [markdown]); we use that selector to attach a small ↗ glyph.
+// Scope to .docs-page__content so the indicator only shows in prose,
+// not in nav / footer / sidebar where it would be noisy.
+
+.docs-page__content a[rel~="external"]::after {
+    content: " \2197"; // ↗ NE arrow
+    font-size: 0.75em;
+    color: var(--color-text-muted);
+    vertical-align: 0.15em;
+    margin-left: 0.05em;
+}

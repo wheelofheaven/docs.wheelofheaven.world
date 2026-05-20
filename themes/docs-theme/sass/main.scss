@@ -3,11 +3,19 @@
 @use "base/reset";
 @use "base/typography";
 @use "base/theme-vars";
+@use "base/a11y";
 @use "layout/shell";
 @use "layout/sidebar";
 @use "layout/toc";
 @use "components/page";
 @use "components/code";
 @use "components/search";
+@use "components/kbd";
+@use "components/external-links";
+@use "components/details";
 @use "components/theme-toggle";
 @use "components/prev-next";
+@use "components/edit-on-github";
+
+// Keep print last so its @media wraps everything.
+@use "base/print";
