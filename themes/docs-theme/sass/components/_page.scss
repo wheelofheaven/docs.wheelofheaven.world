@@ -53,6 +53,87 @@
         line-height: 1.5;
     }
 
+    &__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: t.$spacing-xs;
+        margin: t.$spacing-md 0 0;
+        font-size: t.$font-size-sm;
+    }
+
+    &__meta-chip {
+        display: inline-block;
+        padding: 0.15em 0.55em;
+        background: var(--color-surface-2);
+        color: var(--color-text-muted);
+        border-radius: t.$border-radius-full;
+        font-family: t.$font-family-sans;
+        font-size: t.$font-size-xs;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    // Mobile "On this page" disclosure — shown only when the right ToC
+    // is hidden (below the breakpoint-collapse-toc). Sits between the
+    // page header and the content as a collapsible chip.
+    &__mobile-toc {
+        display: none;
+        margin: 0 0 t.$spacing-xl;
+        padding: t.$spacing-sm t.$spacing-md;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: t.$border-radius-md;
+        font-size: t.$font-size-sm;
+
+        @media (max-width: t.$breakpoint-collapse-toc - 1) {
+            display: block;
+        }
+
+        summary {
+            cursor: pointer;
+            font-family: t.$font-family-display;
+            font-weight: 500;
+            color: var(--color-text);
+            list-style: none;
+
+            &::-webkit-details-marker {
+                display: none;
+            }
+
+            &::before {
+                content: "▸";
+                display: inline-block;
+                margin-right: 0.4em;
+                color: var(--current-section-accent);
+                transition: transform t.$transition-base;
+            }
+        }
+
+        &[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        ul {
+            list-style: none;
+            margin: t.$spacing-sm 0 0;
+            padding: 0 0 0 t.$spacing-md;
+            border-left: 2px solid var(--current-section-accent);
+
+            li {
+                margin: 0;
+                padding: t.$spacing-2xs 0;
+            }
+
+            a {
+                color: var(--color-text-muted);
+                text-decoration: none;
+                font-size: t.$font-size-sm;
+
+                &:hover { color: var(--color-text); }
+            }
+        }
+    }
+
     &__content {
         h2 {
             margin-top: t.$spacing-2xl;
@@ -77,14 +158,17 @@
         // Anchor links on headings (zola "insert_anchor_links")
         // Now using a "#" glyph (see templates/anchor-link.html) instead
         // of the default 🔗 emoji — reads cleaner and picks up theme color.
+        // Clickable to copy URL — see static/js/anchor-copy.js.
         h2 a.zola-anchor,
         h3 a.zola-anchor,
         h4 a.zola-anchor {
+            position: relative;
             opacity: 0;
             margin-left: 0.35em;
             text-decoration: none;
             color: var(--current-section-accent);
             font-weight: 400;
+            cursor: pointer;
             transition: opacity t.$transition-base, color t.$transition-base;
         }
         h2:hover a.zola-anchor,
@@ -94,6 +178,41 @@
         }
         a.zola-anchor:hover {
             color: var(--color-text);
+        }
+
+        // "Link copied" tooltip after an anchor click.
+        // JS injects <span.anchor-copy-tooltip> inside the anchor.
+        .anchor-copy-tooltip {
+            position: absolute;
+            bottom: calc(100% + 0.35em);
+            left: 50%;
+            transform: translateX(-50%) translateY(0.25em);
+            background: var(--color-text);
+            color: var(--color-bg);
+            padding: 0.2em 0.55em;
+            border-radius: t.$border-radius-sm;
+            font-family: t.$font-family-sans;
+            font-size: t.$font-size-xs;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity t.$transition-base, transform t.$transition-base;
+
+            &[data-visible] {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 4px solid transparent;
+                border-top-color: var(--color-text);
+            }
         }
     }
 

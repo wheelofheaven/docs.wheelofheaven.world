@@ -21,7 +21,30 @@
         {% if page.description %}
         <p class="docs-page__lede">{{ page.description }}</p>
         {% endif %}
+
+        {% if page.reading_time and page.reading_time > 1 %}
+        <p class="docs-page__meta">
+            <span class="docs-page__meta-chip">≈ {{ page.reading_time }} min read</span>
+            {% if page.word_count %}
+            <span class="docs-page__meta-chip">{{ page.word_count }} words</span>
+            {% endif %}
+            {% if page.updated %}
+            <span class="docs-page__meta-chip">Updated {{ page.updated | date(format="%Y-%m-%d") }}</span>
+            {% endif %}
+        </p>
+        {% endif %}
     </header>
+
+    {% if page.toc %}
+    <details class="docs-page__mobile-toc">
+        <summary>On this page</summary>
+        <ul>
+            {% for h in page.toc %}
+            <li><a href="#{{ h.id }}">{{ h.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </details>
+    {% endif %}
 
     <div class="docs-page__content">
         {{ page.content | safe }}
