@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Not found &middot; {{ config.title }}{% endblock title %}
+{% block description %}This page doesn't exist on docs.wheelofheaven.world.{% endblock description %}
+
+{% block aside %}{# 404 doesn't need a right-side ToC #}{% endblock aside %}
+
+{% block content %}
+<article class="docs-page docs-page--landing">
+    <header class="docs-page__header">
+        <h1 class="docs-page__title">Not found</h1>
+        <p class="docs-page__lede">
+            The page you're looking for doesn't exist on this site.
+        </p>
+    </header>
+
+    <div class="docs-page__content">
+        <p>A few likely landing spots:</p>
+
+        <ul>
+            <li><a href="{{ config.base_url }}/">The docs landing page</a></li>
+            <li><a href="{{ config.base_url }}/getting-started/quickstart/">Quickstart</a> &mdash;
+                clone, build, preview in under five minutes</li>
+            <li><a href="{{ config.base_url }}/getting-started/project-map/">Project Map</a> &mdash;
+                what each repo does and how they connect</li>
+            <li><a href="{{ config.base_url }}/reference/frontmatter/">Frontmatter Reference</a> &mdash;
+                every TOML field a content file may use</li>
+        </ul>
+
+        <p>
+            If you arrived here from a link to the old <code>github.com/wheelofheaven/docs</code>
+            repository, content has moved &mdash; see the
+            <a href="https://github.com/wheelofheaven/docs">archived repo's README</a>
+            for the path mapping, or use the search box in the header
+            (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd>+<kbd>K</kbd>).
+        </p>
+
+        <p>
+            If you arrived here from the main reading site, you probably
+            want <a href="{{ config.extra.upstream_site }}/">www.wheelofheaven.world</a>.
+        </p>
+    </div>
+</article>
+{% endblock content %}

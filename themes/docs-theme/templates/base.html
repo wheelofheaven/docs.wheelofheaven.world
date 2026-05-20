@@ -9,6 +9,33 @@
 
     <link rel="canonical" href="{{ current_url | default(value=config.base_url) | safe }}">
 
+    {# Favicons — full set copied from the www repo, same brand mark. #}
+    <link rel="icon" type="image/svg+xml" href="{{ get_url(path='brand/favicon.svg') | safe }}">
+    <link rel="icon" type="image/x-icon" href="{{ get_url(path='brand/favicon.ico') | safe }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path='brand/favicon-32x32.png') | safe }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ get_url(path='brand/favicon-16x16.png') | safe }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ get_url(path='brand/apple-touch-icon.png') | safe }}">
+
+    {# Open Graph + Twitter — static brand OG card for now (one image
+       for the whole site; per-page rendering would need the
+       data-images/og pipeline). #}
+    {% set og_title = page.title | default(value=section.title | default(value=config.title)) %}
+    {% set og_desc = page.description | default(value=section.description | default(value=config.description)) %}
+    {% set og_image = config.base_url ~ "/brand/og.jpg" %}
+    {% set og_url = current_url | default(value=config.base_url) %}
+    <meta property="og:site_name" content="{{ config.title }}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ og_title }}">
+    <meta property="og:description" content="{{ og_desc }}">
+    <meta property="og:url" content="{{ og_url | safe }}">
+    <meta property="og:image" content="{{ og_image | safe }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ og_title }}">
+    <meta name="twitter:description" content="{{ og_desc }}">
+    <meta name="twitter:image" content="{{ og_image | safe }}">
+
     {# Read theme preference before paint so we don't flash light → dark.
        Also pre-set the syntax-highlight stylesheet media attrs so the
        correct giallo CSS file is active on first paint. #}
