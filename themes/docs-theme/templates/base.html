@@ -32,8 +32,8 @@
        default; theme-toggle.js swaps the media attrs on explicit
        override. Inline script keeps first paint consistent with the
        resolved theme above. #}
-    <link rel="stylesheet" id="syntax-light" href="{{ get_url(path='giallo-light.css', cachebust=true) | safe }}" media="(prefers-color-scheme: light)">
-    <link rel="stylesheet" id="syntax-dark" href="{{ get_url(path='giallo-dark.css', cachebust=true) | safe }}" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" id="syntax-light" href="{{ get_url(path="giallo-light.css") | safe }}" media="(prefers-color-scheme: light)">
+    <link rel="stylesheet" id="syntax-dark" href="{{ get_url(path="giallo-dark.css") | safe }}" media="(prefers-color-scheme: dark)">
     <script>
         (function () {
             var t = window.__docsTheme;

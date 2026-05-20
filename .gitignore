@@ -3,3 +3,9 @@ public/
 node_modules/
 *.local.json
 .mise.local.toml
+
+# Zola's giallo syntax-highlighter writes these into static/ from the
+# [markdown.highlighting] config — fully derived from light_theme /
+# dark_theme. Letting them regenerate on each fresh build keeps source
+# config the single source of truth.
+static/giallo-*.css
