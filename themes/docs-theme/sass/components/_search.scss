@@ -84,6 +84,15 @@
     text-align: center;
 }
 
+// Match highlight inside search results — wraps the matched chars.
+.search__hit {
+    background: color-mix(in srgb, var(--current-section-accent) 35%, transparent);
+    color: var(--color-text);
+    border-radius: 2px;
+    padding: 0 0.1em;
+    font-weight: 500;
+}
+
 @media (max-width: t.$breakpoint-collapse-sidebar - 1) {
     .search { max-width: none; }
 }

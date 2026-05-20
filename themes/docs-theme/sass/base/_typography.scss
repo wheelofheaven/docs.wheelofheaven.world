@@ -46,21 +46,51 @@ blockquote {
     border-radius: 0 t.$border-radius-md t.$border-radius-md 0;
 }
 
+// Tables — used heavily in references and decision tables. Section-
+// aware accent on the header strip + subtle row hover.
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin: t.$spacing-lg 0;
     font-size: t.$font-size-sm;
+    border: 1px solid var(--color-border);
+    border-radius: t.$border-radius-md;
+    overflow: hidden;
+
+    thead {
+        background: color-mix(in srgb, var(--current-section-accent) 22%, var(--color-surface));
+    }
 
     th, td {
         padding: t.$spacing-sm t.$spacing-md;
         text-align: left;
         border-bottom: 1px solid var(--color-border);
+        vertical-align: top;
     }
+
     th {
         font-family: t.$font-family-display;
         font-weight: 600;
-        background: var(--color-surface);
+        color: var(--color-text);
+        border-bottom: 2px solid var(--current-section-accent);
+        letter-spacing: 0.005em;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) td {
+        background: color-mix(in srgb, var(--color-surface-2) 50%, transparent);
+    }
+
+    tbody tr:hover td {
+        background: color-mix(in srgb, var(--current-section-accent) 10%, var(--color-bg));
+    }
+
+    code {
+        white-space: nowrap;
     }
 }
 

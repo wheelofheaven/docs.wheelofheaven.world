@@ -47,6 +47,7 @@
                     { name: 'body',  weight: 0.4 },
                 ],
                 includeScore: true,
+                includeMatches: true,
                 threshold: 0.35,
                 ignoreLocation: true,
                 minMatchCharLength: 2,
@@ -74,17 +75,92 @@
         }
         var html = items.slice(0, 10).map(function (it, i) {
             var d = it.item;
-            var body = (d.body || '').slice(0, 160).replace(/\s+/g, ' ');
+            var matches = it.matches || [];
+            var title = highlightMatches(d.title || '(untitled)', findKey(matches, 'title'));
+
+            // Build a window of body text centered on the first body match
+            // so the user sees the matched term in context, not just the
+            // opening of the page.
+            var bodyMatch = findKey(matches, 'body');
+            var ctx = buildBodyContext(d.body || '', bodyMatch);
+
             return (
                 '<a class="search__result" href="' + (d.url || '#') + '" role="option" data-index="' + i + '">' +
-                '<span class="search__result-title">' + escapeHtml(d.title || '(untitled)') + '</span>' +
-                '<span class="search__result-context">' + escapeHtml(body) + '…</span>' +
+                '<span class="search__result-title">' + title + '</span>' +
+                '<span class="search__result-context">' + ctx + '</span>' +
                 '</a>'
             );
         }).join('');
         results.innerHTML = html;
         results.setAttribute('data-open', '');
         highlightIndex = -1;
+    }
+
+    function findKey(matches, key) {
+        for (var i = 0; i < matches.length; i++) {
+            if (matches[i].key === key) return matches[i];
+        }
+        return null;
+    }
+
+    // Wrap matched character ranges in <mark> tags, preserving any
+    // text outside the ranges. Indices come from Fuse's matches.indices
+    // array of [start, end] inclusive pairs.
+    function highlightMatches(text, match) {
+        if (!match || !match.indices || !match.indices.length) {
+            return escapeHtml(text);
+        }
+        // Sort ranges; merge overlapping.
+        var ranges = match.indices.slice().sort(function (a, b) { return a[0] - b[0]; });
+        var out = '';
+        var pos = 0;
+        for (var i = 0; i < ranges.length; i++) {
+            var s = ranges[i][0];
+            var e = ranges[i][1] + 1; // make end exclusive
+            if (s < pos) s = pos;     // skip overlap
+            if (s > pos) out += escapeHtml(text.slice(pos, s));
+            if (e > s) out += '<mark class="search__hit">' + escapeHtml(text.slice(s, e)) + '</mark>';
+            pos = e;
+        }
+        if (pos < text.length) out += escapeHtml(text.slice(pos));
+        return out;
+    }
+
+    // Pick a ~160-char window around the first match in body text, with
+    // the matched range wrapped in <mark>. If no match, fall back to the
+    // first 160 chars of body.
+    function buildBodyContext(body, match) {
+        var compact = body.replace(/\s+/g, ' ');
+        var WINDOW = 160;
+
+        if (!match || !match.indices || !match.indices.length) {
+            return escapeHtml(compact.slice(0, WINDOW)) + '…';
+        }
+
+        // Locate the first match in the (uncompacted) body, then compute
+        // a window around it in the compacted body. Easier path: just
+        // operate on the compacted body and find the matched substring.
+        var firstStart = match.indices[0][0];
+        var firstEnd   = match.indices[0][1] + 1;
+        var matchText  = body.slice(firstStart, firstEnd);
+        var compactIdx = compact.indexOf(matchText);
+        if (compactIdx < 0) compactIdx = 0;
+
+        var start = Math.max(0, compactIdx - 40);
+        var end   = Math.min(compact.length, start + WINDOW);
+        if (end - start < WINDOW) start = Math.max(0, end - WINDOW);
+
+        var snippet = compact.slice(start, end);
+        var matchPosInSnippet = compactIdx - start;
+
+        var before  = escapeHtml(snippet.slice(0, matchPosInSnippet));
+        var hit     = escapeHtml(snippet.slice(matchPosInSnippet, matchPosInSnippet + matchText.length));
+        var after   = escapeHtml(snippet.slice(matchPosInSnippet + matchText.length));
+
+        var prefix = start > 0 ? '…' : '';
+        var suffix = end < compact.length ? '…' : '';
+
+        return prefix + before + '<mark class="search__hit">' + hit + '</mark>' + after + suffix;
     }
 
     function escapeHtml(s) {
