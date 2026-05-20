@@ -1,0 +1,119 @@
+{# Docs footer — structurally mirrors the www footer (4-column grid +
+   bottom attribution strip + rainbow stripe) but with docs-relevant
+   content. Docs site is English-only, so no language picker; the
+   theme toggle lives in the header, not duplicated here. #}
+<footer class="footer" id="footer" role="contentinfo">
+  <div class="footer__content">
+    <div class="footer__grid">
+
+      <div class="footer__col footer__col--brand">
+        <h3 class="footer__brand">
+          <a href="{{ config.base_url }}" aria-label="{{ config.title }} home">
+            <span class="footer__brand-wordmark">
+              {% include "partials/brand/wordmark.html" %}
+            </span>
+            <span class="footer__brand-suffix">Docs</span>
+          </a>
+        </h3>
+        <p class="footer__muted">
+          Author, contributor, and developer documentation for the
+          <a href="{{ config.extra.upstream_site }}">Wheel of Heaven</a>
+          knowledge base. Open-source under CC0-1.0.
+        </p>
+        <p class="footer__muted">
+          Looking for the reading site?
+          <a href="{{ config.extra.upstream_site }}">{{ config.extra.upstream_site | replace(from="https://", to="") }}</a>
+        </p>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__col-title">Get started</h4>
+        <ul>
+          <li><a href="{{ config.base_url }}/getting-started/quickstart/">Quickstart</a></li>
+          <li><a href="{{ config.base_url }}/getting-started/project-map/">Project Map</a></li>
+          <li><a href="{{ config.base_url }}/getting-started/conventions/">Conventions</a></li>
+          <li><a href="{{ config.base_url }}/contributing/dev/local-setup/">Local Setup</a></li>
+        </ul>
+
+        <h4 class="footer__col-title">Reference</h4>
+        <ul>
+          <li><a href="{{ config.base_url }}/reference/frontmatter/">Frontmatter</a></li>
+          <li><a href="{{ config.base_url }}/reference/library-book-format/">Library Book Format</a></li>
+          <li><a href="{{ config.base_url }}/reference/glossary/">Glossary</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__col-title">Contributing</h4>
+        <ul>
+          <li><a href="{{ config.base_url }}/contributing/content/wiki-entry/">Wiki Entry</a></li>
+          <li><a href="{{ config.base_url }}/contributing/content/article/">Article</a></li>
+          <li><a href="{{ config.base_url }}/contributing/content/newsroom-dispatch/">Newsroom Dispatch</a></li>
+          <li><a href="{{ config.base_url }}/contributing/content/library-book/">Library Book</a></li>
+          <li><a href="{{ config.base_url }}/contributing/content/translations/">Translations</a></li>
+          <li><a href="{{ config.base_url }}/contributing/content/editorial-passes/">Editorial Passes</a></li>
+        </ul>
+
+        <h4 class="footer__col-title">Dev</h4>
+        <ul>
+          <li><a href="{{ config.base_url }}/contributing/dev/bifrost-theme/">Bifrost Theme</a></li>
+          <li><a href="{{ config.base_url }}/contributing/dev/pipelines/">Pipelines</a></li>
+          <li><a href="{{ config.base_url }}/contributing/dev/ci-deploy/">CI &amp; Deploy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__col-title">Architecture</h4>
+        <ul>
+          <li><a href="{{ config.base_url }}/architecture/overview/">Overview</a></li>
+          <li><a href="{{ config.base_url }}/architecture/sites/">Sites</a></li>
+          <li><a href="{{ config.base_url }}/architecture/sites/www/">www</a></li>
+          <li><a href="{{ config.base_url }}/architecture/sites/api/">api</a></li>
+          <li><a href="{{ config.base_url }}/architecture/sites/assets/">assets</a></li>
+          <li><a href="{{ config.base_url }}/architecture/hosting-and-caching/">Hosting &amp; Caching</a></li>
+          <li><a href="{{ config.base_url }}/reference/repository-inventory/">Repository Inventory</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__col-title">Community</h4>
+        <ul>
+          <li><a href="https://github.com/orgs/wheelofheaven/discussions" rel="noopener" target="_blank">GitHub Discussions</a></li>
+          <li><a href="{{ config.extra.upstream_site }}/contributing/">Contributing</a></li>
+          <li><a href="{{ config.extra.upstream_site }}/code-of-conduct/">Code of Conduct</a></li>
+          <li><a href="https://opencollective.com/wheelofheaven" rel="noopener" target="_blank">Open Collective</a></li>
+        </ul>
+
+        <h4 class="footer__col-title">Source</h4>
+        <ul>
+          <li><a href="{{ config.extra.github_repo }}" rel="noopener" target="_blank">Source code</a></li>
+          <li><a href="{{ config.extra.github_repo }}/issues" rel="noopener" target="_blank">Report an issue</a></li>
+          <li><a href="https://github.com/wheelofheaven/bifrost" rel="noopener" target="_blank">Bifrost theme</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <div class="footer__bottom-grid">
+      <div class="footer__closure">
+        Public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/" rel="noopener" target="_blank">CC0-1.0</a>).
+        Open source — content and code are free to read, fork, and reuse.
+        <br><small>
+          Part of the <a href="{{ config.extra.upstream_site }}">Wheel of Heaven</a> project.
+        </small>
+      </div>
+
+      <div class="footer__socials">
+        {% include "partials/social/x-twitter.html" %}
+        {% include "partials/social/telegram.html" %}
+        {% include "partials/social/youtube.html" %}
+        {% include "partials/social/github.html" %}
+        {% include "partials/social/open-collective.html" %}
+      </div>
+    </div>
+  </div>
+
+  {# Bifrost rainbow strip — kept as-is. #}
+  <div class="site-footer__rainbow" aria-hidden="true"></div>
+</footer>

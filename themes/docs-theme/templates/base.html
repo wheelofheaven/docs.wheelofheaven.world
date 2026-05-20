@@ -180,22 +180,7 @@
         {% endblock aside %}
     </div>
 
-    <footer class="site-footer">
-        <div class="site-footer__inner">
-            <p>
-                <a href="{{ config.extra.upstream_site }}">{{ config.extra.upstream_site | replace(from="https://", to="") }}</a>
-                &middot;
-                <a href="{{ config.extra.github_repo }}">Source</a>
-                &middot;
-                <a href="https://github.com/orgs/wheelofheaven/discussions">Discussions</a>
-                &middot;
-                <a href="{{ config.extra.github_repo }}/issues">Issues</a>
-                &middot;
-                <span>Public domain (CC0-1.0)</span>
-            </p>
-        </div>
-        <div class="site-footer__rainbow" aria-hidden="true"></div>
-    </footer>
+    {% include "partials/footer.html" %}
 
     {% if page %}
     <button id="back-to-top" class="back-to-top" type="button" aria-label="Back to top">
