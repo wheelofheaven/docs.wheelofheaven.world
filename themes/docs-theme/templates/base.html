@@ -9,19 +9,41 @@
 
     <link rel="canonical" href="{{ current_url | default(value=config.base_url) | safe }}">
 
-    {# Read theme preference before paint so we don't flash light → dark #}
+    {# Read theme preference before paint so we don't flash light → dark.
+       Also pre-set the syntax-highlight stylesheet media attrs so the
+       correct giallo CSS file is active on first paint. #}
     <script>
         (function () {
-            try {
-                var t = localStorage.getItem('docs-theme');
-                if (t === 'light' || t === 'dark') {
-                    document.documentElement.setAttribute('data-theme', t);
-                }
-            } catch (_) {}
+            var t = null;
+            try { t = localStorage.getItem('docs-theme'); } catch (_) {}
+            if (t === 'light' || t === 'dark') {
+                document.documentElement.setAttribute('data-theme', t);
+            }
+            // Stash the chosen theme so the link-tag below can read it
+            // synchronously without a second localStorage read.
+            window.__docsTheme = t;
         })();
     </script>
 
     <link rel="stylesheet" href="{{ get_url(path='main.css', cachebust=true) | safe }}">
+
+    {# Syntax-highlight CSS — class-based, dual light/dark. Loaded with
+       media-query attrs so the OS preference picks the right one by
+       default; theme-toggle.js swaps the media attrs on explicit
+       override. Inline script keeps first paint consistent with the
+       resolved theme above. #}
+    <link rel="stylesheet" id="syntax-light" href="{{ get_url(path='giallo-light.css', cachebust=true) | safe }}" media="(prefers-color-scheme: light)">
+    <link rel="stylesheet" id="syntax-dark" href="{{ get_url(path='giallo-dark.css', cachebust=true) | safe }}" media="(prefers-color-scheme: dark)">
+    <script>
+        (function () {
+            var t = window.__docsTheme;
+            var light = document.getElementById('syntax-light');
+            var dark = document.getElementById('syntax-dark');
+            if (!light || !dark) return;
+            if (t === 'light') { light.media = 'all'; dark.media = 'not all'; }
+            else if (t === 'dark') { light.media = 'not all'; dark.media = 'all'; }
+        })();
+    </script>
 
     {% block head_extra %}{% endblock head_extra %}
 </head>
