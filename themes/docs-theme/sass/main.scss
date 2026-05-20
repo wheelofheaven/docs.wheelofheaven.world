@@ -20,6 +20,7 @@
 @use "components/edit-on-github";
 @use "components/landing";
 @use "components/not-found";
+@use "components/reading-progress";
 
 // Keep print last so its @media wraps everything.
 @use "base/print";

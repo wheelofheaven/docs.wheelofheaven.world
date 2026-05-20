@@ -4,7 +4,14 @@
 
 html {
     font-size: 100%;
-    scroll-padding-top: 4rem;
+    // Pad the scroll position when jumping to an anchor so the target
+    // heading clears the sticky site header instead of sitting under it.
+    scroll-padding-top: 4.5rem;
+    scroll-behavior: smooth;
+
+    @media (prefers-reduced-motion: reduce) {
+        scroll-behavior: auto;
+    }
 }
 
 body {
@@ -17,10 +24,24 @@ body {
 
 img, svg { max-width: 100%; height: auto; }
 
+// Horizontal rule — small Bifrost-rainbow strip centered in its width.
 hr {
     border: 0;
-    border-top: 1px solid var(--color-border);
-    margin: t.$spacing-xl 0;
+    height: 2px;
+    width: clamp(120px, 30%, 240px);
+    margin: t.$spacing-2xl auto;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        #{t.$pink-300}     15%,
+        #{t.$lavender-300} 30%,
+        #{t.$blue-300}     50%,
+        #{t.$cyan-300}     70%,
+        #{t.$mint-300}     85%,
+        transparent        100%
+    );
+    border-radius: 1px;
+    opacity: 0.7;
 }
 
 .skip-link {

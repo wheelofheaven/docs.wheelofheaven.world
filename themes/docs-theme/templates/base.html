@@ -98,6 +98,15 @@
 <body{% if _section_id %} data-section="{{ _section_id }}"{% endif %}>
     <a class="skip-link" href="#main">Skip to content</a>
 
+    {# Reading progress bar — anchored to the top of the viewport,
+       transform: scaleX-driven. Skipped on landing + 404 (no real
+       "reading" progress to track). #}
+    {% if page %}
+    <div class="reading-progress" aria-hidden="true">
+        <div class="reading-progress__bar" id="reading-progress"></div>
+    </div>
+    {% endif %}
+
     <header class="site-header">
         <div class="site-header__inner">
             <button class="site-header__nav-toggle" type="button" aria-label="Open navigation" aria-controls="site-body" aria-expanded="false">Menu</button>
@@ -167,11 +176,18 @@
         <div class="site-footer__rainbow" aria-hidden="true"></div>
     </footer>
 
+    {% if page %}
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="Back to top">
+        <span aria-hidden="true">↑</span>
+    </button>
+    {% endif %}
+
     <script src="{{ get_url(path='js/theme-toggle.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/code-copy.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/nav-toggle.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/toc-active.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/anchor-copy.js', cachebust=true) | safe }}" defer></script>
+    <script src="{{ get_url(path='js/reading-progress.js', cachebust=true) | safe }}" defer></script>
     {% if config.build_search_index %}
     <script src="{{ get_url(path='js/search.js', cachebust=true) | safe }}" defer></script>
     {% endif %}

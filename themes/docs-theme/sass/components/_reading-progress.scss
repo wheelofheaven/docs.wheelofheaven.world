@@ -1,0 +1,91 @@
+@use "../abstracts/tokens" as t;
+
+// Thin reading progress bar pinned to the top of the viewport. The
+// inner __bar is transform-driven (scaleX from 0 to 1) by
+// static/js/reading-progress.js. Sits above the sticky site-header
+// (z-index just above navbar) so a partially-read page reads its
+// progress at a glance.
+
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: t.$z-navbar + 1;
+    pointer-events: none;
+
+    @media print {
+        display: none;
+    }
+}
+
+.reading-progress__bar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--current-section-accent),
+        color-mix(in srgb, var(--current-section-accent) 50%, #{t.$blue-300})
+    );
+    transform-origin: 0 0;
+    transform: scaleX(0);
+    transition: transform 80ms linear;
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+    }
+}
+
+// Back-to-top button — floats bottom-right, only visible after the
+// reader has scrolled past the top. Tinted with section accent.
+.back-to-top {
+    position: fixed;
+    right: t.$spacing-lg;
+    bottom: t.$spacing-lg;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    background: var(--color-surface);
+    color: var(--current-section-accent);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity t.$transition-base, transform t.$transition-base,
+                border-color t.$transition-base;
+    pointer-events: none;
+    z-index: t.$z-dropdown;
+
+    &[data-visible] {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    &:hover {
+        border-color: var(--current-section-accent);
+        background: color-mix(in srgb, var(--current-section-accent) 12%, var(--color-surface));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: opacity t.$transition-base;
+        transform: none;
+
+        &[data-visible] { transform: none; }
+    }
+
+    @media print {
+        display: none;
+    }
+
+    // On mobile, lift above the safe-area inset (iPhone home indicator).
+    @media (max-width: 640px) {
+        right: t.$spacing-md;
+        bottom: calc(#{t.$spacing-md} + env(safe-area-inset-bottom, 0px));
+    }
+}
