@@ -65,15 +65,19 @@ to anything in particular.
 Source: [github.com/wheelofheaven/docs.wheelofheaven.world](https://github.com/wheelofheaven/docs.wheelofheaven.world).
 License: CC0-1.0 (Public Domain).
 
-## Status
+## Rollout
 
-Build-out is in five phases per
-[`.claude/plans/docs-site.md`](https://github.com/wheelofheaven/.claude/blob/main/plans/docs-site.md):
+This site launched on 2026-05-20. The five-phase rollout plan
+(in [`.claude/plans/docs-site.md`](https://github.com/wheelofheaven/.claude/blob/main/plans/docs-site.md))
+is complete:
 
-| Phase | What | State |
+| Phase | What | |
 |---|---|---|
-| 1 | Bootstrap & deploy pipeline | Done |
-| 2 | Theme buildout (sidebar nav, sticky ToC, code-block chrome, search) | Done |
-| 3 | Migrate & restructure existing content | Done |
-| 4 | Write missing connective tissue | Done |
-| 5 | Cutover (archive old docs repo, update cross-references) | **Pending** |
+| 1 | Bootstrap & deploy pipeline | ✓ |
+| 2 | Theme buildout (sidebar nav, sticky ToC, code-block chrome, search) | ✓ |
+| 3 | Migrate & restructure existing content from the old `docs` repo | ✓ |
+| 4 | Write the missing connective tissue (Quickstart, Project Map, the per-content-type how-tos, frontmatter reference) | ✓ |
+| 5 | Cutover (archive old docs repo, update cross-references in `.github` and bifrost footer) | ✓ |
+
+The old `wheelofheaven/docs` repo is archived; this site is where
+docs work happens now.
