@@ -1,0 +1,29 @@
+// Critical / above-the-fold styles. Inlined into <head> by base.html;
+// the full main.css is loaded asynchronously. The goal is to render
+// the first viewport (header + sidebar shell + page header) without
+// waiting for main.css. Keep this file small — every byte ships
+// inline in every page's HTML.
+//
+// What's NOT critical and lives in main.css:
+//   - Code-block styling (pre/code, copy buttons, language badges)
+//   - Search dropdown / modal
+//   - Shortcuts modal
+//   - Footer
+//   - 404 hero
+//   - Landing cards (visible only on /, render unstyled briefly OK)
+//   - Print stylesheet
+//   - ToC, alerts, prev/next, theme-toggle hover states
+//   - Most animations
+
+// Above-the-fold styles inlined into <head>. Goal: render the first
+// viewport (header + sidebar + page header) without waiting for the
+// async main.css.
+@use "base/fonts";
+@use "base/reset";
+@use "base/theme-vars";
+@use "base/section-accent";
+@use "base/typography";
+@use "layout/shell";
+@use "layout/sidebar";
+@use "components/page";
+@use "components/reading-progress";

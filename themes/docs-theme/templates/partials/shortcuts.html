@@ -1,0 +1,33 @@
+{# Keyboard shortcuts modal. Always present in the DOM but hidden by
+   CSS unless [data-open] is set by static/js/shortcuts.js. Trigger:
+   "?" from anywhere on the page (when not typing in an input). #}
+<div id="shortcuts-modal" class="shortcuts" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+    <div class="shortcuts__panel">
+        <header class="shortcuts__header">
+            <h2 id="shortcuts-title" class="shortcuts__title">Keyboard shortcuts</h2>
+            <button type="button" class="shortcuts__close" aria-label="Close keyboard shortcuts">&times;</button>
+        </header>
+        <dl class="shortcuts__list">
+            <dt><kbd data-mod>⌘</kbd>+<kbd>K</kbd></dt>
+            <dd>Focus the search input</dd>
+
+            <dt><kbd>↑</kbd> <kbd>↓</kbd></dt>
+            <dd>Navigate through search results</dd>
+
+            <dt><kbd>Enter</kbd></dt>
+            <dd>Open the highlighted search result</dd>
+
+            <dt><kbd>Esc</kbd></dt>
+            <dd>Close search results or this dialog</dd>
+
+            <dt><kbd>?</kbd></dt>
+            <dd>Open this dialog</dd>
+
+            <dt>Click <code>#</code> next to a heading</dt>
+            <dd>Copy the heading's permalink to your clipboard</dd>
+        </dl>
+        <p class="shortcuts__hint">
+            Press <kbd>Esc</kbd> or click outside this panel to close.
+        </p>
+    </div>
+</div>

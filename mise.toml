@@ -3,12 +3,18 @@ min_version = "2025.8.3"
 [tools]
 zola = "0.22.1"
 
+[tasks.dates]
+description = "Refresh data/updated-dates.json from git log per content file"
+run = "python3 scripts/extract-git-dates.py"
+
 [tasks.build]
 description = "Compile site statically with Zola"
+depends = ["dates"]
 run = "zola build"
 
 [tasks.serve]
 description = "Run dev server (live reload, auto-selects free port)"
+depends = ["dates"]
 run = """
 port=${ZOLA_PORT:-1112}
 while lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; do port=$((port + 1)); done

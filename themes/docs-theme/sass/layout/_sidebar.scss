@@ -1,4 +1,5 @@
 @use "../abstracts/tokens" as t;
+@use "../abstracts/section-colors" as sc;
 
 // Left sidebar — section nav tree. Always visible on desktop, drawer
 // on mobile (controlled by the .site-body[data-nav-open] attribute set
@@ -100,15 +101,14 @@
     }
 }
 
-// Per-section accent assignments. Each top-level section gets one
-// color from the Bifrost palette, used for both the heading-dot and
-// the active-page left border. Picked to span the rainbow roughly in
-// reading-order so the sidebar feels like a coherent strip.
-.sidebar__section[aria-labelledby="sidebar-getting-started"]    { --sidebar-section-accent: #{t.$cyan-300}; }
-.sidebar__section[aria-labelledby="sidebar-contributing-content"] { --sidebar-section-accent: #{t.$lavender-300}; }
-.sidebar__section[aria-labelledby="sidebar-contributing-dev"]   { --sidebar-section-accent: #{t.$mauve-300}; }
-.sidebar__section[aria-labelledby="sidebar-architecture"]       { --sidebar-section-accent: #{t.$blue-300}; }
-.sidebar__section[aria-labelledby="sidebar-reference"]          { --sidebar-section-accent: #{t.$mint-300}; }
+// Per-section accent assignments. Sourced from the shared map in
+// abstracts/section-colors.scss so palette changes propagate to
+// every consumer at once (sidebar, page chrome, landing cards).
+@each $name, $color in sc.$section-accents {
+    .sidebar__section[aria-labelledby="sidebar-#{$name}"] {
+        --sidebar-section-accent: #{$color};
+    }
+}
 
 // Drawer backdrop on mobile.
 .sidebar-backdrop {

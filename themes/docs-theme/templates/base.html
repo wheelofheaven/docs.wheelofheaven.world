@@ -79,7 +79,21 @@
         })();
     </script>
 
-    <link rel="stylesheet" href="{{ get_url(path='main.css', cachebust=true) | safe }}">
+    {# Critical CSS inlined — the bare reset + theme vars + section
+       accent map + layout shell. Avoids FOUC on first paint. Compiled
+       from themes/docs-theme/sass/critical.scss by Zola's SCSS pipeline.
+       Falls back gracefully (no inline style block) if the file is
+       missing at render time. #}
+    {% set critical_css = load_data(path="public/critical.css", format="plain", required=false) %}
+    {% if critical_css %}
+    <style>{{ critical_css | safe }}</style>
+    {% endif %}
+
+    {# Main CSS — loaded async to avoid blocking first paint. The
+       media=print + onload trick is the standard pattern; noscript
+       fallback for browsers with JS disabled. #}
+    <link rel="preload" href="{{ get_url(path='main.css', cachebust=true) | safe }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ get_url(path='main.css', cachebust=true) | safe }}"></noscript>
 
     {# Syntax-highlight CSS — class-based, dual light/dark. Loaded with
        media-query attrs so the OS preference picks the right one by
@@ -194,12 +208,15 @@
     </button>
     {% endif %}
 
+    {% include "partials/shortcuts.html" %}
+
     <script src="{{ get_url(path='js/theme-toggle.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/code-copy.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/nav-toggle.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/toc-active.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/anchor-copy.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/reading-progress.js', cachebust=true) | safe }}" defer></script>
+    <script src="{{ get_url(path='js/shortcuts.js', cachebust=true) | safe }}" defer></script>
     {% if config.build_search_index %}
     <script src="{{ get_url(path='js/search.js', cachebust=true) | safe }}" defer></script>
     {% endif %}

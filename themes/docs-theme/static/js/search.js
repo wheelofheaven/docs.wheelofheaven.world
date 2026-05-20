@@ -84,8 +84,15 @@
             var bodyMatch = findKey(matches, 'body');
             var ctx = buildBodyContext(d.body || '', bodyMatch);
 
+            // Derive the section breadcrumb from the URL path. For
+            //   /contributing/content/wiki-entry/  →  "Contributing → Content"
+            //   /reference/glossary/               →  "Reference"
+            //   /                                  →  ""  (omit)
+            var section = sectionFromUrl(d.url || '');
+
             return (
                 '<a class="search__result" href="' + (d.url || '#') + '" role="option" data-index="' + i + '">' +
+                (section ? '<span class="search__result-section">' + escapeHtml(section) + '</span>' : '') +
                 '<span class="search__result-title">' + title + '</span>' +
                 '<span class="search__result-context">' + ctx + '</span>' +
                 '</a>'
@@ -168,6 +175,36 @@
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
+    }
+
+    // URL path → "Section → Subsection" label. Drops the trailing
+    // page slug. Returns "" for the root page.
+    var SECTION_LABELS = {
+        'getting-started':       'Getting Started',
+        'contributing':          'Contributing',
+        'contributing/content':  'Contributing → Content',
+        'contributing/dev':      'Contributing → Dev',
+        'architecture':          'Architecture',
+        'architecture/sites':    'Architecture → Sites',
+        'reference':             'Reference',
+    };
+    function sectionFromUrl(url) {
+        if (!url) return '';
+        var path;
+        try { path = new URL(url, window.location.origin).pathname; }
+        catch (_) { path = url; }
+        var segs = path.split('/').filter(Boolean);
+        if (segs.length <= 1) return ''; // root or single-segment page
+        // Drop the final slug; what remains is the section path.
+        var sectionPath = segs.slice(0, -1).join('/');
+        if (SECTION_LABELS[sectionPath]) return SECTION_LABELS[sectionPath];
+        // Fallback: titlecase the path segments.
+        return sectionPath
+            .split('/')
+            .map(function (s) {
+                return s.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+            })
+            .join(' → ');
     }
 
     function search(q) {

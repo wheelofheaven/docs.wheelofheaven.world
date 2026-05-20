@@ -1,0 +1,16 @@
+@use "tokens" as t;
+
+// Single source of truth for the section → Bifrost-accent mapping.
+// Consumed by _section-accent.scss (body[data-section]), _sidebar.scss
+// (.sidebar__section[aria-labelledby="sidebar-X"]), and _landing.scss
+// ([data-card-accent="X"]). Add a new top-level section here once and
+// every consumer picks it up via @each.
+
+$section-accents: (
+    "getting-started":       t.$cyan-300,
+    "contributing":          t.$pink-300,
+    "contributing-content":  t.$lavender-300,
+    "contributing-dev":      t.$mauve-300,
+    "architecture":          t.$blue-300,
+    "reference":             t.$mint-300,
+);

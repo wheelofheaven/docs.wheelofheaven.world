@@ -57,6 +57,17 @@
         background: var(--color-surface-2);
     }
 
+    &-section {
+        display: block;
+        font-family: t.$font-family-display;
+        font-size: t.$font-size-xs;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        margin-bottom: 0.15em;
+    }
+
     &-title {
         font-family: t.$font-family-display;
         font-weight: 500;

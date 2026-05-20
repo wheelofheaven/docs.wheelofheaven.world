@@ -1,13 +1,11 @@
 @use "../abstracts/tokens" as t;
+@use "../abstracts/section-colors" as sc;
 
-// Per-card accent assignments. Mirrors the sidebar + section-accent
-// palette so audience cards and section cards on the landing page
-// read as visual previews of the destinations.
-[data-card-accent="getting-started"]      { --card-accent: #{t.$cyan-300}; }
-[data-card-accent="contributing-content"] { --card-accent: #{t.$lavender-300}; }
-[data-card-accent="contributing-dev"]     { --card-accent: #{t.$mauve-300}; }
-[data-card-accent="architecture"]         { --card-accent: #{t.$blue-300}; }
-[data-card-accent="reference"]            { --card-accent: #{t.$mint-300}; }
+// Per-card accent assignments. Sourced from the shared map in
+// abstracts/section-colors.scss.
+@each $name, $color in sc.$section-accents {
+    [data-card-accent="#{$name}"] { --card-accent: #{$color}; }
+}
 
 // --- Hero ---
 .landing-hero {
