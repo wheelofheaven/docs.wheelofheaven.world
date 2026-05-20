@@ -1,0 +1,67 @@
+@use "../abstracts/tokens" as t;
+
+.not-found {
+    text-align: center;
+    padding: t.$spacing-3xl 0 t.$spacing-2xl;
+    position: relative;
+
+    &__logomark {
+        margin-bottom: t.$spacing-md;
+        color: var(--color-text);
+        opacity: 0.7;
+
+        svg {
+            width: 72px;
+            height: 72px;
+            display: inline-block;
+        }
+    }
+
+    &__code {
+        font-family: t.$font-family-display;
+        font-size: clamp(4rem, 14vw, 7rem);
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin: 0 0 t.$spacing-md;
+
+        // Bifrost rainbow gradient text — same palette stops as the
+        // header/footer stripes, mapped onto the "404" glyphs.
+        background: linear-gradient(
+            90deg,
+            #{t.$pink-300}     0%,
+            #{t.$lavender-300} 18%,
+            #{t.$mauve-300}    32%,
+            #{t.$blue-300}     50%,
+            #{t.$cyan-300}     68%,
+            #{t.$mint-300}     85%,
+            #{t.$green-300}    100%
+        );
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+                background-clip: text;
+        -webkit-text-fill-color: transparent;
+                color: transparent;
+
+        animation: bifrost-rainbow-shift 18s linear infinite;
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+    }
+
+    &__title {
+        font-family: t.$font-family-display;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 t.$spacing-sm;
+    }
+
+    &__lede {
+        font-size: 1.05rem;
+        color: var(--color-text-muted);
+        max-width: 50ch;
+        margin: 0 auto t.$spacing-xl;
+        line-height: 1.5;
+    }
+}

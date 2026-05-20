@@ -46,11 +46,32 @@
     }
 
     &__wordmark {
-        display: inline-flex;
-        flex-direction: column;
         line-height: 1;
         font-family: t.$font-family-display;
-        gap: 0.15em;
+
+        // Text variant: stacked two-line "Wheel of Heaven" / "Docs"
+        // visible on small + medium screens.
+        &--text {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 0.15em;
+
+            @media (min-width: t.$breakpoint-collapse-sidebar) {
+                display: none;
+            }
+        }
+
+        // SVG variant: inline wordmark + "Docs" suffix on ≥ lg.
+        &--svg {
+            display: none;
+            align-items: baseline;
+            gap: 0.55em;
+            color: var(--color-text);
+
+            @media (min-width: t.$breakpoint-collapse-sidebar) {
+                display: inline-flex;
+            }
+        }
     }
 
     &__wordmark-line1 {
@@ -66,6 +87,40 @@
         font-weight: 600;
         letter-spacing: -0.005em;
         color: var(--color-text);
+    }
+
+    &__wordmark-svg-inner {
+        display: inline-flex;
+        align-items: center;
+
+        svg {
+            // SVG ships at 1920×200 (aspect 9.6:1). At 18px tall the
+            // rendered wordmark is ~173px wide — fits the header strip
+            // without crowding search.
+            height: 18px;
+            width: auto;
+            display: block;
+        }
+    }
+
+    &__wordmark-suffix {
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+        color: var(--current-section-accent, var(--color-accent-strong));
+        position: relative;
+        padding-left: 0.6em;
+
+        // Small bar separator between the wordmark and "Docs".
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.18em;
+            bottom: 0.18em;
+            width: 1px;
+            background: var(--color-border);
+        }
     }
 
     // Thin animated Bifrost rainbow strip under the header. Always

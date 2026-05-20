@@ -19,6 +19,7 @@
 @use "components/prev-next";
 @use "components/edit-on-github";
 @use "components/landing";
+@use "components/not-found";
 
 // Keep print last so its @media wraps everything.
 @use "base/print";

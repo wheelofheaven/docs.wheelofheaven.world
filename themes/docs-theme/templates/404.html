@@ -7,37 +7,54 @@
 
 {% block content %}
 <article class="docs-page docs-page--landing">
-    <header class="docs-page__header">
-        <h1 class="docs-page__title">Not found</h1>
-        <p class="docs-page__lede">
-            The page you're looking for doesn't exist on this site.
+    <div class="not-found">
+        <div class="not-found__logomark" aria-hidden="true">
+            {% include "partials/brand/logomark.html" %}
+        </div>
+        <h1 class="not-found__code">404</h1>
+        <p class="not-found__title">Page not found</p>
+        <p class="not-found__lede">
+            The page you're looking for doesn't exist on this site —
+            or it might have moved during the migration to
+            <code>docs.wheelofheaven.world</code>.
         </p>
-    </header>
+    </div>
 
-    <div class="docs-page__content">
-        <p>A few likely landing spots:</p>
+    <h2 class="landing-section-heading">Try one of these</h2>
+    <div class="landing-section-grid">
+        <a class="landing-section-card" data-card-accent="getting-started" href="{{ config.base_url }}/getting-started/quickstart/">
+            <span class="landing-section-card__chip" aria-hidden="true"></span>
+            <h3 class="landing-section-card__title">Quickstart</h3>
+            <p class="landing-section-card__desc">Clone, build, preview in under five minutes.</p>
+        </a>
+        <a class="landing-section-card" data-card-accent="getting-started" href="{{ config.base_url }}/getting-started/project-map/">
+            <span class="landing-section-card__chip" aria-hidden="true"></span>
+            <h3 class="landing-section-card__title">Project Map</h3>
+            <p class="landing-section-card__desc">What each repo does and how they connect.</p>
+        </a>
+        <a class="landing-section-card" data-card-accent="contributing-content" href="{{ config.base_url }}/contributing/content/">
+            <span class="landing-section-card__chip" aria-hidden="true"></span>
+            <h3 class="landing-section-card__title">Contributing → Content</h3>
+            <p class="landing-section-card__desc">How to write wiki entries, Articles, and Dispatches.</p>
+        </a>
+        <a class="landing-section-card" data-card-accent="reference" href="{{ config.base_url }}/reference/frontmatter/">
+            <span class="landing-section-card__chip" aria-hidden="true"></span>
+            <h3 class="landing-section-card__title">Frontmatter Reference</h3>
+            <p class="landing-section-card__desc">Every TOML field a content file may use.</p>
+        </a>
+    </div>
 
-        <ul>
-            <li><a href="{{ config.base_url }}/">The docs landing page</a></li>
-            <li><a href="{{ config.base_url }}/getting-started/quickstart/">Quickstart</a> &mdash;
-                clone, build, preview in under five minutes</li>
-            <li><a href="{{ config.base_url }}/getting-started/project-map/">Project Map</a> &mdash;
-                what each repo does and how they connect</li>
-            <li><a href="{{ config.base_url }}/reference/frontmatter/">Frontmatter Reference</a> &mdash;
-                every TOML field a content file may use</li>
-        </ul>
-
+    <div class="docs-page__content landing-aside-content">
         <p>
-            If you arrived here from a link to the old <code>github.com/wheelofheaven/docs</code>
-            repository, content has moved &mdash; see the
-            <a href="https://github.com/wheelofheaven/docs">archived repo's README</a>
-            for the path mapping, or use the search box in the header
-            (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd>+<kbd>K</kbd>).
+            If you arrived here from a link to the old
+            <code>github.com/wheelofheaven/docs</code> repository, content has moved —
+            see the <a href="https://github.com/wheelofheaven/docs">archived
+            repo's README</a> for the path mapping, or use the search box
+            in the header (<kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>).
         </p>
-
         <p>
-            If you arrived here from the main reading site, you probably
-            want <a href="{{ config.extra.upstream_site }}/">www.wheelofheaven.world</a>.
+            If you arrived from the main reading site, you probably want
+            <a href="{{ config.extra.upstream_site }}/">www.wheelofheaven.world</a>.
         </p>
     </div>
 </article>

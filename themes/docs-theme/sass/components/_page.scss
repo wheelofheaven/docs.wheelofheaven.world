@@ -24,6 +24,39 @@
             background: var(--current-section-accent);
             border-radius: 1px;
         }
+
+        // Section-index pages get a larger, more deliberate header
+        // with a soft accent wash behind the title.
+        &--section {
+            padding: t.$spacing-xl t.$spacing-lg t.$spacing-xl;
+            margin-left: -#{t.$spacing-lg};
+            margin-right: -#{t.$spacing-lg};
+            border-radius: t.$border-radius-lg;
+            background:
+                radial-gradient(
+                    ellipse 70% 100% at 0% 100%,
+                    color-mix(in srgb, var(--current-section-accent) 18%, transparent),
+                    transparent 70%
+                );
+            border-bottom: none;
+
+            &::after {
+                bottom: t.$spacing-lg;
+                left: t.$spacing-lg;
+                height: 3px;
+                width: clamp(80px, 30%, 240px);
+            }
+        }
+    }
+
+    &__eyebrow {
+        font-family: t.$font-family-display;
+        font-size: t.$font-size-xs;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--current-section-accent);
+        margin: 0 0 t.$spacing-xs;
     }
 
     &__breadcrumbs {
@@ -44,6 +77,11 @@
         margin: 0 0 t.$spacing-sm;
         line-height: 1.15;
         letter-spacing: -0.01em;
+
+        &--section {
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            color: var(--color-text);
+        }
     }
 
     &__lede {

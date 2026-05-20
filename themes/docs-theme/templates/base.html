@@ -106,9 +106,17 @@
                 <span class="site-header__logo">
                     {% include "partials/brand/logomark.html" %}
                 </span>
-                <span class="site-header__wordmark">
+                {# Text wordmark for small/medium screens. #}
+                <span class="site-header__wordmark site-header__wordmark--text">
                     <span class="site-header__wordmark-line1">Wheel of Heaven</span>
                     <span class="site-header__wordmark-line2">Docs</span>
+                </span>
+                {# Inline SVG wordmark + "Docs" suffix on desktop. #}
+                <span class="site-header__wordmark site-header__wordmark--svg" aria-hidden="true">
+                    <span class="site-header__wordmark-svg-inner">
+                        {% include "partials/brand/wordmark.html" %}
+                    </span>
+                    <span class="site-header__wordmark-suffix">Docs</span>
                 </span>
             </a>
 
