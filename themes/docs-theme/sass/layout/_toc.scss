@@ -52,7 +52,7 @@
 
         &[data-active] {
             color: var(--color-text);
-            border-left-color: var(--color-accent-strong);
+            border-left-color: var(--current-section-accent);
         }
     }
 

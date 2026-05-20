@@ -21,11 +21,25 @@ pre {
     background: var(--color-code-bg);
     color: var(--color-code-text);
     padding: t.$spacing-md;
+    padding-top: calc(#{t.$spacing-md} + 3px); // room for the top accent
     border-radius: t.$border-radius-md;
     overflow-x: auto;
     margin: t.$spacing-md 0;
     border: 1px solid var(--color-border);
     line-height: 1.5;
+
+    // Section-color accent stripe along the top of each code block.
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--current-section-accent);
+        opacity: 0.7;
+        border-radius: t.$border-radius-md t.$border-radius-md 0 0;
+    }
 
     code {
         background: none;

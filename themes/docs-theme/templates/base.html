@@ -1,3 +1,24 @@
+{# Compute the current page's section identity. Used by the body
+   data-section attribute below, which drives the per-section accent
+   color used in page headings, blockquotes, search focus, etc. #}
+{% if page %}
+    {% set _components = page.components %}
+{% elif section %}
+    {% set _components = section.components %}
+{% else %}
+    {% set _components = [] %}
+{% endif %}
+{% set _top = _components | nth(n=0) | default(value="") %}
+{% if _top == "contributing" %}
+    {% set _sub = _components | nth(n=1) | default(value="") %}
+    {% if _sub %}
+        {% set _section_id = "contributing-" ~ _sub %}
+    {% else %}
+        {% set _section_id = "contributing" %}
+    {% endif %}
+{% else %}
+    {% set _section_id = _top %}
+{% endif %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,7 +95,7 @@
 
     {% block head_extra %}{% endblock head_extra %}
 </head>
-<body>
+<body{% if _section_id %} data-section="{{ _section_id }}"{% endif %}>
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header">

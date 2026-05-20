@@ -35,9 +35,15 @@ ul, ol {
 blockquote {
     margin: t.$spacing-lg 0;
     padding: t.$spacing-sm t.$spacing-lg;
-    border-left: 3px solid var(--color-accent-strong);
+    border-left: 3px solid var(--current-section-accent);
+    background: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--current-section-accent) 10%, transparent),
+        transparent 30%
+    );
     color: var(--color-text-muted);
     font-style: italic;
+    border-radius: 0 t.$border-radius-md t.$border-radius-md 0;
 }
 
 table {

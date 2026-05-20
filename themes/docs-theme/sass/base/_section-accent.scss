@@ -1,0 +1,16 @@
+@use "../abstracts/tokens" as t;
+
+// Per-section accent color carried on <body data-section="…">.
+// Mirrors the sidebar section colors in _sidebar.scss so the page
+// chrome reads as a continuation of the sidebar tile.
+
+:root {
+    --current-section-accent: #{t.$mauve-300};
+}
+
+body[data-section="getting-started"]     { --current-section-accent: #{t.$cyan-300}; }
+body[data-section="contributing"]        { --current-section-accent: #{t.$pink-300}; }
+body[data-section="contributing-content"]{ --current-section-accent: #{t.$lavender-300}; }
+body[data-section="contributing-dev"]    { --current-section-accent: #{t.$mauve-300}; }
+body[data-section="architecture"]        { --current-section-accent: #{t.$blue-300}; }
+body[data-section="reference"]           { --current-section-accent: #{t.$mint-300}; }

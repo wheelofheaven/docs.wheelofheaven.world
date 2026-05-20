@@ -13,12 +13,14 @@
     border: 1px solid var(--color-border);
     border-radius: t.$border-radius-md;
     padding: t.$spacing-xs t.$spacing-md;
+    padding-right: 3rem; // room for the ⌘K hint
     font-family: t.$font-family-sans;
     font-size: t.$font-size-sm;
 
     &:focus {
         outline: none;
-        border-color: var(--color-accent-strong);
+        border-color: var(--current-section-accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--current-section-accent) 25%, transparent);
     }
 
     &::placeholder {
