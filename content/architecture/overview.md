@@ -76,27 +76,77 @@ api.wheelofheaven.io
 
 ## Key design decisions
 
+The shape of the project follows from a small number of upstream
+choices. Each section here is one of them, with the rationale that
+should hold up as the system grows.
+
 ### Content as submodules
 
-Single source of truth for content. Shared between www and api. Independent
-versioning — each repo bumps its content pointer when ready.
+**Decision:** all canonical content lives in `data-content` (markdown)
+and `data-library` (book JSON), pulled into the consumer repos
+(`www`, `api`) as git submodules.
+
+**Why:**
+
+- Single source of truth — a content edit propagates to both surfaces
+  by bumping a pointer. No risk of www and api diverging on what
+  exists or what it says.
+- Independent versioning — content can move forward on its own
+  schedule; consumer sites bump pointers when they're ready to
+  redeploy with new content.
+- Authors edit one repo with one validation pipeline. They never need
+  to touch site code to publish.
+
+**Trade-off:** submodules are awkward (forgetting `--recurse-submodules`
+is the most common new-contributor stumble). Mitigated by good
+[Quickstart](@/getting-started/quickstart.md) docs and CI that catches
+missing pointers.
 
 ### Theme extraction (Bifrost)
 
-The reading theme is its own repo. Reusable across projects, decoupled from
-content, versioned separately.
+**Decision:** the Zola theme is its own repo (`bifrost`), submoduled
+into the consumer sites.
+
+**Why:** even though only www currently uses it as a full theme, the
+theme is also imported (just SCSS tokens) by this docs site, and could
+be reused elsewhere. Decoupling templates + styles from content makes
+visual changes a one-repo operation that lights up everywhere.
 
 ### Split book format
 
-Library books are split into per-chapter JSON with paragraph-level granularity
-and stable refIds (e.g. `TBWTT-1:5`). Enables deep linking and multi-language
-text within a single source. See [Library Book Format](@/reference/library-book-format.md).
+**Decision:** library books are stored as per-chapter JSON in
+`data-library`, with stable paragraph refIds like `TBWTT-1:5`.
+
+**Why:**
+
+- Paragraph-level granularity enables deep linking (every paragraph
+  is addressable) and stable citations across translations
+- Multiple translations live in one source — each paragraph carries
+  an `i18n` object keyed by language code
+- Per-chapter files keep each load small and let translators work in
+  smaller chunks
+
+See [Library Book Format](@/reference/library-book-format.md) for the
+full schema.
 
 ### Static-first
 
-No server-side processing. Cloudflare Pages serves built HTML from edge caches.
-The "API" is also static — Zola-generated JSON files served like any other
-asset.
+**Decision:** no server-side processing anywhere. Everything is built
+statically at deploy time; Cloudflare Pages serves the build output
+from edge caches.
+
+**Why:**
+
+- The whole corpus is essentially read-only at runtime — there's
+  nothing to compute per request
+- Edge caching makes the site fast globally without a paid CDN tier
+- The "API" is just JSON files; same hosting, same cache behavior,
+  same uptime as the reading site
+- No servers to patch, no application code paths to monitor
+
+**Trade-off:** anything that legitimately needs dynamic behavior
+(search, theme toggle, library reader) has to live in client-side JS.
+That's been fine so far.
 
 ## Component responsibilities
 

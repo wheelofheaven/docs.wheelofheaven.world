@@ -6,6 +6,22 @@ weight = 20
 
 JSON API providing programmatic access to Wheel of Heaven content.
 
+## Who this is for
+
+The API exists primarily so machines can read the same content the
+reading site serves to humans — for AI extraction, third-party
+integrations, embedding the corpus elsewhere, or feeding analytics.
+
+Worth being clear: this is **not a database in front of an
+application server**. It's static JSON files, pre-built at deploy
+time from the same `data-content` and `data-library` submodules
+that feed www. No queries, no auth, no rate limits beyond
+Cloudflare's edge.
+
+If you want full-text search, hit `/v1/search/` — Cloudflare caches
+it at the edge, and clients build their own search UI on top of it
+(this docs site does, against its own search index).
+
 ## Overview
 
 - **URL:** <https://api.wheelofheaven.world>
