@@ -81,7 +81,8 @@
 
         &:hover {
             color: var(--color-text);
-            background: var(--color-surface);
+            background: color-mix(in srgb, var(--sidebar-section-accent, var(--color-accent-strong)) 12%, var(--color-surface));
+            border-left-color: color-mix(in srgb, var(--sidebar-section-accent, var(--color-accent-strong)) 50%, transparent);
         }
 
         &[aria-current="page"] {

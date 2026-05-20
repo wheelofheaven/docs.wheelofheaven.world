@@ -1,0 +1,63 @@
+@use "../abstracts/tokens" as t;
+
+// GitHub-style alerts. Markdown:
+//   > [!NOTE]
+//   > body
+// Zola emits <blockquote class="markdown-alert-{note|tip|important|warning|caution}">.
+// We restyle them out of the regular blockquote treatment with a header,
+// icon, and per-type color.
+
+.docs-page__content {
+    [class^="markdown-alert-"] {
+        margin: t.$spacing-lg 0;
+        padding: t.$spacing-md t.$spacing-lg;
+        border-left: 4px solid var(--alert-accent, var(--current-section-accent));
+        background: color-mix(in srgb, var(--alert-accent, var(--current-section-accent)) 10%, var(--color-surface));
+        border-radius: 0 t.$border-radius-md t.$border-radius-md 0;
+        color: var(--color-text);
+        font-style: normal; // override the generic-blockquote italic
+        position: relative;
+
+        // Insert a small header label before the body. Implemented via
+        // ::before on the first <p> so the label sits on its own line.
+        > p:first-child::before {
+            display: block;
+            font-family: t.$font-family-display;
+            font-weight: 600;
+            font-size: t.$font-size-sm;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--alert-accent, var(--current-section-accent));
+            margin-bottom: 0.25em;
+        }
+
+        > p:first-child {
+            margin-top: 0;
+        }
+
+        > p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .markdown-alert-note {
+        --alert-accent: #{t.$blue-300};
+        > p:first-child::before { content: "ⓘ  Note"; }
+    }
+    .markdown-alert-tip {
+        --alert-accent: #{t.$green-300};
+        > p:first-child::before { content: "✦  Tip"; }
+    }
+    .markdown-alert-important {
+        --alert-accent: #{t.$lavender-300};
+        > p:first-child::before { content: "★  Important"; }
+    }
+    .markdown-alert-warning {
+        --alert-accent: #{t.$yellow-300};
+        > p:first-child::before { content: "⚠  Warning"; }
+    }
+    .markdown-alert-caution {
+        --alert-accent: #{t.$soft-pink-300};
+        > p:first-child::before { content: "⚠  Caution"; }
+    }
+}

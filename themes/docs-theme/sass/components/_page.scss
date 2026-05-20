@@ -75,19 +75,25 @@
         }
 
         // Anchor links on headings (zola "insert_anchor_links")
+        // Now using a "#" glyph (see templates/anchor-link.html) instead
+        // of the default 🔗 emoji — reads cleaner and picks up theme color.
         h2 a.zola-anchor,
         h3 a.zola-anchor,
         h4 a.zola-anchor {
             opacity: 0;
-            margin-left: t.$spacing-xs;
+            margin-left: 0.35em;
             text-decoration: none;
-            color: var(--color-text-muted);
-            transition: opacity t.$transition-base;
+            color: var(--current-section-accent);
+            font-weight: 400;
+            transition: opacity t.$transition-base, color t.$transition-base;
         }
         h2:hover a.zola-anchor,
         h3:hover a.zola-anchor,
         h4:hover a.zola-anchor {
-            opacity: 0.6;
+            opacity: 1;
+        }
+        a.zola-anchor:hover {
+            color: var(--color-text);
         }
     }
 

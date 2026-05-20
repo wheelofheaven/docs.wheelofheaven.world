@@ -15,6 +15,8 @@ external_links_target_blank = true
 external_links_no_referrer = true
 bottom_footnotes = true
 insert_anchor_links = "right"
+definition_list = true
+github_alerts = true
 
 # Syntax highlighting: class-based, dual light/dark themes.
 # Zola/giallo emits /giallo-light.css and /giallo-dark.css; base.html

@@ -63,3 +63,33 @@ table {
         background: var(--color-surface);
     }
 }
+
+// Definition lists — used heavily on the glossary, plus anywhere
+// the `term\n:   definition` markdown shorthand appears.
+dl {
+    margin: t.$spacing-lg 0;
+}
+
+dt {
+    margin-top: t.$spacing-md;
+    font-family: t.$font-family-display;
+    font-weight: 600;
+    color: var(--color-text);
+
+    // Strip the redundant <strong> emphasis many authors add inside.
+    > strong:only-child {
+        font-weight: inherit;
+    }
+}
+
+dd {
+    margin: t.$spacing-2xs 0 0 t.$spacing-md;
+    padding-left: t.$spacing-md;
+    border-left: 2px solid var(--current-section-accent);
+    color: var(--color-text);
+
+    // Soften any block elements inside the definition.
+    p {
+        margin: t.$spacing-2xs 0;
+    }
+}
