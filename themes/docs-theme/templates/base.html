@@ -81,8 +81,14 @@
         <div class="site-header__inner">
             <button class="site-header__nav-toggle" type="button" aria-label="Open navigation" aria-controls="site-body" aria-expanded="false">Menu</button>
 
-            <a href="{{ config.base_url }}" class="site-header__brand">
-                <span class="site-header__title">{{ config.title }}</span>
+            <a href="{{ config.base_url }}" class="site-header__brand" aria-label="{{ config.title }} home">
+                <span class="site-header__logo">
+                    {% include "partials/brand/logomark.html" %}
+                </span>
+                <span class="site-header__wordmark">
+                    <span class="site-header__wordmark-line1">Wheel of Heaven</span>
+                    <span class="site-header__wordmark-line2">Docs</span>
+                </span>
             </a>
 
             <div class="site-header__spacer"></div>
@@ -94,6 +100,7 @@
                 <span class="theme-toggle__icon theme-toggle__icon--light" aria-hidden="true">◐</span>
             </button>
         </div>
+        <div class="site-header__rainbow" aria-hidden="true"></div>
     </header>
 
     <div class="site-body" id="site-body">
@@ -124,6 +131,7 @@
                 <span>Public domain (CC0-1.0)</span>
             </p>
         </div>
+        <div class="site-footer__rainbow" aria-hidden="true"></div>
     </footer>
 
     <script src="{{ get_url(path='js/theme-toggle.js', cachebust=true) | safe }}" defer></script>

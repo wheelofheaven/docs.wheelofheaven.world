@@ -19,16 +19,78 @@
     }
 
     &__brand {
-        font-family: t.$font-family-display;
-        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: t.$spacing-sm;
         text-decoration: none;
         color: var(--color-text);
         white-space: nowrap;
         flex-shrink: 0;
+        transition: opacity t.$transition-base;
+
+        &:hover { opacity: 0.85; }
     }
 
-    &__title {
-        font-size: 1.1rem;
+    &__logo {
+        display: inline-flex;
+        align-items: center;
+        color: var(--color-text);
+        flex-shrink: 0;
+
+        // logomark.html ships at 42px; scale down for the header strip.
+        svg {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+    }
+
+    &__wordmark {
+        display: inline-flex;
+        flex-direction: column;
+        line-height: 1;
+        font-family: t.$font-family-display;
+        gap: 0.15em;
+    }
+
+    &__wordmark-line1 {
+        font-size: 0.78rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+    &__wordmark-line2 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+        color: var(--color-text);
+    }
+
+    // Thin animated Bifrost rainbow strip under the header. Always
+    // visible; reads as the brand stripe used across the org's sites.
+    &__rainbow {
+        height: 3px;
+        background: linear-gradient(
+            90deg,
+            #{t.$pink-300}     0%,
+            #{t.$lavender-300} 14%,
+            #{t.$mauve-300}    28%,
+            #{t.$blue-300}     42%,
+            #{t.$cyan-300}     56%,
+            #{t.$mint-300}     70%,
+            #{t.$green-300}    84%,
+            #{t.$pink-300}     100%
+        );
+        background-size: 200% 100%;
+        background-repeat: repeat-x;
+        animation: bifrost-rainbow-shift 90s linear infinite;
+        pointer-events: none;
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
     }
 
     &__spacer { flex: 1; }
@@ -48,6 +110,11 @@
             display: inline-flex;
         }
     }
+}
+
+@keyframes bifrost-rainbow-shift {
+    0%   { background-position: 0%    50%; }
+    100% { background-position: -200% 50%; }
 }
 
 .site-body {
@@ -74,6 +141,7 @@
 }
 
 .site-footer {
+    position: relative;
     border-top: 1px solid var(--color-border);
     color: var(--color-text-muted);
     margin-top: t.$spacing-3xl;
@@ -82,5 +150,67 @@
         padding: t.$spacing-lg;
         font-size: t.$font-size-sm;
         max-width: 100%;
+        position: relative;
+        z-index: 1;
+    }
+
+    // The Bifrost rainbow stripe. Mirrors the strip on the reading
+    // site's footer — long pastel gradient, slowly scrolling, with a
+    // vertical alpha mask so it fades in from the footer bg above and
+    // sits solid at the bottom edge.
+    &__rainbow {
+        display: block;
+        height: 6rem;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        box-sizing: content-box;
+        margin: 0;
+        background: linear-gradient(
+            90deg,
+            #{t.$pink-300}     0%,
+            #{t.$lavender-300} 14%,
+            #{t.$mauve-300}    28%,
+            #{t.$blue-300}     42%,
+            #{t.$cyan-300}     56%,
+            #{t.$mint-300}     70%,
+            #{t.$green-300}    84%,
+            #{t.$pink-300}     100%
+        );
+        background-size: 200% 100%;
+        background-repeat: repeat-x;
+        background-position: 0% 50%;
+
+        // Soft vertical fade — top transparent so the footer text reads
+        // cleanly above it, bottom 25% fully opaque pastel band.
+        $fade: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0)     0%,
+            rgba(0, 0, 0, 0)     8%,
+            rgba(0, 0, 0, 0.05)  16%,
+            rgba(0, 0, 0, 0.15)  26%,
+            rgba(0, 0, 0, 0.30)  36%,
+            rgba(0, 0, 0, 0.50)  48%,
+            rgba(0, 0, 0, 0.70)  60%,
+            rgba(0, 0, 0, 0.85)  70%,
+            rgba(0, 0, 0, 0.96)  78%,
+            rgba(0, 0, 0, 1)     85%,
+            rgba(0, 0, 0, 1)     100%
+        );
+        -webkit-mask-image: $fade;
+                mask-image: $fade;
+
+        animation: bifrost-rainbow-shift 90s linear infinite;
+        pointer-events: none;
+
+        @media (max-width: 768px) {
+            height: 4.5rem;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+
+        @media print {
+            display: none;
+        }
     }
 }
