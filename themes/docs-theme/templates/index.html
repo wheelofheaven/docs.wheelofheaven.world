@@ -4,17 +4,81 @@
 
 {% block content %}
 <article class="docs-page docs-page--landing">
-    <header class="docs-page__header">
-        <h1 class="docs-page__title">{{ section.title | default(value=config.title) }}</h1>
+
+    <header class="landing-hero">
+        <h1 class="landing-hero__title">{{ section.title | default(value=config.title) }}</h1>
         {% if section.description %}
-        <p class="docs-page__lede">{{ section.description }}</p>
+        <p class="landing-hero__lede">{{ section.description }}</p>
         {% elif config.description %}
-        <p class="docs-page__lede">{{ config.description }}</p>
+        <p class="landing-hero__lede">{{ config.description }}</p>
         {% endif %}
+        <p class="landing-hero__hint">
+            Press <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd> to search, or pick a path below.
+        </p>
     </header>
 
+    <h2 class="landing-section-heading">Pick your path</h2>
+    <div class="landing-audience-grid">
+        <a class="landing-audience-card" data-card-accent="contributing-content"
+           href="{{ get_url(path='@/contributing/content/_index.md') }}">
+            <h3 class="landing-audience-card__title">Content authors</h3>
+            <p class="landing-audience-card__desc">
+                You write or translate wiki entries, Articles, Newsroom Dispatches,
+                or library entries. Start with the Quickstart, then the
+                per-content-type how-tos.
+            </p>
+            <span class="landing-audience-card__cta">Contributing&nbsp;→&nbsp;Content&nbsp;↗</span>
+        </a>
+
+        <a class="landing-audience-card" data-card-accent="contributing-dev"
+           href="{{ get_url(path='@/contributing/dev/_index.md') }}">
+            <h3 class="landing-audience-card__title">Theme &amp; tooling devs</h3>
+            <p class="landing-audience-card__desc">
+                You touch Bifrost, the pipelines, or the deploy chain. Start with
+                Local Setup, then the Bifrost-theme and pipelines guides.
+            </p>
+            <span class="landing-audience-card__cta">Contributing&nbsp;→&nbsp;Dev&nbsp;↗</span>
+        </a>
+
+        <a class="landing-audience-card" data-card-accent="architecture"
+           href="{{ get_url(path='@/architecture/_index.md') }}">
+            <h3 class="landing-audience-card__title">Architecture readers</h3>
+            <p class="landing-audience-card__desc">
+                You want to understand how the ~19-repo organization fits
+                together before contributing to anything in particular. Start
+                with the Architecture Overview.
+            </p>
+            <span class="landing-audience-card__cta">Architecture&nbsp;↗</span>
+        </a>
+    </div>
+
+    <h2 class="landing-section-heading">All sections</h2>
+    <div class="landing-section-grid">
+        {% set top_level = [
+            "getting-started",
+            "contributing/content",
+            "contributing/dev",
+            "architecture",
+            "reference",
+        ] %}
+        {% for path in top_level %}
+            {% set s = get_section(path=path ~ "/_index.md", metadata_only=true) %}
+            {% if s %}
+                {% set accent = path | replace(from="/", to="-") %}
+            <a class="landing-section-card" data-card-accent="{{ accent }}"
+               href="{{ s.permalink }}">
+                <span class="landing-section-card__chip" aria-hidden="true"></span>
+                <h3 class="landing-section-card__title">{{ s.title }}</h3>
+                {% if s.description %}
+                <p class="landing-section-card__desc">{{ s.description }}</p>
+                {% endif %}
+            </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
     {% if section.content %}
-    <div class="docs-page__content">
+    <div class="docs-page__content landing-aside-content">
         {{ section.content | safe }}
     </div>
     {% endif %}

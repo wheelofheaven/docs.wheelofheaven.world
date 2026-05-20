@@ -18,6 +18,7 @@
 @use "components/theme-toggle";
 @use "components/prev-next";
 @use "components/edit-on-github";
+@use "components/landing";
 
 // Keep print last so its @media wraps everything.
 @use "base/print";

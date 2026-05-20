@@ -1,0 +1,209 @@
+@use "../abstracts/tokens" as t;
+
+// Per-card accent assignments. Mirrors the sidebar + section-accent
+// palette so audience cards and section cards on the landing page
+// read as visual previews of the destinations.
+[data-card-accent="getting-started"]      { --card-accent: #{t.$cyan-300}; }
+[data-card-accent="contributing-content"] { --card-accent: #{t.$lavender-300}; }
+[data-card-accent="contributing-dev"]     { --card-accent: #{t.$mauve-300}; }
+[data-card-accent="architecture"]         { --card-accent: #{t.$blue-300}; }
+[data-card-accent="reference"]            { --card-accent: #{t.$mint-300}; }
+
+// --- Hero ---
+.landing-hero {
+    margin: 0 0 t.$spacing-2xl;
+    padding: 0 0 t.$spacing-lg;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+
+    // Soft Bifrost-pink-to-mint wash behind the hero — same palette
+    // signature as the rainbow stripes, dialed way down.
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -2rem -1rem 0;
+        z-index: -1;
+        background:
+            radial-gradient(
+                ellipse 60% 80% at 10% 30%,
+                color-mix(in srgb, #{t.$lavender-300} 18%, transparent),
+                transparent 70%
+            ),
+            radial-gradient(
+                ellipse 50% 70% at 90% 60%,
+                color-mix(in srgb, #{t.$cyan-300} 16%, transparent),
+                transparent 70%
+            );
+        border-radius: t.$border-radius-lg;
+        pointer-events: none;
+    }
+
+    &__title {
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        font-family: t.$font-family-display;
+        line-height: 1.05;
+        letter-spacing: -0.015em;
+        margin: 0 0 t.$spacing-md;
+        padding-top: t.$spacing-lg;
+    }
+
+    &__lede {
+        font-size: clamp(1.05rem, 2vw, 1.25rem);
+        line-height: 1.45;
+        color: var(--color-text);
+        max-width: 60ch;
+        margin: 0 0 t.$spacing-lg;
+    }
+
+    &__hint {
+        color: var(--color-text-muted);
+        font-size: t.$font-size-sm;
+        margin: 0;
+
+        kbd { margin: 0 0.1em; }
+    }
+}
+
+// --- Section heading style for the landing's H2s ---
+.landing-section-heading {
+    font-family: t.$font-family-display;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: t.$spacing-2xl 0 t.$spacing-md;
+    padding-bottom: t.$spacing-xs;
+    border: none;
+    border-bottom: 0 !important; // override .docs-page__content h2 border-bottom
+}
+
+// --- Cards (shared treatment) ---
+%landing-card {
+    position: relative;
+    display: block;
+    padding: t.$spacing-lg;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: t.$border-radius-md;
+    text-decoration: none;
+    color: var(--color-text);
+    overflow: hidden;
+    transition: border-color t.$transition-base, transform t.$transition-base,
+                box-shadow t.$transition-base;
+
+    // Section-accent top stripe.
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--card-accent, var(--color-accent-strong));
+        transition: height t.$transition-base;
+    }
+
+    &:hover {
+        border-color: var(--card-accent, var(--color-accent-strong));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+
+        &::before { height: 5px; }
+    }
+}
+
+// --- Audience grid (3 cards) ---
+.landing-audience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: t.$spacing-lg;
+    margin-bottom: t.$spacing-xl;
+
+    @media (max-width: t.$breakpoint-lg) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.landing-audience-card {
+    @extend %landing-card;
+    padding-top: calc(#{t.$spacing-lg} + 3px); // make room for the stripe
+
+    &__title {
+        font-family: t.$font-family-display;
+        font-size: 1.25rem;
+        margin: 0 0 t.$spacing-sm;
+        color: var(--color-text);
+    }
+
+    &__desc {
+        color: var(--color-text-muted);
+        font-size: t.$font-size-sm;
+        line-height: 1.5;
+        margin: 0 0 t.$spacing-md;
+    }
+
+    &__cta {
+        font-family: t.$font-family-display;
+        font-size: t.$font-size-sm;
+        font-weight: 500;
+        color: var(--card-accent, var(--color-accent-strong));
+    }
+}
+
+// --- Section grid (5 cards, smaller) ---
+.landing-section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: t.$spacing-md;
+    margin-bottom: t.$spacing-xl;
+}
+
+.landing-section-card {
+    @extend %landing-card;
+    padding: t.$spacing-md t.$spacing-lg;
+    padding-top: calc(#{t.$spacing-md} + 3px);
+    padding-left: t.$spacing-lg;
+
+    &__chip {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--card-accent);
+        margin-right: 0.5em;
+        vertical-align: 1px;
+    }
+
+    &__title {
+        font-family: t.$font-family-display;
+        font-size: 1.05rem;
+        margin: 0 0 t.$spacing-xs;
+        display: inline;
+    }
+
+    &__desc {
+        color: var(--color-text-muted);
+        font-size: t.$font-size-sm;
+        line-height: 1.45;
+        margin: t.$spacing-xs 0 0;
+    }
+}
+
+// --- Trailing markdown content on the landing (Stack + Rollout) ---
+.landing-aside-content {
+    margin-top: t.$spacing-2xl;
+    padding-top: t.$spacing-lg;
+    border-top: 1px solid var(--color-border);
+    font-size: t.$font-size-sm;
+    color: var(--color-text-muted);
+
+    h2 {
+        font-size: 1.05rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--color-text-muted);
+        border: none !important;
+        margin-top: t.$spacing-xl !important;
+    }
+}
