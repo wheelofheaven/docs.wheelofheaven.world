@@ -64,26 +64,36 @@ These are *not* submodules — they're standalone tools.
 
 ## How things connect
 
-```
-                          ┌──────────────┐
-                          │ data-content │  (markdown, 10 languages)
-                          │ data-library │  (books JSON)
-                          │   bifrost    │  (theme)
-                          └──────┬───────┘
-                                 │ git submodules
-                ┌────────────────┼────────────────┐
-                │                │                │
-                ▼                ▼                ▼
-            ┌───────┐        ┌───────┐       ┌──────────┐
-            │  www  │        │  api  │       │   docs   │
-            └───┬───┘        └───┬───┘       └────┬─────┘
-                │                │                │
-                │   data-images → assets ◀────┐   │
-                │   data-cinematics → assets   │   │
-                │                              │   │
-                ▼                ▼                ▼
-            Cloudflare       Cloudflare       Cloudflare
-            Pages            Pages            Pages
+```mermaid
+flowchart TB
+    subgraph submodules["Shared submodules"]
+        dc["data-content<br/><i>markdown, 10 languages</i>"]
+        dl["data-library<br/><i>books JSON</i>"]
+        bf["bifrost<br/><i>theme</i>"]
+    end
+
+    www["www"]
+    api["api"]
+    docs["docs"]
+
+    dc -.-> www
+    dl -.-> www
+    bf -.-> www
+    dc -.-> api
+    dl -.-> api
+    bf -.-> docs
+
+    di["data-images"]
+    dcin["data-cinematics"]
+    assets["assets"]
+    di --> assets
+    dcin --> assets
+
+    cf[("Cloudflare Pages")]
+    www    --> cf
+    api    --> cf
+    docs   --> cf
+    assets --> cf
 ```
 
 ## Where to start, based on what you want to do

@@ -9,69 +9,70 @@ to share content and themes across multiple sites.
 
 ## High-level architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           WHEEL OF HEAVEN ECOSYSTEM                          │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │                        CLOUDFLARE PAGES                              │    │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐        │    │
-│  │  │      www        │ │       api       │ │     assets      │        │    │
-│  │  │  Static Site    │ │    JSON API     │ │      CDN        │        │    │
-│  │  │  1,251 pages    │ │   REST endpoints│ │  Images/Media   │        │    │
-│  │  └────────┬────────┘ └────────┬────────┘ └────────┬────────┘        │    │
-│  └───────────┼───────────────────┼───────────────────┼──────────────────┘    │
-│              │                   │                   │                       │
-│  ┌───────────┴───────────────────┴───────────────────┴──────────────────┐    │
-│  │                         BUILD LAYER (Zola)                            │    │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐         │    │
-│  │  │ www.wheelof...  │ │ api.wheelof...  │ │ data-images     │         │    │
-│  │  │   ├── themes/   │ │   ├── data/     │ │   ├── sources/  │         │    │
-│  │  │   │   └── bifrost│ │   │   ├── content│ │   ├── processed/│         │    │
-│  │  │   ├── content/  │ │   │   └── library│ │   └── scripts/  │         │    │
-│  │  │   └── data/     │ │   └── templates/│ │                  │         │    │
-│  │  │       └── library│ │                 │ │                  │         │    │
-│  │  └─────────────────┘ └─────────────────┘ └─────────────────┘         │    │
-│  └──────────────────────────────────────────────────────────────────────┘    │
-│              │                   │                                           │
-│  ┌───────────┴───────────────────┴──────────────────────────────────────┐    │
-│  │                      SHARED SUBMODULES                                │    │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐         │    │
-│  │  │   bifrost       │ │  data-content   │ │  data-library   │         │    │
-│  │  │   (theme)       │ │  (markdown)     │ │  (books JSON)   │         │    │
-│  │  └─────────────────┘ └─────────────────┘ └─────────────────┘         │    │
-│  └──────────────────────────────────────────────────────────────────────┘    │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph CF["Cloudflare Pages"]
+        www["www<br/>Static Site<br/><i>1,251 pages</i>"]
+        api["api<br/>JSON API<br/><i>REST endpoints</i>"]
+        assets["assets<br/>CDN<br/><i>images / media</i>"]
+    end
+
+    subgraph BUILD["Build layer (Zola)"]
+        wwwsrc["www.wheelofheaven.io<br/>+ themes/bifrost<br/>+ content<br/>+ data/library"]
+        apisrc["api.wheelofheaven.io<br/>+ data/content<br/>+ data/library<br/>+ templates/"]
+        imgsrc["data-images<br/>sources / processed /<br/>scripts/"]
+    end
+
+    subgraph SUB["Shared submodules"]
+        bifrost["<b>bifrost</b><br/>theme"]
+        content["<b>data-content</b><br/>markdown"]
+        library["<b>data-library</b><br/>books JSON"]
+    end
+
+    wwwsrc --> www
+    apisrc --> api
+    imgsrc --> assets
+
+    bifrost --> wwwsrc
+    content --> wwwsrc
+    library --> wwwsrc
+    content --> apisrc
+    library --> apisrc
 ```
 
 ## Data flow
 
-```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Author     │────▶│ data-content │────▶│  Zola Build  │────▶│  Cloudflare  │
-│   (Markdown) │     │  (Git repo)  │     │   (Static)   │     │   (CDN)      │
-└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
-                            │
-                            ▼
-                     ┌──────────────┐
-                     │  Validation  │
-                     │  (CI/CD)     │
-                     └──────────────┘
+```mermaid
+flowchart LR
+    author["Author<br/>(markdown)"] --> dc["data-content<br/>(Git repo)"]
+    dc --> zola["Zola Build<br/>(static)"]
+    zola --> cdn["Cloudflare<br/>(CDN)"]
+    dc --> ci["Validation<br/>(CI/CD)"]
 ```
 
 ## Submodule relationships
 
-```
-www.wheelofheaven.io
-├── content/           → data-content (submodule)
-├── data/library/      → data-library (submodule)
-└── themes/bifrost/    → bifrost (submodule)
+```mermaid
+flowchart LR
+    subgraph www["www.wheelofheaven.io"]
+        wcontent["content/"]
+        wlibrary["data/library/"]
+        wtheme["themes/bifrost/"]
+    end
+    subgraph api["api.wheelofheaven.io"]
+        acontent["data/content/"]
+        alibrary["data/library/"]
+    end
 
-api.wheelofheaven.io
-├── data/content/      → data-content (submodule)
-└── data/library/      → data-library (submodule)
+    DC[("data-content")]
+    DL[("data-library")]
+    BF[("bifrost")]
+
+    DC -.submodule.-> wcontent
+    DL -.submodule.-> wlibrary
+    BF -.submodule.-> wtheme
+    DC -.submodule.-> acontent
+    DL -.submodule.-> alibrary
 ```
 
 ## Key design decisions

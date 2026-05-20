@@ -60,11 +60,13 @@ curl -sL https://github.com/getzola/zola/releases/download/v0.22.1/zola-v0.22.1-
 
 ## Deployment workflow
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Git Push  │────▶│  Cloudflare │────▶│    Build    │────▶│   Deploy    │
-│   (main)    │     │   Webhook   │     │   (Zola)    │     │   (Edge)    │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+```mermaid
+flowchart LR
+    push["Git push<br/>(main)"]
+    hook["Cloudflare<br/>webhook"]
+    build["Build<br/>(Zola)"]
+    deploy["Deploy<br/>(edge)"]
+    push --> hook --> build --> deploy
 ```
 
 1. Push to `main` triggers a CF Pages webhook

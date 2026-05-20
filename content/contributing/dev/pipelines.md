@@ -17,15 +17,19 @@ headers, build environment), see
 
 ## Build pipeline
 
-```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│  Push    │───▶│  Clone   │───▶│  Build   │───▶│  Deploy  │
-│  (Git)   │    │  (Subs)  │    │  (Zola)  │    │  (Edge)  │
-└──────────┘    └──────────┘    └──────────┘    └──────────┘
-     │               │               │               │
-     ▼               ▼               ▼               ▼
- GitHub         Submodules       Static          Cloudflare
- Webhook        Initialized      HTML/CSS        Pages CDN
+```mermaid
+flowchart LR
+    push["Push<br/>(Git)"]
+    clone["Clone<br/>(with submodules)"]
+    build["Build<br/>(Zola)"]
+    deploy["Deploy<br/>(edge)"]
+
+    push --> clone --> build --> deploy
+
+    push  -.-> hook["GitHub webhook"]
+    clone -.-> subs["submodules initialized"]
+    build -.-> html["static HTML/CSS"]
+    deploy -.-> cf["Cloudflare Pages CDN"]
 ```
 
 ### Trigger
@@ -128,19 +132,18 @@ jobs:
 
 ### Deployment flow
 
-```
-data-content (push)
-       │
-       ├─────────────────────────────┐
-       ▼                             ▼
-www.wheelofheaven.io          api.wheelofheaven.io
-(submodule update)            (submodule update)
-       │                             │
-       ▼                             ▼
-Cloudflare Pages              Cloudflare Pages
-       │                             │
-       ▼                             ▼
-  www deployed                 api deployed
+```mermaid
+flowchart TB
+    push["data-content<br/>(push)"]
+    wwwsub["www.wheelofheaven.io<br/>(submodule update)"]
+    apisub["api.wheelofheaven.io<br/>(submodule update)"]
+    wwwcf["Cloudflare Pages<br/>(www)"]
+    apicf["Cloudflare Pages<br/>(api)"]
+    wwwout["www deployed"]
+    apiout["api deployed"]
+
+    push --> wwwsub --> wwwcf --> wwwout
+    push --> apisub --> apicf --> apiout
 ```
 
 ### Rollback
@@ -166,11 +169,13 @@ Build logs live in the Cloudflare dashboard:
 
 ## Content pipeline
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Author    │────▶│   Review    │────▶│  Validate   │────▶│   Publish   │
-│   (Write)   │     │   (PR)      │     │   (CI)      │     │   (Deploy)  │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+```mermaid
+flowchart LR
+    author["Author<br/>(write)"]
+    review["Review<br/>(PR)"]
+    validate["Validate<br/>(CI)"]
+    publish["Publish<br/>(deploy)"]
+    author --> review --> validate --> publish
 ```
 
 ### Authoring
@@ -321,12 +326,13 @@ Cloudflare dashboard → Pages project → Deployments → "Retry deployment."
 
 ## Image pipeline
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Source    │────▶│   Process   │────▶│   Deploy    │────▶│     CDN     │
-│   Images    │     │   (Python)  │     │   (Upload)  │     │   (Edge)    │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-     raw/           AVIF/WebP/JPG       assets.wheel...     Global cache
+```mermaid
+flowchart LR
+    src["Source images<br/><i>raw/</i>"]
+    proc["Process<br/>(Python)<br/><i>AVIF / WebP / JPG</i>"]
+    dep["Deploy<br/>(upload)<br/><i>assets.wheelofheaven.world</i>"]
+    cdn["CDN<br/>(edge)<br/><i>global cache</i>"]
+    src --> proc --> dep --> cdn
 ```
 
 ### Repository structure

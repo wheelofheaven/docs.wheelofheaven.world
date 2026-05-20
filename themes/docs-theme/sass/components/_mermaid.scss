@@ -1,0 +1,70 @@
+@use "../abstracts/tokens" as t;
+
+// Mermaid diagram blocks. The init script in static/js/mermaid-init.js
+// rewrites ```mermaid``` fenced code into <div class="mermaid">...</div>,
+// then runs mermaid.run() on those divs. While mermaid is loading we
+// hide the unrendered text (mermaid syntax) so the user doesn't see a
+// flash of raw `flowchart LR ...` markup.
+
+.mermaid {
+    margin: t.$spacing-lg 0;
+    padding: t.$spacing-md;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: t.$border-radius-md;
+    text-align: center;
+    overflow-x: auto;
+    position: relative;
+
+    // Section-accent stripe at the top — matches the code-block treatment.
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--current-section-accent);
+        opacity: 0.7;
+        border-radius: t.$border-radius-md t.$border-radius-md 0 0;
+    }
+
+    // Hide the raw source text until mermaid has rendered.
+    // [data-processed] is added by mermaid when it finishes.
+    &:not([data-processed]) {
+        // Show a small loading hint instead of raw mermaid syntax.
+        color: transparent;
+        font-size: 0;
+        line-height: 0;
+        min-height: 3rem;
+
+        &::after {
+            content: "Rendering diagram…";
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--color-text-muted);
+            font-family: t.$font-family-sans;
+            font-size: t.$font-size-sm;
+            line-height: 1.4;
+        }
+    }
+
+    // Rendered SVG should scale to the container.
+    svg {
+        max-width: 100%;
+        height: auto;
+        display: inline-block;
+    }
+}
+
+// Plain-text fallback if JS is disabled — show the original code block
+// as it would have been rendered, since the rewrite to .mermaid only
+// happens in JS.
+@media print {
+    .mermaid:not([data-processed]) {
+        display: none;
+    }
+}

@@ -24,6 +24,7 @@
 @use "components/not-found";
 @use "components/reading-progress";
 @use "components/shortcuts";
+@use "components/mermaid";
 
 // Keep print last so its @media wraps everything.
 @use "base/print";

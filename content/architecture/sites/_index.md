@@ -23,20 +23,36 @@ Per-site detail on the pages below.
 
 ## What shares what
 
-```
-                 ┌─────────────────────┐
-                 │   data-content      │ markdown, 10 langs, 1330+ files
-                 │   data-library      │ books JSON
-                 │   bifrost           │ reading-site theme
-                 └──────────┬──────────┘
-                            │ git submodules
-              ┌─────────────┼─────────────┐
-              ▼             ▼             ▼
-            www           api           docs (only bifrost — for design tokens)
-              │             │             │
-              └─────────────┴─────────────┴── → all hosted on Cloudflare Pages
+```mermaid
+flowchart TB
+    subgraph submodules["Shared submodules"]
+        dc["data-content<br/><i>markdown, 10 langs, 1330+ files</i>"]
+        dl["data-library<br/><i>books JSON</i>"]
+        bf["bifrost<br/><i>reading-site theme</i>"]
+    end
 
-assets is fed by data-images/ + data-cinematics/ pipelines, not by submodules.
+    www["www"]
+    api["api"]
+    docs["docs<br/><i>only bifrost — for design tokens</i>"]
+
+    dc -.-> www
+    dl -.-> www
+    bf -.-> www
+    dc -.-> api
+    dl -.-> api
+    bf -.-> docs
+
+    cdn[("Cloudflare Pages")]
+    www --> cdn
+    api --> cdn
+    docs --> cdn
+
+    di["data-images"]
+    dcin["data-cinematics"]
+    assets["assets<br/><i>CDN, not a submodule of others</i>"]
+    di --> assets
+    dcin --> assets
+    assets --> cdn
 ```
 
 The `data-content` submodule being shared between **www** and **api**

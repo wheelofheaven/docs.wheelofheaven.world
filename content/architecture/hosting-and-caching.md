@@ -9,12 +9,13 @@ layer.
 
 ## Cache layers
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Browser   │────▶│  Cloudflare │────▶│   Origin    │────▶│   Source    │
-│   Cache     │     │   Edge      │     │   (Pages)   │     │   (Git)     │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-     Local           Global CDN         Build Output        Repository
+```mermaid
+flowchart LR
+    browser["Browser cache<br/><i>local</i>"]
+    edge["Cloudflare Edge<br/><i>global CDN</i>"]
+    origin["Origin (Pages)<br/><i>build output</i>"]
+    source["Source (Git)<br/><i>repository</i>"]
+    browser --> edge --> origin --> source
 ```
 
 ## Cache configuration by site
