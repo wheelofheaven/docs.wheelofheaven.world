@@ -1,0 +1,50 @@
+{# AI / AEO meta tags. Helps LLM-based crawlers + search engines
+   classify and extract the page. Mirrors www's pattern. #}
+
+{# Content type inferred from the URL — same path-segment logic as the
+   data-section attribute computed in base.html. #}
+{% if page %}
+    {% set _ai_type = "TechArticle" %}
+{% elif section %}
+    {% set _ai_type = "CollectionPage" %}
+{% else %}
+    {% set _ai_type = "WebSite" %}
+{% endif %}
+
+<meta name="ai.content_type" content="{{ _ai_type }}">
+<meta name="ai.publisher" content="Wheel of Heaven">
+<meta name="ai.language" content="en">
+<meta name="ai.license" content="CC0-1.0">
+<meta name="ai.crawlable" content="true">
+<meta name="ai.indexable" content="true">
+
+{% if _section_id %}
+<meta name="ai.topic" content="{{ _section_id | replace(from='-', to=' ') | title }}">
+{% endif %}
+
+{% if page %}
+    {% if page.word_count %}
+<meta name="ai.word_count" content="{{ page.word_count }}">
+    {% endif %}
+    {% if page.reading_time %}
+<meta name="ai.reading_time_minutes" content="{{ page.reading_time }}">
+    {% endif %}
+    {% if page.description %}
+<meta name="ai.summary" content="{{ page.description | escape }}">
+    {% endif %}
+{% elif section %}
+    {% if section.description %}
+<meta name="ai.summary" content="{{ section.description | escape }}">
+    {% endif %}
+{% endif %}
+
+<meta name="ai.extractable_sections" content=".docs-page__lede, .docs-page__content, [data-ai-summary], [data-ai-answer]">
+
+{# Author / publisher / canonical URL — restated explicitly in author tag
+   for crawlers that don't read the Organization JSON-LD. #}
+<meta name="author" content="Wheel of Heaven">
+<meta name="generator" content="Zola">
+
+{# Robots — let everyone in by default; the project-wide robots.txt
+   carries the AI-bot policy. #}
+<meta name="robots" content="index, follow, max-image-preview:large">

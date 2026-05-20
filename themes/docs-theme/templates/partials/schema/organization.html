@@ -1,0 +1,22 @@
+<!-- Schema.org Organization — referenced by other schemas via @id -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "{{ config.base_url | safe }}/#organization",
+  "name": "Wheel of Heaven",
+  "alternateName": ["WoH", "Wheel of Heaven Project"],
+  "url": "{{ config.extra.upstream_site | default(value='https://www.wheelofheaven.world') | safe }}",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "{{ get_url(path='brand/favicon-192x192.png') | safe }}",
+    "width": 192,
+    "height": 192
+  },
+  "sameAs": [
+    "https://github.com/wheelofheaven",
+    "https://x.com/wheelofheaven",
+    "https://t.me/wheelofheaven"
+  ]
+}
+</script>

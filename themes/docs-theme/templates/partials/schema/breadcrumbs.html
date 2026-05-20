@@ -1,0 +1,54 @@
+<!-- Schema.org BreadcrumbList — auto-generated from page/section ancestors -->
+{% if page %}
+    {% set ancestors = page.ancestors %}
+{% elif section %}
+    {% set ancestors = section.ancestors %}
+{% else %}
+    {% set ancestors = [] %}
+{% endif %}
+{% if ancestors | length > 0 %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Docs",
+      "item": "{{ config.base_url | safe }}"
+    }
+    {% set pos = 1 %}
+    {% for ancestor in ancestors %}
+        {% if not loop.first %}
+            {% set sec = get_section(path=ancestor, metadata_only=true) %}
+            {% set pos = pos + 1 %},
+    {
+      "@type": "ListItem",
+      "position": {{ pos }},
+      "name": "{{ sec.title | escape }}",
+      "item": "{{ sec.permalink | safe }}"
+    }
+        {% endif %}
+    {% endfor %}
+    {% if page %}
+        {% set pos = pos + 1 %},
+    {
+      "@type": "ListItem",
+      "position": {{ pos }},
+      "name": "{{ page.title | escape }}",
+      "item": "{{ current_url | safe }}"
+    }
+    {% elif section %}
+        {% set pos = pos + 1 %},
+    {
+      "@type": "ListItem",
+      "position": {{ pos }},
+      "name": "{{ section.title | escape }}",
+      "item": "{{ current_url | safe }}"
+    }
+    {% endif %}
+  ]
+}
+</script>
+{% endif %}

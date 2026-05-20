@@ -1,0 +1,54 @@
+<!-- Schema.org CollectionPage — section index pages -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "{{ current_url | safe }}#collection",
+  "name": "{{ section.title | escape }}",
+  {% if section.description %}
+  "description": "{{ section.description | escape }}",
+  {% endif %}
+  "url": "{{ current_url | safe }}",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{ config.base_url | safe }}/brand/og.jpg",
+    "width": 1200,
+    "height": 630
+  },
+  "publisher": { "@id": "{{ config.base_url | safe }}/#organization" },
+  "isPartOf": { "@id": "{{ config.base_url | safe }}/#website" }
+  {% set pcount = section.pages | length %}
+  {% set scount = section.subsections | length %}
+  {% set total = pcount + scount %}
+  {% if total > 0 %},
+  "hasPart": [
+    {% set first = true %}
+    {% for sub_path in section.subsections %}
+      {% set sub = get_section(path=sub_path, metadata_only=true) %}
+      {% if not first %},{% endif %}{% set first = false %}
+    {
+      "@type": "WebPage",
+      "name": "{{ sub.title | escape }}",
+      "url": "{{ sub.permalink | safe }}"
+      {% if sub.description %},
+      "description": "{{ sub.description | escape }}"
+      {% endif %}
+    }
+    {% endfor %}
+    {% for p in section.pages %}
+      {% if not first %},{% endif %}{% set first = false %}
+    {
+      "@type": "WebPage",
+      "name": "{{ p.title | escape }}",
+      "url": "{{ p.permalink | safe }}"
+      {% if p.description %},
+      "description": "{{ p.description | escape }}"
+      {% endif %}
+    }
+    {% endfor %}
+  ]
+  {% endif %}
+}
+</script>

@@ -93,6 +93,27 @@
         })();
     </script>
 
+    {# AI / AEO meta tags. #}
+    {% include "partials/ai-meta.html" %}
+
+    {# JSON-LD schema graph. Organization is referenced by other
+       schemas via @id, so it ships on every page. WebSite only on
+       the landing (it carries the SearchAction). TechArticle on
+       individual pages, CollectionPage on section indexes. Breadcrumbs
+       auto-rendered from ancestors where applicable. #}
+    {% include "partials/schema/organization.html" %}
+    {% if page %}
+        {% include "partials/schema/tech-article.html" %}
+        {% include "partials/schema/breadcrumbs.html" %}
+    {% elif section %}
+        {% if section.ancestors and section.ancestors | length > 0 %}
+            {% include "partials/schema/collection-page.html" %}
+            {% include "partials/schema/breadcrumbs.html" %}
+        {% else %}
+            {% include "partials/schema/website.html" %}
+        {% endif %}
+    {% endif %}
+
     {% block head_extra %}{% endblock head_extra %}
 </head>
 <body{% if _section_id %} data-section="{{ _section_id }}"{% endif %}>

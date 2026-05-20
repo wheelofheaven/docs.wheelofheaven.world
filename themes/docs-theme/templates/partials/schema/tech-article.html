@@ -1,0 +1,40 @@
+<!-- Schema.org TechArticle — content pages -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "{{ current_url | safe }}#article",
+  "headline": "{{ page.title | escape }}",
+  {% if page.description %}
+  "description": "{{ page.description | escape }}",
+  {% endif %}
+  "url": "{{ current_url | safe }}",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  {% if page.reading_time %}
+  "timeRequired": "PT{{ page.reading_time }}M",
+  {% endif %}
+  {% if page.word_count %}
+  "wordCount": {{ page.word_count }},
+  {% endif %}
+  {% if page.date %}
+  "datePublished": "{{ page.date | date(format='%Y-%m-%dT%H:%M:%S') }}+00:00",
+  {% endif %}
+  {% if page.updated %}
+  "dateModified": "{{ page.updated | date(format='%Y-%m-%dT%H:%M:%S') }}+00:00",
+  {% endif %}
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{ config.base_url | safe }}/brand/og.jpg",
+    "width": 1200,
+    "height": 630
+  },
+  "publisher": { "@id": "{{ config.base_url | safe }}/#organization" },
+  "isPartOf": { "@id": "{{ config.base_url | safe }}/#website" },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ current_url | safe }}"
+  }
+}
+</script>
