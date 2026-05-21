@@ -1,4 +1,6 @@
-// Docs theme entry point.
+// Docs theme entry point. SCSS partials are imported in cascade order:
+// base → layout → components → print (which lives at the bottom so
+// its @media print wraps the rest).
 
 @use "base/fonts";
 @use "base/reset";
