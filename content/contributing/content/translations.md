@@ -1,8 +1,25 @@
 +++
-title = "Translations"
-description = "Translating Wheel of Heaven content across the ten supported languages — workflow, glossary, RTL handling for Hebrew."
+title = "Translations (i18n localisation)"
+description = "Translating existing Wheel of Heaven English content across the ten supported site languages — workflow, glossary, RTL handling for Hebrew. Distinct from the WoH Translation Program (source-text translation), which has its own section."
 weight = 50
 +++
+
+> **Two translation pipelines, two pages.** This page covers
+> **i18n localisation** — taking an existing English Wheel of
+> Heaven page (a wiki entry, Article, Newsroom Dispatch, etc.)
+> and rendering it into the other nine site languages. It does
+> NOT cover translating religious or mythological source texts
+> (Hebrew, Greek, Akkadian, etc.) through the Wheel of Heaven
+> lens — that work is the
+> [WoH Translation Program](@/contributing/content/source-text-translation/_index.md),
+> which has its own substantial methodology and runs a
+> different pipeline (Translator → Editor → Reviewer agents,
+> glossary with `claim_type` per entry, scholarly citation
+> requirements, etc.). The two pipelines do not compete; they
+> are sequential. A WoH Translation of Genesis is produced via
+> the WoH Translation Program; that English Translation is
+> then fanned out to the nine other languages via this i18n
+> localisation pipeline.
 
 The Wheel of Heaven knowledge base ships in **ten languages**:
 
