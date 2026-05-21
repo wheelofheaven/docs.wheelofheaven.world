@@ -1,162 +1,132 @@
 +++
 title = "api.wheelofheaven.world"
-description = "The JSON API — Zola-generated static endpoints serving wiki, timeline, traditions, and search."
+description = "The static JSON API — Zola-generated endpoints serving every curated artefact in the corpus."
 weight = 20
 +++
 
-JSON API providing programmatic access to Wheel of Heaven content.
+The Wheel of Heaven API is a **static JSON twin of the public site**.
+Every page on `www.wheelofheaven.world` has a deterministic JSON URL
+on `api.wheelofheaven.world`, plus surfaces (bibliography, glossary,
+translation provenance, schemas, controlled vocabularies) that don't
+exist on www.
+
+For the catalogue of every endpoint, the response envelope, controlled
+vocabularies, and JSON Schemas, see [API Reference](@/reference/api/_index.md).
 
 ## Who this is for
 
-The API exists primarily so machines can read the same content the
-reading site serves to humans — for AI extraction, third-party
-integrations, embedding the corpus elsewhere, or feeding analytics.
+The API exists so machines — AI agents, third-party integrations,
+analytics, downstream sites — can read the same corpus the reading
+site presents to humans. It is also the entry point we deliberately
+expose to LLMs: every page has a JSON twin, and a handful of
+`/v1/context/*` endpoints are curated as direct system-prompt material.
 
-Worth being clear: this is **not a database in front of an
-application server**. It's static JSON files, pre-built at deploy
-time from the same `data-content` and `data-library` submodules
-that feed www. No queries, no auth, no rate limits beyond
-Cloudflare's edge.
-
-If you want full-text search, hit `/v1/search/` — Cloudflare caches
-it at the edge, and clients build their own search UI on top of it
-(this docs site does, against its own search index).
+**This is not a database in front of an application server.** Every
+URL is a static file, pre-built at deploy time from `data-content`,
+`data-library`, and `data-bibliography`. No queries, no auth, no rate
+limits beyond Cloudflare's edge.
 
 ## Overview
 
 - **URL:** <https://api.wheelofheaven.world>
-- **Generator:** Zola
-- **Hosting:** Cloudflare Pages
-- **Format:** JSON REST endpoints (static)
+- **Generator:** Zola (with a Python prebuild step)
+- **Hosting:** Cloudflare Pages (migrated from GitHub Pages in May 2026)
+- **Format:** JSON, static, CC0-1.0
+- **Versioning:** strictly additive within `/v1/`. Breaking changes
+  earn `/v2/`. Decision 14 of
+  [`strategy-decisions.md`](https://github.com/wheelofheaven/wheelofheaven/blob/main/.claude/plans/strategy-decisions.md)
+  locks v1 URLs forever.
 
-## Endpoints
+## Design principles
 
-### Wiki index
+The full shape is documented in the org-level strategy doc
+[`strategy-api.md`](https://github.com/wheelofheaven/wheelofheaven/blob/main/.claude/plans/strategy-api.md).
+The principles in one line each:
 
-```
-GET /v1/wiki/
-```
+1. **Static, file-backed, pre-built.** No query engine, no runtime
+   logic. Every URL is a deterministic file.
+2. **Resource-noun naming.** URLs name what consumers want
+   (`/books/`, `/wiki/`, `/sources/`), not the storage warehouse.
+3. **One way to do everything.** Each fact has one canonical URL.
+4. **URL permanence for v1.** Shipped paths never break.
+5. **Same envelope everywhere.** `{ apiVersion, kind, metadata, data,
+   links }` for every endpoint.
+6. **Multilingual by path prefix.** English at `/v1/...`, others at
+   `/v1/{lang}/...`.
+7. **Self-describing.** A consumer with just the root URL can walk
+   the entire surface — manifest, schemas, enums, sitemap, llms.txt.
+8. **AI-first metadata, not AI-only.** Same envelope serves humans,
+   scripts, and LLMs; `/v1/context/*` adds curated narrative summaries
+   for direct LLM ingestion.
 
-Returns all wiki entries with metadata.
+## How it's built
 
-```json
-{
-  "apiVersion": "v1",
-  "kind": "WikiIndex",
-  "metadata": {
-    "generated": "2026-01-24T...",
-    "count": 101
-  },
-  "entries": [
-    {
-      "slug": "elohim",
-      "title": "Elohim",
-      "description": "...",
-      "url": "/v1/wiki/elohim"
-    }
-  ]
-}
-```
+The API repo is `wheelofheaven/api.wheelofheaven.world`. Build steps:
 
-### Timeline index
+1. **`python3 scripts/prebuild.py`** — reads
+   `data/content/` (wiki, timeline, articles, news, tradition hubs),
+   `data/library/` (the 100+ books), and `data/bibliography/`
+   (67 source records). Writes per-section index data to
+   `data/extracted/` and one Zola content page per entry under
+   `content/v1/`. For non-default languages it walks
+   `data/content/{lang}/` and emits to `content/v1/{lang}/`. The
+   generated content files are gitignored.
 
-```
-GET /v1/timeline/
-```
+2. **`zola build`** — Zola renders every content page through its
+   bound `template = "v1-*.json"` template, producing one
+   `index.html` per endpoint containing JSON.
 
-Returns all twelve precessional ages.
+3. **`bash scripts/postbuild.sh`** — mirrors every `index.html` as
+   `index.json` (so both forms work), writes `_headers` for proper
+   `Content-Type: application/json` + CORS + cache TTLs, and writes
+   `_redirects` so directory URLs are canonical.
 
-```json
-{
-  "apiVersion": "v1",
-  "kind": "TimelineIndex",
-  "metadata": { "count": 14 },
-  "entries": [
-    {
-      "slug": "age-of-aquarius",
-      "title": "Age of Aquarius",
-      "startYear": "1945",
-      "endYear": "4105",
-      "zodiacSign": "aquarius"
-    }
-  ]
-}
-```
+The pipeline runs on every push to `main` and on the Cloudflare Pages
+build hook.
 
-### Traditions index
+## Data sources
 
-```
-GET /v1/traditions/
-```
+| Source repo | What | API surface |
+|---|---|---|
+| `data-content` | wiki, timeline, articles, news, tradition hubs, i18n glossary | `/v1/wiki/`, `/v1/timeline/`, `/v1/articles/`, `/v1/news/`, `/v1/sources/traditions/`, `/v1/glossary/` |
+| `data-library` | catalog + 100+ books with chapter/verse JSON | `/v1/library/books/`, `/v1/library/traditions/`, `/v1/translations/` (for the `-woh` family) |
+| `data-bibliography` | 67 structured source records | `/v1/sources/` |
 
-Religious/philosophical traditions.
+The same submodules feed www. The two sites are independent Zola
+builds reading the same canonical data.
 
-### Search index
+## URL conventions
 
-```
-GET /v1/search/
-```
-
-Flat search index for client-side search integration.
-
-## CORS configuration
-
-```
-# static/_headers
-/*
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET, HEAD, OPTIONS
-  Access-Control-Allow-Headers: Content-Type
-  Content-Type: application/json; charset=utf-8
-
-/v1/*
-  Cache-Control: public, max-age=3600
-```
-
-## Prebuild script
-
-The API extracts content from markdown to JSON before Zola runs:
-
-```sh
-python scripts/prebuild.py
-```
-
-This creates `data/extracted/wiki.json` and `data/extracted/timeline.json`,
-which Tera templates load to render the per-endpoint JSON responses.
-
-## Templates
-
-API responses are generated by Tera templates:
-
-| Template | Endpoint |
-|----------|----------|
-| `v1-wiki-index.json` | `/v1/wiki/` |
-| `v1-timeline-index.json` | `/v1/timeline/` |
-| `v1-traditions.json` | `/v1/traditions/` |
-| `v1-search.json` | `/v1/search/` |
-
-## Build commands
-
-```sh
-mise run build    # runs prebuild + zola build
-mise run serve    # dev server
-```
-
-The `build` task chains `python scripts/prebuild.py && zola build`.
-
-## Usage example
-
-```javascript
-const response = await fetch('https://api.wheelofheaven.world/v1/wiki/');
-const data = await response.json();
-console.log(`Found ${data.metadata.count} wiki entries`);
-data.entries.forEach(entry => {
-    console.log(`- ${entry.title}: ${entry.description}`);
-});
-```
+- `/v1/{kind}/` returns the listing for that kind.
+- `/v1/{kind}/{slug}/` returns the individual item.
+- `/v1/{lang}/{kind}/[{slug}/]` returns the same in another language.
+- Every directory URL also responds at `/v1/{kind}/index.json` and
+  `/v1/{kind}/{slug}/index.json` (historical canonical form).
 
 ## Caching
 
-- API responses cached for 1 hour (`max-age=3600`)
-- Cloudflare edge caching
-- Cache purged on new deployment
+| Surface | Cache TTL |
+|---|---|
+| `/v1/schema/*`, `/v1/enums/*`, `/v1/context/*` | 24 hours |
+| `/v1/wiki/*`, `/v1/timeline/*`, `/v1/articles/*`, `/v1/library/*`, etc. | 1 hour |
+| `robots.txt`, `sitemap.xml`, `llms.txt` | default (1 hour) |
+
+Cloudflare purges the entire zone on each successful deploy.
+
+## Discoverability
+
+- Every consumer endpoint links back to `/v1/` (manifest),
+  `/v1/schema/{kind}/` (its schema), and the relevant `/v1/enums/`.
+- `/llms.txt` (API-side) is a short manifest pointing AI agents at
+  `/v1/context/*` and `/v1/`.
+- Every www HTML page carries a `<link rel="alternate"
+  type="application/json">` pointing to its API twin.
+
+## Related
+
+- [API Reference](@/reference/api/_index.md) — tabular endpoint
+  catalogue, envelope spec, enum and schema reference.
+- [Hosting and Caching](@/architecture/hosting-and-caching.md) — how
+  every site is cached.
+- [CI & Deploy](@/contributing/dev/ci-deploy.md) — the build and
+  deploy chain.
