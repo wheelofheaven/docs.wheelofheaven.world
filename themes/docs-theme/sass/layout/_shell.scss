@@ -62,9 +62,13 @@
         }
 
         // SVG variant: inline wordmark + "Docs" suffix on ≥ lg.
+        // align-items: center, not baseline — SVGs don't expose a
+        // typographic baseline, so `baseline` falls back to the SVG
+        // box's bottom edge and pushes "Docs" off the actual
+        // letterform baseline.
         &--svg {
             display: none;
-            align-items: baseline;
+            align-items: center;
             gap: 0.55em;
             color: var(--color-text);
 

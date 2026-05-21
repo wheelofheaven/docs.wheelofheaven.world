@@ -112,7 +112,11 @@
             text-decoration: none;
             color: var(--color-text);
             display: inline-flex;
-            align-items: baseline;
+            // align-items: center, not baseline — SVGs don't expose a
+            // typographic baseline; `baseline` falls back to the SVG
+            // box's bottom edge and pushes "Docs" off the actual
+            // letterform baseline.
+            align-items: center;
             gap: 0.6em;
             transition: opacity t.$transition-base;
 
