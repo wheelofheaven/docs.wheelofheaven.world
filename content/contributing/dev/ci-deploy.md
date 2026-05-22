@@ -38,10 +38,12 @@ curl -sL https://github.com/getzola/zola/releases/download/v0.22.0/zola-v0.22.0-
 ### api.wheelofheaven.world
 
 ```sh
-curl -sL <zola-url> -o zola.tar.gz && tar xzf zola.tar.gz && python3 scripts/prebuild.py && ./zola build
+python3 scripts/prebuild.py && curl -sL https://github.com/getzola/zola/releases/download/v0.22.0/zola-v0.22.0-x86_64-unknown-linux-gnu.tar.gz -o zola.tar.gz && tar xzf zola.tar.gz && ./zola build && bash scripts/postbuild.sh
 ```
 
 **Build output directory:** `public`
+
+The prebuild step extracts wiki / timeline / articles / news / tradition hubs from `data/content`, mirrors the bibliography from `data/bibliography`, and writes one Zola content page per entry under `content/v1/` plus a per-section index data file under `data/extracted/`. The postbuild step mirrors each generated `index.html` as `index.json`, writes `_headers` (Content-Type, CORS, cache TTLs, `X-License`, `X-Citable`, `X-API-Version`), and writes `_redirects` so directory URLs are canonical. Both files are committed to the repo and required for the API to serve correctly.
 
 ### docs.wheelofheaven.world
 
