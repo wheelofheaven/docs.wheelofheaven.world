@@ -91,9 +91,41 @@ Individual book entries:
 
 | Status | Meaning |
 |--------|---------|
-| `complete` | Fully digitized |
-| `in-progress` | Being digitized |
-| `planned` | Not yet started |
+| `complete` | All chapters shipped and signed off |
+| `partial` | At least one chapter shipped, more to come |
+| `planned` | Wrapper scaffolded; no chapters shipped yet |
+
+The lifecycle is `planned → partial → complete`. The bifrost
+`/library/` index renders `complete` and `partial` books in the main
+grid and groups `planned` ones in a separate "planned" list. A book
+with status `planned` is therefore invisible to the available-books
+filter even if chapters exist on disk — see
+[Catalog validation](#catalog-validation) below.
+
+## Catalog validation
+
+```bash
+mise run cat validate         # report-only
+mise run cat validate --fix   # auto-correct
+```
+
+The validator walks `catalog.json` against the per-book data on disk
+and reports drift in `chapters`, `paragraphs`, `availableLangs`, and
+`status`. With `--fix` it rewrites `catalog.json` in place.
+
+The most important rule it enforces: **`planned → partial` is
+auto-promoted as soon as a chapter ships.** `status` is set manually
+when a wrapper is scaffolded, and there is no other automatic step
+that flips it once `data-library/{slug}/_meta.json` starts listing
+chapters. Without this promotion the book stays catalog-flagged as
+planned and is hidden from the main library grid (the 2026-05-22
+"Job and Ezekiel went missing" incident). The `partial → complete`
+transition is *not* automated — that's an editorial sign-off, not a
+file-count check, and must be flipped by hand.
+
+Run `validate --fix` before bumping the `data-library` submodule
+pointer in `www` and `api` — that's the moment where catalog drift
+would otherwise ship to production.
 
 ## Reference IDs
 
