@@ -134,6 +134,56 @@ For the section `_index.md` only (individual books come from
 | `canon_links` | object[] | Yes | ≥ 1 entry. Format: `{ title = "Elohim", path = "/wiki/elohim/" }` |
 | `sources` | object[] | Yes | Format: `{ title = "...", url = "...", outlet = "...", date = "..." }` |
 
+### Social broadcast
+
+The [Social Broadcast Pipeline](@/contributing/dev/social-broadcast.md)
+reads two pieces of frontmatter when deciding what to post and how.
+
+#### `extra.broadcast` — eligibility
+
+| Type | Meaning |
+|---|---|
+| `true` | Post to every enabled channel (default for `/news/` and `/articles/`). |
+| `false` | Don't post anywhere (default for `/wiki/`, `/library/`, `/timeline/`, `/resources/`, translations, drafts). |
+| `string[]` | Allowlist of channel names — e.g. `broadcast = ["telegram", "bluesky"]` posts only to those two. |
+
+```toml
+[extra]
+broadcast = true                          # all enabled channels
+broadcast = false                         # suppress entirely
+broadcast = ["telegram"]                  # only Telegram
+```
+
+#### `[social]` — per-platform overrides
+
+Optional top-level block (not under `[extra]`). Each key is a platform
+name; the value overrides the mechanical default copy for that
+platform only. Unset platforms fall back to the default template.
+
+| Field | Type | Notes |
+|---|---|---|
+| `telegram` | string | Custom Telegram caption / message. HTML subset supported. Up to 1024 chars with photo, 4096 plain text. |
+| `bluesky` | string | Custom Bluesky post body. ≤ 300 graphemes. |
+| `mastodon` | string | Custom Mastodon status body. ≤ 500 chars (instance default). |
+| `twitter` | string | Custom Twitter / X post body. ≤ 280 chars (URL counts as 23). |
+| `discord` | string | Custom Discord message body. |
+| `not_before` | datetime | Don't broadcast before this ISO 8601 timestamp. |
+
+```toml
+[social]
+telegram = """
+🛰️ <b>Custom Telegram lede</b>
+
+Multi-paragraph copy goes here.
+"""
+not_before = "2026-05-22T13:00:00Z"
+```
+
+Per-page hand-rolled copy is the exception, not the norm — the
+mechanical default (title + summary + permalink + OG card) handles
+most dispatches well. Use `[social]` when the dispatch's lede needs to
+match a specific tone or hook on a specific platform.
+
 ### Resource — `[extra]` additions
 
 For entries in the source registry (resources section).

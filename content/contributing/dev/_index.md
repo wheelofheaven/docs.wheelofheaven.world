@@ -20,6 +20,7 @@ pipelines are Python.
 | Templates, SCSS, shortcodes (Bifrost) | [Bifrost Theme](@/contributing/dev/bifrost-theme.md) |
 | Image processing, build pipeline, content validation | [Pipelines](@/contributing/dev/pipelines.md) |
 | Per-page Open Graph cards (social unfurls) | [OG Image Pipeline](@/contributing/dev/og-image-pipeline.md) |
+| Auto-posting new content to Telegram, Bluesky, etc. | [Social Broadcast Pipeline](@/contributing/dev/social-broadcast.md) |
 | Cloudflare Pages, DNS, headers, redirects | [CI & Deploy](@/contributing/dev/ci-deploy.md) |
 
 If you're starting cold, [Local Setup](@/contributing/dev/local-setup.md)
