@@ -1,6 +1,6 @@
 +++
 title = "Social Broadcast Pipeline"
-description = "How newly published Wheel of Heaven content auto-posts to Telegram and (eventually) Bluesky, Mastodon, Twitter — frontmatter contract, state model, CI trigger, guardrails."
+description = "How newly published Wheel of Heaven content auto-posts to Telegram, Twitter/X, and (eventually) Bluesky, Mastodon, Discord — frontmatter contract, state model, CI trigger, guardrails."
 weight = 40
 +++
 
@@ -8,8 +8,8 @@ When a Newsroom Dispatch or Article lands on `main` and ships to
 production, the social-broadcast pipeline reads the freshly built
 content tree, figures out which pages haven't been announced yet, and
 posts them to the project's social channels. Phase 1 supports
-**Telegram**; later phases add **Bluesky**, **Mastodon**, **Discord**,
-and **Twitter/X** in that order.
+**Telegram** and **Twitter/X**; later phases add **Bluesky**,
+**Mastodon**, and **Discord**.
 
 The pipeline is **deploy-triggered, not push-triggered**: a post only
 fires after GitHub Pages has confirmed the page is live, so unfurls
@@ -25,16 +25,18 @@ flowchart LR
     bot["scripts/broadcast<br/><i>Python module</i>"]
     state["data/socials/posted.json<br/><i>per-channel state</i>"]
     api1["Telegram Bot API"]
-    api2["Bluesky AT Protocol<br/>(Phase 2)"]
-    api3["Mastodon API<br/>(Phase 3)"]
-    api4["Twitter/X v2<br/>(Phase 4)"]
+    api2["Twitter/X v2 API"]
+    api3["Bluesky AT Protocol<br/>(Phase 2)"]
+    api4["Mastodon API<br/>(Phase 3)"]
+    api5["Discord webhook<br/>(Phase 3)"]
 
     md --> deploy --> bcast --> bot
     state <--> bot
     bot --> api1
-    bot -.-> api2
+    bot --> api2
     bot -.-> api3
     bot -.-> api4
+    bot -.-> api5
 ```
 
 Three repos participate:
@@ -251,12 +253,16 @@ Configured as **Repository secrets** on
 |---|---|---|
 | `TELEGRAM_BOT_TOKEN` | `telegram.py` | 1 |
 | `TELEGRAM_CHAT_ID` | `telegram.py` | 1 |
+| `TWITTER_API_KEY` | `twitter.py` | 1 |
+| `TWITTER_API_SECRET` | `twitter.py` | 1 |
+| `TWITTER_ACCESS_TOKEN` | `twitter.py` | 1 |
+| `TWITTER_ACCESS_TOKEN_SECRET` | `twitter.py` | 1 |
+| `TWITTER_USERNAME` _(optional)_ | `twitter.py` | 1 |
 | `BLUESKY_HANDLE` | (phase 2) | 2 |
 | `BLUESKY_APP_PASSWORD` | (phase 2) | 2 |
 | `MASTODON_INSTANCE` | (phase 3) | 3 |
 | `MASTODON_ACCESS_TOKEN` | (phase 3) | 3 |
 | `DISCORD_WEBHOOK_URL` | (phase 3) | 3 |
-| `TWITTER_BEARER_TOKEN`, plus OAuth 2.0 PKCE refresh-token | (phase 4) | 4 |
 
 A channel is **enabled** when its required secrets are present. Missing
 secrets disable the channel silently for the broadcaster (no error), but
@@ -286,7 +292,7 @@ to which channel, with links to each post. Visible in the Actions tab.
 
 ## Per-platform notes
 
-### Telegram (Phase 1)
+### Telegram (Phase 1, shipped)
 
 - **API:** `https://api.telegram.org/bot{TOKEN}/sendPhoto` if the OG
   image is live, else `sendMessage`. The broadcaster HEAD-probes the
@@ -306,6 +312,58 @@ to which channel, with links to each post. Visible in the Actions tab.
   [@username\_to\_id\_bot](https://t.me/username_to_id_bot).
 - **Result:** post_id is `{chat_id}/{message_id}`; the public URL is
   `https://t.me/{channelusername}/{message_id}` for public channels.
+
+### Twitter / X (Phase 1, shipped)
+
+- **API:** `POST https://api.x.com/2/tweets` with a JSON body
+  `{"text": "..."}`. Text-only post — **no API media upload**. Image
+  cards are rendered by Twitter's auto-unfurler reading the page's
+  `<meta name="twitter:card" content="summary_large_image">` and
+  `<meta name="twitter:image" content="...">` tags.
+- **Why no API media:** the v2 media-upload endpoint requires the
+  Basic tier ($200/mo). The Free tier permits text writes (well above
+  our actual broadcast volume) but disallows media. Twitter Cards
+  auto-unfurl gives an indistinguishable result for readers, and
+  follows the live OG card if it's regenerated later — at the price
+  of a brief unfurl race on the first paste.
+- **Length:** 280 chars hard limit; URLs count as 23 regardless of
+  actual length. The default template targets a 275-char ceiling with
+  a 5-char safety margin for the truncation ellipsis.
+- **Auth:** OAuth 1.0a user-context — **not OAuth 2.0 PKCE**, chosen
+  deliberately to avoid the rotating-refresh-token dance. The four
+  static credentials live in repo secrets and are signed into every
+  request with HMAC-SHA1.
+- **Per-platform override:** set `[social].twitter = "…"` in the
+  page's frontmatter to hand-tune copy for this channel. Useful when
+  the mechanical title + summary truncation breaks awkwardly (e.g.
+  mid-comma).
+- **Result:** post_id is the numeric tweet ID; the public URL is
+  `https://x.com/{TWITTER_USERNAME}/status/{tweet_id}` when the
+  optional `TWITTER_USERNAME` secret is set, else
+  `https://x.com/i/web/status/{tweet_id}` (Twitter redirects this to
+  the canonical user URL).
+
+**Setup checklist:**
+
+1. Create a [Twitter Developer](https://developer.x.com) account and a
+   v2 app. Free tier is fine.
+2. In the app's **User authentication settings**, enable OAuth 1.0a
+   with permissions **Read and write**. Set the callback URI to any
+   placeholder — OAuth 1.0a user-context here doesn't redirect, but
+   the field is required.
+3. Go to **Keys and tokens** → generate the four credentials. Copy:
+   `API Key` → `TWITTER_API_KEY`, `API Key Secret` →
+   `TWITTER_API_SECRET`, `Access Token` → `TWITTER_ACCESS_TOKEN`,
+   `Access Token Secret` → `TWITTER_ACCESS_TOKEN_SECRET`.
+4. Optionally set `TWITTER_USERNAME` to your account's handle (without
+   the `@`) for nicer post URLs in the state file.
+5. Set all five values as repo secrets on
+   `wheelofheaven/www.wheelofheaven.world`.
+
+**Verifying:** trigger the workflow once with `workflow_dispatch` and
+`dry_run = true`. Then clear one entry's `twitter` slot in
+`posted.json` and trigger without dry-run — the inaugural tweet
+should land at `https://x.com/{username}/status/{...}`.
 
 ### Bluesky (Phase 2, not implemented yet)
 
@@ -331,19 +389,6 @@ to which channel, with links to each post. Visible in the Actions tab.
 - **API:** Webhook URL — POST JSON, no auth headers.
 - **Embed:** Native `embed` payload with title/description/url/image —
   no length issues, rich preview without unfurl quirks.
-
-### Twitter / X (Phase 4, not implemented yet)
-
-- **API:** v2 `POST /2/tweets`, with media upload via v1.1
-  `POST /1.1/media/upload.json` (the v2 media endpoint is still
-  developer-preview).
-- **Length:** 280 chars; URL counts as 23.
-- **Auth:** OAuth 2.0 PKCE with refresh token. The refresh token must
-  be stored as a GitHub secret and rotated after every use — see
-  the implementation notes when Phase 4 ships.
-- **Cost:** Basic tier ($200/mo) is required for media upload at any
-  meaningful volume. Phase 4 will document the cost decision in this
-  section.
 
 ## Guardrails
 
@@ -637,8 +682,6 @@ In rough order of payoff:
   comment. Editorial review of the social copy before merge.
 - **Bluesky adapter (Phase 2).** Open API, project-aligned audience.
 - **Mastodon and Discord adapters (Phase 3).**
-- **Twitter/X adapter (Phase 4).** Last because most fragile and most
-  expensive.
 - **HTTP HEAD probe loop on the page URL.** Wait up to ~10 minutes
   after deploy-success for the page to return 200 before firing. Today
   the workflow fires the moment `workflow_run` says success, which is
