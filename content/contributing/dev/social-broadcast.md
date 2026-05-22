@@ -288,8 +288,13 @@ to which channel, with links to each post. Visible in the Actions tab.
 
 ### Telegram (Phase 1)
 
-- **API:** `https://api.telegram.org/bot{TOKEN}/sendPhoto` if OG image
-  available, else `sendMessage`.
+- **API:** `https://api.telegram.org/bot{TOKEN}/sendPhoto` if the OG
+  image is live, else `sendMessage`. The broadcaster HEAD-probes the
+  per-page OG URL on
+  `assets.wheelofheaven.world` first; if it 404s (the OG pipeline
+  hasn't been run yet for this slug), it falls back to text + link
+  unfurl instead of handing Telegram a dead URL and tripping
+  `400 failed to get HTTP URL content`.
 - **Parse mode:** `HTML` (subset — `<b>`, `<i>`, `<a>`, `<code>`).
 - **Caption limit:** 1024 chars (with photo) / 4096 chars (text-only).
   The default template fits comfortably under 1024.
@@ -536,19 +541,79 @@ once before failing. If both retries fail, the next deploy will pick
 up both entries and post them in one batch. No data is lost; at worst
 a post is delayed by one deploy cycle.
 
+### OG asset 404 race — text-only post instead of card
+
+**Symptom:** Broadcast workflow succeeds, the Telegram post lands, but
+the post is text-only (no image card) even though the dispatch has
+been published.
+
+**Cause:** The
+[OG Image Pipeline](@/contributing/dev/og-image-pipeline.md) is
+author-triggered, not CI-triggered. If the editor merged the dispatch
+without first generating + syncing its OG card, the per-page JPEG at
+`assets.wheelofheaven.world/images/og/en/{section}/{slug}.jpg` returns
+404 at broadcast time. The broadcaster's HEAD probe sees this and falls
+back to `sendMessage` (text + link unfurl) rather than tripping
+Telegram's `400 failed to get HTTP URL content` on a dead photo URL.
+
+**Why the fallback exists:** A text post is much better than a failed
+post, and the unfurl preview will still pull the OG card if/when it's
+generated later — but only if Telegram is told to refresh its preview
+cache for that URL (see next entry).
+
+**Fix going forward:** Run the OG pipeline before merging the dispatch:
+
+```sh
+cd data-images/og
+./venv/bin/python scripts/generate_og.py --only en/news/{slug} --force
+./venv/bin/python scripts/sync_og_to_cdn.py --yes
+cd ../../assets.wheelofheaven.world
+git add images/og && git commit -m "Sync OG: news/{slug}" && git push
+```
+
+**Recovery for a post that already went out text-only:**
+
+1. Generate + push the OG card (steps above).
+2. After CF Pages publishes the asset (~30 s), send
+   `https://t.me/WebpageBot` the page URL — it refreshes Telegram's
+   preview cache. The next paste of the link gets the fresh card. The
+   already-posted message itself does **not** retroactively gain the
+   image; only future link previews do.
+
+**Hit on:** 2026-05-22, inaugural Release 02 broadcast. Shipped the
+HEAD probe + fallback in `scripts/broadcast/__main__.py` the same day.
+
 ### Cache hit on the page = post fires before unfurl works
 
-**Symptom:** A new dispatch posts to Telegram, but the inline preview
-shows the brand fallback image, not the page's OG card.
+**Symptom:** A new dispatch posts to Telegram with what *looks* like a
+real OG card, but the card is the brand fallback rather than the
+page's per-slug card.
 
-**Cause:** Telegram fetched the link before
-`assets.wheelofheaven.world` had a chance to publish the OG card.
+**Cause:** Telegram fetched the link while Cloudflare still held a
+stale preview for the URL (e.g. the page had been requested before
+its OG card finished propagating).
 
 **Fix:** Send `https://t.me/WebpageBot` the page URL — it refreshes
-Telegram's preview cache. For future posts, the OG pipeline should
-already have run before the dispatch merges (the pipeline is
-author-triggered, not CI-triggered today — see
-[OG Image Pipeline](@/contributing/dev/og-image-pipeline.md#who-runs-this-and-when)).
+Telegram's preview cache. The next paste of the link gets the fresh
+card. The already-posted message keeps the stale preview.
+
+### Posted but Pages 500'd on the dispatch URL
+
+**Symptom:** Broadcast workflow succeeded against a URL that, when a
+human pastes it, returns a 500 from Cloudflare. The Telegram post is
+already out.
+
+**Diagnosis:** Likely CF Pages content-hash blob poisoning — a
+known external-platform quirk. The broadcaster doesn't probe the page
+URL itself (only the OG image URL), so it can post a link that
+unfurls into a 500.
+
+**Fix:** See
+[Hosting and Caching → CF Pages content-hash blob poisoning](@/architecture/hosting-and-caching.md#cf-pages-content-hash-blob-poisoning)
+for the canonical write-up. Make a tiny content change to the
+dispatch source, push, and the URL flips to 200 on the next deploy.
+The already-posted message stays valid (the unfurl will refresh on
+the next paste).
 
 ### Posted but Pages 404'd anyway
 
@@ -574,11 +639,6 @@ In rough order of payoff:
 - **Mastodon and Discord adapters (Phase 3).**
 - **Twitter/X adapter (Phase 4).** Last because most fragile and most
   expensive.
-- **OG image HEAD probe before posting.** Resolve the per-page
-  `og:image` URL via the same precedence chain `seo.html` uses, and
-  HEAD it. Refuse to post if 404 (and instead retry on the next
-  deploy). Closes the
-  [silent broken-card race](#cache-hit-on-the-page-post-fires-before-unfurl-works).
 - **HTTP HEAD probe loop on the page URL.** Wait up to ~10 minutes
   after deploy-success for the page to return 200 before firing. Today
   the workflow fires the moment `workflow_run` says success, which is
