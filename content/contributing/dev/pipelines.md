@@ -13,7 +13,9 @@ into deployable artifacts:
 
 This page covers each. For Cloudflare Pages specifics (DNS, custom domains,
 headers, build environment), see
-[CI & Deploy](@/contributing/dev/ci-deploy.md).
+[CI & Deploy](@/contributing/dev/ci-deploy.md). The per-page social-card
+renderer is its own thing — see
+[OG Image Pipeline](@/contributing/dev/og-image-pipeline.md).
 
 ## Build pipeline
 

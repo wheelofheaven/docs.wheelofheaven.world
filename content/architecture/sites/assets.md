@@ -30,6 +30,17 @@ https://assets.wheelofheaven.world/images/{category}/{image-name}.{ext}
 
 Categories: `wiki/`, `timeline/`, `resources/`, `brand/`.
 
+Per-page social cards live under their own `og/` subtree:
+
+```
+https://assets.wheelofheaven.world/images/og/{lang}/{section}/{slug}.jpg
+```
+
+Rendered by the [OG Image Pipeline](@/contributing/dev/og-image-pipeline.md),
+served with a 24h `must-revalidate` override so re-renders propagate
+within a day. Every published page on the reading site advertises one
+in its `<meta property="og:image">`.
+
 ## Usage in templates
 
 The Bifrost theme's `figure` shortcode handles format selection:
