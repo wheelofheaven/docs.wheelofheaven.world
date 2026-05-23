@@ -94,6 +94,13 @@ rather than Zola's unreliable `lang` global, and emits one `hreflang`
 per locale listed for the page's canonical key — and only those. A page
 without a Hebrew translation gets no `hreflang="he"` tag.
 
+The script uses `git -C content ls-files *.md` rather than walking the
+filesystem with `rglob`. This is important: the `content/` working tree
+often holds WIP translation stubs that aren't committed, and including
+them in the manifest would emit hreflang pointing to URLs that 404 in
+production (the deployed site only has committed content). Sticking to
+tracked files keeps the manifest aligned with deployment reality.
+
 ### Build wiring
 
 The manifest is regenerated before each build:
@@ -127,39 +134,44 @@ thing to check.
 `static/_redirects` (consumed by Cloudflare Pages) is the URL-stability
 contract.
 
-### Three categories of rules
+### Categories of rules
 
-**1. Legacy-section redirects.** The reading-site has reorganized once
-— `/intro/`, `/explainers/`, `/encyclopedia/`, `/categories/`,
-`/medium/`, `/resources/`. Each old section has a per-locale block
-redirecting to the current destination, e.g.
-`/explainers/* → /articles/:splat`. This is the bulk of the file.
+**Legacy-section redirects.** The reading-site has reorganized once —
+`/intro/`, `/explainers/`, `/encyclopedia/`, `/categories/`, `/medium/`,
+`/resources/`. Each old section has a per-locale block redirecting to
+the current destination, e.g. `/explainers/* → /articles/:splat`. This
+is the bulk of the file (~73 dynamic rules).
 
-**2. Trailing-slash normalization.** Zola emits `index.html` at
-`<path>/`. Google was crawling bare URLs like `/fr/library/1-chronicles`
-and 404'ing because Cloudflare Pages doesn't auto-add a trailing slash.
-Per-locale rules normalize:
+**Stale paths from the 2026-05 pass.** `age-of-*` entries used to live
+under `/wiki/`; they now live under `/timeline/`. Five literal rules
+near the top of the file cover the specific URLs Google had cached
+(e.g. `/wiki/age-of-aquarius/ → /timeline/age-of-aquarius/`).
 
-```
-/library/:slug              /library/:slug/              301
-/de/library/:slug           /de/library/:slug/           301
-...
-```
+We do **not** maintain per-locale trailing-slash normalization rules —
+Cloudflare Pages auto-308's bare paths to `<path>/` when the target
+file exists. Bare paths whose target doesn't exist would 404 either
+way; the right fix there is to publish the page (or commit the
+translation stub — see the `library/*` stubs landed in the 2026-05
+content pass).
 
-The `:slug` placeholder matches a single non-slash segment, so the
-already-slash-terminated form (`/fr/library/1-chronicles/`) falls
-through and doesn't loop. Sections currently covered: `/library/`,
-`/sources/`. If Search Console later flags more trailing-slash 404s in
-another section, add the same pattern.
+### The Cloudflare Pages de-facto rule-count cap
 
-**3. Stale paths.** `age-of-*` entries used to live under `/wiki/`;
-they now live under `/timeline/`. Google still had the old paths
-cached. Splat redirects per locale:
+The documented Cloudflare Pages limit is 2,100 static + 100 dynamic
+rules. In practice, this file behaves as if rules past ~270 are
+silently ignored — pre-existing rules near the end of the file (e.g.
+`/medium/`, `/categories/` catch-alls at lines 404–409) return 404 in
+production even though they're well under the documented caps.
 
-```
-/wiki/age-of-*              /timeline/age-of-:splat              301
-/wiki/timeline/*            /timeline/:splat                     301
-```
+The 2026-05 pass discovered this the hard way: literal redirects
+added at the *end* of the file deployed cleanly to gh-pages but were
+never applied by Cloudflare. The workaround is **keep recently-added
+urgent rules near the TOP** of the file, just after the header. The
+file itself documents this in a leading comment.
+
+Long-term, the legacy `/intro/*` block (~100 rules of churn from the
+pre-migration site structure) could be condensed into a much smaller
+splat-pattern set, which would push the cap out and rescue the
+trailing catch-all rules. Left for a separate pass.
 
 ### Maintenance
 
@@ -168,9 +180,10 @@ current site, the redirects file, and Zola `aliases` frontmatter, then
 reports old URLs with no destination. Run it after large content
 reorganizations.
 
-If Search Console flags a new 404 pattern: add the rule with the
-appropriate placeholder, document it in a comment block above the rule,
-and (if locale-specific) add the per-locale equivalents.
+If Search Console flags a new 404 pattern: add a literal rule near the
+top of the file in the dated section, document the reason in a comment
+block, and (if locale-specific) add the per-locale equivalents — but
+keep an eye on the dynamic-rule count.
 
 ## Sitemap & robots
 
@@ -208,3 +221,25 @@ of that timeline entry was never created. The hreflang manifest
 correctly omits `ko` from that entry, but Google still has the URL from
 an earlier crawl. Will resolve once the page is created or Google
 re-evaluates.
+
+## Translation stubs: the `en_only` pattern
+
+Many library books have locale companion files at e.g.
+`content/<lang>/library/genesis.md` with `translation_status =
+"en_only"` and frontmatter-only content (title, description in the
+target language, but no translated body). These exist so the library
+catalog renders in each locale and hreflang on the canonical English
+page binds the locale URLs as alternates, even when the body content
+hasn't been translated yet.
+
+The 2026-05 SEO pass committed 700 such stubs in a single batch (698
+across the 9 locale directories under `library/` + 2 new EN entries:
+`atrahasis` and `epic-of-gilgamesh`). Before that, the files existed
+in working trees but were untracked, so production 404'd ~40 of the
+URLs Google was crawling. Now committed and tracked.
+
+If you add a new library book, generate matching `en_only` stubs in
+each locale directory (or accept that hreflang on that book will only
+declare English until the stubs land). The build-translations-manifest
+script will pick them up automatically once they're committed in the
+content submodule and the parent repo's submodule pointer is bumped.

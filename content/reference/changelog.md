@@ -21,9 +21,17 @@ side-effect of generating double-slash internal links.
 Fix landed as a new manifest-driven hreflang pipeline
 (`scripts/build_translations_manifest.py` writes
 `data/translations.json`, the partial reads it via `load_data`) plus
-60 new redirect rules in `static/_redirects` covering trailing-slash
-normalization for library/sources and stale `/wiki/age-of-*` and
-`/wiki/timeline/*` paths.
+five literal redirect rules in `static/_redirects` for the stale
+`/wiki/age-of-*` and `/wiki/timeline/*` paths Google had cached.
+Trailing-slash normalization is left to Cloudflare Pages's built-in
+behavior — explicit per-locale rules ran into a de-facto rule-count
+cap (~270) that silently drops anything later in the file.
+
+The pass also committed 700 `translation_status = "en_only"` library
+stubs in `data-content` that had been sitting untracked in the
+working tree (the missing-content cause of ~40 of the Search Console
+404s). The build-translations-manifest script now uses `git ls-files`
+so untracked WIP can't inflate the manifest again.
 
 Full writeup: [Indexing & Multilingual SEO](@/architecture/indexing.md).
 
