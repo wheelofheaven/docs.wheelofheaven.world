@@ -1,6 +1,6 @@
 +++
 title = "Social Broadcast Pipeline"
-description = "How newly published Wheel of Heaven content auto-posts to Telegram, Twitter/X, and (eventually) Bluesky, Mastodon, Discord — frontmatter contract, state model, CI trigger, guardrails."
+description = "How newly published Wheel of Heaven content auto-posts to Telegram, Twitter/X, Bluesky, and (eventually) Mastodon, Discord — frontmatter contract, state model, CI trigger, guardrails."
 weight = 40
 +++
 
@@ -8,8 +8,8 @@ When a Newsroom Dispatch or Article lands on `main` and ships to
 production, the social-broadcast pipeline reads the freshly built
 content tree, figures out which pages haven't been announced yet, and
 posts them to the project's social channels. Phase 1 supports
-**Telegram** and **Twitter/X**; later phases add **Bluesky**,
-**Mastodon**, and **Discord**.
+**Telegram**, **Twitter/X**, and **Bluesky**; later phases add
+**Mastodon** and **Discord**.
 
 The pipeline is **deploy-triggered, not push-triggered**: a post only
 fires after GitHub Pages has confirmed the page is live, so unfurls
@@ -26,15 +26,15 @@ flowchart LR
     state["data/socials/posted.json<br/><i>per-channel state</i>"]
     api1["Telegram Bot API"]
     api2["Twitter/X v2 API"]
-    api3["Bluesky AT Protocol<br/>(Phase 2)"]
-    api4["Mastodon API<br/>(Phase 3)"]
-    api5["Discord webhook<br/>(Phase 3)"]
+    api3["Bluesky AT Protocol"]
+    api4["Mastodon API<br/>(Phase 2)"]
+    api5["Discord webhook<br/>(Phase 2)"]
 
     md --> deploy --> bcast --> bot
     state <--> bot
     bot --> api1
     bot --> api2
-    bot -.-> api3
+    bot --> api3
     bot -.-> api4
     bot -.-> api5
 ```
@@ -258,11 +258,12 @@ Configured as **Repository secrets** on
 | `TWITTER_ACCESS_TOKEN` | `twitter.py` | 1 |
 | `TWITTER_ACCESS_TOKEN_SECRET` | `twitter.py` | 1 |
 | `TWITTER_USERNAME` _(optional)_ | `twitter.py` | 1 |
-| `BLUESKY_HANDLE` | (phase 2) | 2 |
-| `BLUESKY_APP_PASSWORD` | (phase 2) | 2 |
-| `MASTODON_INSTANCE` | (phase 3) | 3 |
-| `MASTODON_ACCESS_TOKEN` | (phase 3) | 3 |
-| `DISCORD_WEBHOOK_URL` | (phase 3) | 3 |
+| `BLUESKY_HANDLE` | `bluesky.py` | 1 |
+| `BLUESKY_APP_PASSWORD` | `bluesky.py` | 1 |
+| `BLUESKY_PDS` _(optional, defaults to `https://bsky.social`)_ | `bluesky.py` | 1 |
+| `MASTODON_INSTANCE` | (phase 2) | 2 |
+| `MASTODON_ACCESS_TOKEN` | (phase 2) | 2 |
+| `DISCORD_WEBHOOK_URL` | (phase 2) | 2 |
 
 A channel is **enabled** when its required secrets are present. Missing
 secrets disable the channel silently for the broadcaster (no error), but
@@ -365,17 +366,54 @@ to which channel, with links to each post. Visible in the Actions tab.
 `posted.json` and trigger without dry-run — the inaugural tweet
 should land at `https://x.com/{username}/status/{...}`.
 
-### Bluesky (Phase 2, not implemented yet)
+### Bluesky (Phase 1, shipped)
 
-- **API:** `app.bsky.feed.post` via the AT Protocol XRPC endpoint.
-- **Length:** 300 graphemes (not chars — emoji/CJK count differently).
-- **Auth:** App password generated in the Bluesky web UI under
-  Settings → App Passwords.
-- **Link card:** Constructed as an `app.bsky.embed.external` record
-  with the OG image uploaded to the user's blob store first
-  (`com.atproto.repo.uploadBlob`).
+- **API:** AT Protocol XRPC against the user's PDS (defaults to
+  `https://bsky.social`). Three calls per post:
+  1. `com.atproto.server.createSession` — trade
+     handle + app password for an `accessJwt` and the account's DID.
+  2. `com.atproto.repo.uploadBlob` — upload the OG image bytes
+     directly (HEAD-fetched from `assets.wheelofheaven.world`) and get
+     a blob ref back. Skipped if the OG asset isn't live yet — the
+     post still goes out, just without a thumb.
+  3. `com.atproto.repo.createRecord` — create the
+     `app.bsky.feed.post` record with `app.bsky.embed.external`
+     pointing at the page URL and (optionally) the uploaded blob as
+     `thumb`.
+- **Length:** 300 graphemes hard limit. The default template targets
+  290 chars (using `len()` as a safe approximation for grapheme count;
+  fine for our scholarly-English content, would need a proper
+  grapheme cluster counter for emoji-heavy posts). The **URL is not
+  in the body text** — the embed card owns it, which saves graphemes.
+- **Auth:** **App password**, not OAuth. Generate in Bluesky web UI:
+  Settings → Privacy and security → App Passwords → Add App Password.
+  App passwords are scoped to the standard write APIs and individually
+  revocable; **never use the account password**.
+- **Per-platform override:** set `[social].bluesky = "…"` in the
+  page's frontmatter to hand-tune the post text for this channel.
+- **Result:** post_id is the AT URI
+  (`at://did:plc:.../app.bsky.feed.post/{rkey}`); the public URL is
+  `https://bsky.app/profile/{BLUESKY_HANDLE}/post/{rkey}`.
 
-### Mastodon (Phase 3, not implemented yet)
+**Setup checklist:**
+
+1. Create a Bluesky account (or use an existing one). Note the handle
+   — e.g. `wheelofheaven.bsky.social` or a custom-domain handle like
+   `wheelofheaven.world`.
+2. Settings → Privacy and security → App Passwords → **Add App
+   Password**. Name it `broadcast-bot` or similar. Copy the password
+   (Bluesky shows it once; you can't see it again).
+3. Set repo secrets on `wheelofheaven/www.wheelofheaven.world`:
+   - `BLUESKY_HANDLE` = the handle (no `@`)
+   - `BLUESKY_APP_PASSWORD` = the app password from step 2
+   - `BLUESKY_PDS` = optional; only set if running on a non-bsky.social
+     PDS
+
+**Verifying:** trigger the workflow with `workflow_dispatch` +
+`dry_run = true` first to confirm the render. Then clear one entry's
+`bluesky` slot in `posted.json` and trigger without dry-run.
+
+### Mastodon (Phase 2, not implemented yet)
 
 - **API:** `POST /api/v1/statuses`.
 - **Length:** 500 chars default (instance-configurable).
@@ -384,7 +422,7 @@ should land at `https://x.com/{username}/status/{...}`.
   warning of `"Speculative reading"` — useful editorial signal that
   doubles as Mastodon's etiquette norm.
 
-### Discord (Phase 3, not implemented yet)
+### Discord (Phase 2, not implemented yet)
 
 - **API:** Webhook URL — POST JSON, no auth headers.
 - **Embed:** Native `embed` payload with title/description/url/image —
@@ -680,8 +718,7 @@ In rough order of payoff:
   touches `content/news/` or `content/articles/` should run the
   broadcaster with `--dry-run` and post the rendered copy as a PR
   comment. Editorial review of the social copy before merge.
-- **Bluesky adapter (Phase 2).** Open API, project-aligned audience.
-- **Mastodon and Discord adapters (Phase 3).**
+- **Mastodon and Discord adapters (Phase 2).**
 - **HTTP HEAD probe loop on the page URL.** Wait up to ~10 minutes
   after deploy-success for the page to return 200 before firing. Today
   the workflow fires the moment `workflow_run` says success, which is
