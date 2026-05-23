@@ -28,6 +28,10 @@ this section drills into specific corners.
 - **[Performance](@/architecture/performance.md)** — the three
   landing-page LCP techniques (preload, critical CSS gate, poster
   sizing), the current Lighthouse scores, and how to keep them.
+- **[Indexing & Multilingual SEO](@/architecture/indexing.md)** — how
+  hreflang is built from a manifest rather than Zola's native
+  translations, the redirect strategy in `_redirects`, and the
+  current Search Console state.
 
 For a flat list of every repo in the org, what each one holds, and
 the GitHub URLs, the

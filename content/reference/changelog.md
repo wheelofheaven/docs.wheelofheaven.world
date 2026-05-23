@@ -8,6 +8,25 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-05 — Search Console / hreflang fix
+
+First Google Search Console audit of `www.wheelofheaven.world`,
+one week into full crawl coverage. Two structural issues surfaced:
+hreflang was broken across all ~2,000 translation pages (Zola's native
+`page.translations` doesn't see directory-prefixed locales, only
+file-suffix translations), and ~80 URLs were 404'ing from a mix of
+trailing-slash quirks, stale paths, and the broken hreflang's
+side-effect of generating double-slash internal links.
+
+Fix landed as a new manifest-driven hreflang pipeline
+(`scripts/build_translations_manifest.py` writes
+`data/translations.json`, the partial reads it via `load_data`) plus
+60 new redirect rules in `static/_redirects` covering trailing-slash
+normalization for library/sources and stale `/wiki/age-of-*` and
+`/wiki/timeline/*` paths.
+
+Full writeup: [Indexing & Multilingual SEO](@/architecture/indexing.md).
+
 ## 2026-05 — Landing-page performance pass
 
 First targeted Lighthouse pass on `www.wheelofheaven.world/`.
