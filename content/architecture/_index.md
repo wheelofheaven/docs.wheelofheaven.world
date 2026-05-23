@@ -25,6 +25,9 @@ this section drills into specific corners.
   what gets cached where, with TTLs by asset type, how cache
   invalidation works on deploy, and how to debug a stale-content
   bug at the edge.
+- **[Performance](@/architecture/performance.md)** — the three
+  landing-page LCP techniques (preload, critical CSS gate, poster
+  sizing), the current Lighthouse scores, and how to keep them.
 
 For a flat list of every repo in the org, what each one holds, and
 the GitHub URLs, the

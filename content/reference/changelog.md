@@ -8,6 +8,19 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-05 — Landing-page performance pass
+
+First targeted Lighthouse pass on `www.wheelofheaven.world/`.
+LCP dropped from 5.4s to under 2s, Performance score 98, Accessibility /
+Best Practices / SEO all 100.
+Three landing-page-only changes: explicit `<link rel="preload">` for the
+§1 video poster, async-loaded `main.css` with the pre-existing
+`critical.css` filling above-the-fold, and a resized §1 poster
+(1280×720 132 KB → 800×450 53 KB).
+The mobile language pane was also given the `inert` attribute alongside
+`aria-hidden` to clear an accessibility violation.
+Full writeup: [Performance](@/architecture/performance.md).
+
 ## 2026-05 — Documentation site launched
 
 `docs.wheelofheaven.world` (this site) launched as a dedicated
