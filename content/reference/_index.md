@@ -30,6 +30,10 @@ the [Contributing](@/contributing/_index.md) sections instead.
   (Bifrost, claim type, editorial pass, refId, OG card, etc.). Distinct
   from the on-site translations glossary in
   `data-content/i18n/glossary.json`.
+- **[Icon Registry](@/reference/icons.md)** — every icon used on
+  www.wheelofheaven.world, rendered live from `data/icons.json`. Slug
+  bindings (section / tradition / event-type), family classification
+  (stroked / mixed / filled), source, viewBox, and usage.
 - **[Changelog](@/reference/changelog.md)** — major project
   milestones (domain migration, editorial passes, infrastructure
   shifts) at a project level. Not commit history.

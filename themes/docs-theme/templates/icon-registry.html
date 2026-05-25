@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% import "macros/section-icons.html" as section_icons %}
+
+{% block title %}{{ page.title }} &middot; {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description | default(value=config.description) }}{% endblock description %}
+
+{% block head_extra %}
+<style>
+    .icon-registry { max-width: 100%; }
+    .icon-registry__intro { color: var(--color-text-muted); font-size: .95rem; margin-bottom: 1.5rem; }
+    .icon-registry__intro code { background: var(--color-background-secondary); padding: .1em .4em; border-radius: .25rem; font-size: .9em; }
+    .icon-registry__legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0 2rem; font-size: .85rem; color: var(--color-text-muted); }
+    .icon-registry__legend-item { display: inline-flex; align-items: center; gap: .4rem; }
+    .icon-registry__legend-swatch { width: .85rem; height: .85rem; border-radius: 50%; display: inline-block; }
+    .icon-registry__legend-swatch--stroked { background: #4fb3a0; }
+    .icon-registry__legend-swatch--mixed   { background: #c4a85a; }
+    .icon-registry__legend-swatch--filled  { background: #c46a6a; }
+
+    .icon-registry__group { margin: 2.5rem 0; }
+    .icon-registry__group-title {
+        font-family: var(--font-family-display, var(--font-family-base));
+        font-size: 1.1rem;
+        margin: 0 0 1rem;
+        padding-bottom: .5rem;
+        border-bottom: 1px solid var(--color-border, var(--color-text-subtle));
+        display: flex;
+        align-items: baseline;
+        gap: .75rem;
+    }
+    .icon-registry__group-count { font-size: .8rem; color: var(--color-text-muted); font-weight: normal; }
+
+    .icon-registry__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: .75rem;
+    }
+    .icon-registry__cell {
+        display: flex; flex-direction: column; align-items: center; gap: .5rem;
+        padding: 1rem .75rem;
+        border: 1px solid var(--color-border, var(--color-text-subtle));
+        border-radius: .5rem;
+        background: var(--color-background-secondary, transparent);
+    }
+    .icon-registry__cell--stroked { border-left: 3px solid #4fb3a0; }
+    .icon-registry__cell--mixed   { border-left: 3px solid #c4a85a; }
+    .icon-registry__cell--filled  { border-left: 3px solid #c46a6a; }
+
+    .icon-registry__svg { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; color: var(--color-text); }
+    .icon-registry__svg svg { width: 100%; height: 100%; }
+    .icon-registry__sizes { display: flex; gap: .9rem; align-items: center; justify-content: center; color: var(--color-text-muted); }
+    .icon-registry__size-sm svg { width: .85rem; height: .85rem; }
+    .icon-registry__size-md svg { width: 1.4rem; height: 1.4rem; }
+    .icon-registry__size-lg svg { width: 2.1rem; height: 2.1rem; }
+
+    .icon-registry__id { font-family: var(--font-family-mono, monospace); font-size: .72rem; text-align: center; word-break: break-all; color: var(--color-text); }
+    .icon-registry__meta { font-size: .65rem; color: var(--color-text-muted); text-align: center; }
+    .icon-registry__usage { font-size: .65rem; color: var(--color-text-subtle); text-align: center; font-style: italic; }
+    .icon-registry__iconify { font-size: .65rem; color: var(--color-text-muted); text-align: center; }
+    .icon-registry__iconify a { color: var(--color-text-muted); text-decoration: none; border-bottom: 1px dotted currentColor; }
+    .icon-registry__iconify a:hover { color: var(--color-text); border-bottom-style: solid; }
+    .icon-registry__iconify--none { color: var(--color-text-subtle); font-style: italic; }
+
+    .icon-registry__binding {
+        display: flex; align-items: center; gap: .75rem;
+        padding: .65rem .75rem;
+        border: 1px solid var(--color-border, var(--color-text-subtle));
+        border-radius: .4rem;
+        background: var(--color-background-secondary, transparent);
+    }
+    .icon-registry__binding-icon { width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text); flex-shrink: 0; }
+    .icon-registry__binding-icon svg { width: 100%; height: 100%; }
+    .icon-registry__binding-meta { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+    .icon-registry__binding-slug { font-family: var(--font-family-mono, monospace); font-size: .78rem; color: var(--color-text); }
+    .icon-registry__binding-id { font-size: .65rem; color: var(--color-text-muted); }
+</style>
+{% endblock head_extra %}
+
+{% block content %}
+{% set registry = load_data(path="data/icons.json") %}
+
+<article class="docs-page">
+    <header class="docs-page__header">
+        {% if page.ancestors and page.ancestors | length > 1 %}
+        <nav class="docs-page__breadcrumbs" aria-label="Breadcrumb">
+            {% for ancestor in page.ancestors %}
+                {% if not loop.first %}
+                    {% set sec = get_section(path=ancestor, metadata_only=true) %}
+                    <a href="{{ sec.permalink }}">{{ sec.title }}</a> /
+                {% endif %}
+            {% endfor %}
+        </nav>
+        {% endif %}
+
+        <h1 class="docs-page__title">{{ page.title }}</h1>
+        {% if page.description %}
+        <p class="docs-page__lede">{{ page.description }}</p>
+        {% endif %}
+    </header>
+
+    <div class="docs-page__content">
+        {{ page.content | safe }}
+
+        <section class="icon-registry">
+            <p class="icon-registry__intro">
+                Live render from <code>data/icons.json</code> via
+                <code>section_icons::render(id=…)</code>. Synced from
+                <code>www.wheelofheaven.world</code> &mdash; run
+                <code>mise run icons</code> in this repo to refresh.
+            </p>
+
+            <div class="icon-registry__legend">
+                <span class="icon-registry__legend-item">
+                    <span class="icon-registry__legend-swatch icon-registry__legend-swatch--stroked"></span>
+                    stroked &mdash; thin outlines, currentColor stroke
+                </span>
+                <span class="icon-registry__legend-item">
+                    <span class="icon-registry__legend-swatch icon-registry__legend-swatch--mixed"></span>
+                    mixed &mdash; stroke + filled accent
+                </span>
+                <span class="icon-registry__legend-item">
+                    <span class="icon-registry__legend-swatch icon-registry__legend-swatch--filled"></span>
+                    filled &mdash; bold silhouettes, currentColor fill
+                </span>
+            </div>
+
+            <h2 id="bindings">Bindings</h2>
+            <p>
+                Slug &rarr; icon id maps that drive the semantic resolvers
+                <code>section_icons::section(slug)</code>,
+                <code>section_icons::tradition(slug)</code>, and
+                <code>section_icons::event_type(slug)</code>. Editing
+                <code>bindings</code> in the registry rewires which icon
+                represents a given slug across every page that uses it.
+            </p>
+
+            {% set kinds = ["service", "section", "tradition", "event_type"] %}
+            {% for kind in kinds %}
+            <section class="icon-registry__group">
+                <h3 class="icon-registry__group-title">
+                    bindings.{{ kind }}
+                    <span class="icon-registry__group-count">{{ registry.bindings[kind] | length }} entries</span>
+                </h3>
+                <div class="icon-registry__grid">
+                    {% for slug, icon_id in registry.bindings[kind] %}
+                    {% set meta = registry.icons[icon_id] | default(value=false) %}
+                    <div class="icon-registry__binding{% if meta %} icon-registry__cell--{{ meta.family }}{% endif %}">
+                        <span class="icon-registry__binding-icon">{{ section_icons::render(id=icon_id) }}</span>
+                        <div class="icon-registry__binding-meta">
+                            <span class="icon-registry__binding-slug">{{ slug }}</span>
+                            <span class="icon-registry__binding-id">&rarr; {{ icon_id }}{% if meta %} &middot; {{ meta.family }}{% endif %}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+
+            <h2 id="catalogue">Catalogue</h2>
+            <p>
+                Every icon partial under
+                <code>themes/bifrost/templates/partials/icons/</code>,
+                grouped by family. Each cell shows the icon at three sizes
+                (16, 24, 40 px), id, source, viewBox, and where it&rsquo;s
+                used. Left-border colour encodes family.
+            </p>
+
+            {% set families = ["stroked", "mixed", "filled"] %}
+            {% for family in families %}
+            {% set_global family_icons = [] %}
+            {% for id, meta in registry.icons %}
+                {% if meta.family == family %}
+                {% set_global family_icons = family_icons | concat(with=id) %}
+                {% endif %}
+            {% endfor %}
+            {% set family_sorted = family_icons | sort %}
+            <section class="icon-registry__group">
+                <h3 class="icon-registry__group-title">
+                    {{ family }}
+                    <span class="icon-registry__group-count">{{ family_sorted | length }} icons</span>
+                </h3>
+                <div class="icon-registry__grid">
+                    {% for id in family_sorted %}
+                    {% set meta = registry.icons[id] %}
+                    <div class="icon-registry__cell icon-registry__cell--{{ meta.family }}">
+                        <div class="icon-registry__svg">{{ section_icons::render(id=id) }}</div>
+                        <div class="icon-registry__sizes" aria-hidden="true">
+                            <span class="icon-registry__size-sm">{{ section_icons::render(id=id) }}</span>
+                            <span class="icon-registry__size-md">{{ section_icons::render(id=id) }}</span>
+                            <span class="icon-registry__size-lg">{{ section_icons::render(id=id) }}</span>
+                        </div>
+                        <div class="icon-registry__id">{{ id }}</div>
+                        <div class="icon-registry__meta">{{ meta.source }} &middot; {{ meta.viewBox }}</div>
+                        {% if meta.iconify %}
+                        <div class="icon-registry__iconify"><a href="{{ meta.iconify }}" target="_blank" rel="noopener noreferrer">view on iconify &rarr;</a></div>
+                        {% else %}
+                        <div class="icon-registry__iconify icon-registry__iconify--none">custom (no iconify source)</div>
+                        {% endif %}
+                        {% if meta.usage %}
+                        <div class="icon-registry__usage">{{ meta.usage | join(sep=", ") }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+        </section>
+    </div>
+
+    {% include "partials/edit-on-github.html" ignore missing %}
+    {% include "partials/prev-next.html" ignore missing %}
+</article>
+{% endblock content %}
