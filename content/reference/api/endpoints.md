@@ -105,7 +105,11 @@ Available schema kinds: `wiki-entry`, `timeline-entry`, `article`,
 ## Multilingual mirror
 
 Every endpoint above is also reachable under `/v1/{lang}/...` for the
-9 supported languages. See [Multilingual](@/reference/api/multilingual.md).
+9 supported languages. The library tree (books, traditions, chapters)
+resolves localized titles and paragraph text from the underlying
+multilingual data with English fallback. See
+[Multilingual](@/reference/api/multilingual.md) for the full mirror
+rules.
 
 ## Example call
 

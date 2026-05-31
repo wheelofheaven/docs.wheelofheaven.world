@@ -39,7 +39,7 @@ The canonical list is at `/v1/enums/languages/`.
 | `/v1/articles/` | Yes — articles currently only ship in English. |
 | `/v1/news/` | Yes — Newsroom dispatches currently only ship in English. |
 | `/v1/sources/traditions/` | English only for now. |
-| `/v1/library/` | Per-book; book content surfaces its own `availableLangs`. |
+| `/v1/library/` | Full URL mirror under `/v1/{lang}/library/...` for all 9 languages. Catalog titles/names, chapter titles, and per-paragraph text are returned in the requested language with English fallback; book/meta responses set `metadata.fallback=true` when the requested language isn't in `completeLangs`. Per-paragraph i18n maps are included in every chapter response. |
 
 ## What's *not* mirrored
 

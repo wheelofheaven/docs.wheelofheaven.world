@@ -110,6 +110,40 @@ list of editorial divergences from received translations.
 surfacing it in an AI-generated answer. The project's editorial
 discipline is in the provenance, not just the text.
 
+### Multilingual library access
+
+The library tree is mirrored under `/v1/{lang}/library/...` for all 9
+supported languages (de, fr, es, ru, ja, zh, zh-Hant, ko, he), with
+English the unprefixed default:
+
+```bash
+curl https://api.wheelofheaven.world/v1/de/library/books/the-book-which-tells-the-truth/chapters/1
+curl https://api.wheelofheaven.world/v1/ja/library/books/the-book-which-tells-the-truth/chapters/1
+```
+
+Behaviour:
+
+- **Catalog metadata** — `title`, tradition `name` and `description`
+  resolve from the requested language with English fallback. The raw
+  `titles` / `names` / `descriptions` maps are also returned so a
+  client can switch language without a refetch.
+- **Chapter titles** — pulled from `chapter.i18n.{lang}` with English
+  fallback to `chapter.title` (primary-language).
+- **Paragraph text** — pulled from `paragraph.i18n.{lang}` with
+  fallback to `paragraph.text` (primary-language).
+- **`metadata.fallback`** — set to `true` on `Book` and `BookMeta`
+  responses when the requested language is not in the book's
+  `completeLangs`. Lets a client warn the user that they're getting
+  the primary-language text.
+- **`paragraph.i18n`** — the full per-paragraph language map is
+  preserved in the chapter response, so clients can language-switch
+  in-flight without re-fetching.
+
+Coverage is sparse outside the Raëlian source family and the `-woh`
+translation books — biblical and ancient-text books typically have
+`completeLangs: ["en"]` only, so non-English requests return the
+English text with `fallback=true`.
+
 ### Useful retrieval patterns
 
 **Quote a passage by reference:**
