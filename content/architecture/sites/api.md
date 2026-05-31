@@ -76,13 +76,35 @@ The API repo is `wheelofheaven/api.wheelofheaven.world`. Build steps:
    bound `template = "v1-*.json"` template, producing one
    `index.html` per endpoint containing JSON.
 
-3. **`bash scripts/postbuild.sh`** — mirrors every `index.html` as
-   `index.json` (so both forms work), writes `_headers` for proper
+3. **`bash scripts/postbuild.sh`** — writes `_headers` for proper
    `Content-Type: application/json` + CORS + cache TTLs, and writes
-   `_redirects` so directory URLs are canonical.
+   `_redirects` so directory URLs are canonical and explicit-extension
+   URLs (`/v1/.../index.json`) rewrite to the directory form (200,
+   no actual file mirror).
 
 The pipeline runs on every push to `main` and on the Cloudflare Pages
 build hook.
+
+### Deployment file-count budget
+
+The API has the largest page count of any Wheel of Heaven site and
+is the one closest to Cloudflare Pages' **20,000-file deployment
+cap**. Current builds sit at ~3,700 files (well under), but two
+design choices keep it there:
+
+1. The postbuild does **not** mirror every `index.html` as a sibling
+   `index.json` — `_redirects` does the same job via a rewrite rule
+   without doubling the file count.
+2. Per-language library mirrors (`/v1/{lang}/library/...`) are
+   filtered to books whose catalog `availableLangs` includes
+   `{lang}`. Without that filter, 9 languages × ~2,000 English pages
+   = ~18,000 extra files, which crosses the cap.
+
+Before merging changes that add a new content surface or mirror, run
+`mise run build && find public -type f | wc -l` locally. If the
+result is above ~15,000, plan the additional surface carefully. See
+[Hosting and Caching → CF Pages 20,000-file deployment cap](@/architecture/hosting-and-caching.md)
+for the failure mode and the working patterns.
 
 ## Data sources
 

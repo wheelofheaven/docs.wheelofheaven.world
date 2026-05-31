@@ -182,6 +182,23 @@ Use the curl-download method in the build command.
 Zola builds are lightweight; rarely an issue. Contact Cloudflare support
 if persistent.
 
+#### "Pages only supports up to 20,000 files in a deployment"
+
+Cloudflare Pages caps every deployment at 20,000 files, across all
+plans (Free, Pro, Business). The Zola build succeeds in the log but
+the deploy step rejects the artefact and the previous successful
+build keeps serving — new URLs from the failed deploy 404. Verify
+locally before pushing big page-count changes:
+
+```sh
+mise run build && find public -type f | wc -l
+```
+
+For the full incident postmortem and the working patterns (drop
+redundant postbuild file mirrors, make per-language mirrors coverage-
+honest), see
+[Hosting and Caching → CF Pages 20,000-file deployment cap](@/architecture/hosting-and-caching.md).
+
 ### Cache issues
 
 #### Stale content after deploy

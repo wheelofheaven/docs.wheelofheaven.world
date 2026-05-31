@@ -217,3 +217,89 @@ poisoned blob and prevent recurrence. Include the deployment ID
 Two independent fresh builds (`0eaf4e14` and `361f583f`) both 500'd
 identically; a one-line content change on the source resolved it on
 the next deploy.
+
+### CF Pages 20,000-file deployment cap
+
+**Symptom:** The Cloudflare Pages build runs to completion, the build
+log shows the Zola output and the postbuild summary, but the deploy
+step fails with:
+
+```
+✘ [ERROR] Error: Pages only supports up to 20,000 files in a deployment.
+          Ensure you have specified your build output directory correctly.
+Failed to validate assets in the output directory with code: 1
+Failed: error occurred while validating assets in your output directory.
+```
+
+Cloudflare then **silently rolls back to the previous successful
+deployment** and continues serving the old build. The failed build's
+new URLs return 404 because the files were never uploaded. The site
+appears to "be deployed" in the sense that traffic still works, but
+nothing from the new commit is live.
+
+**The number is a hard cap on all Pages plans** (Free, Pro, Business)
+as of 2026-05. Workers Static Assets has a higher cap but is a
+different deploy mechanism.
+
+**Counting what hits the cap:**
+
+Everything under `public/` counts toward the limit, not just leaf
+content files. Specifically:
+
+- Each Zola page emits one `index.html`.
+- The `_headers`, `_redirects`, `robots.txt`, `sitemap.xml`, `llms.txt`
+  each count as one file.
+- **Any sibling files added by `postbuild.sh`** (e.g. mirroring every
+  `index.html` as `index.json` for explicit-extension consumers) count
+  too. The mirror doubles the file count for free, which is the most
+  common way to bump into the cap unintentionally.
+
+Check the current build's count locally before pushing big page-count
+changes:
+
+```sh
+mise run build && find public -type f | wc -l
+```
+
+**Working patterns:**
+
+1. **Drop redundant file mirrors in postbuild.** If `_redirects`
+   already rewrites explicit-extension URLs (e.g.
+   `/v1/*/index.json /v1/:splat/ 200`), the sibling `.json` files are
+   dead weight. Removing the mirror halves the file count.
+2. **Make per-language mirrors coverage-honest.** Only emit pages for
+   surfaces where translations actually exist. The naive "mirror
+   everything under `/v1/{lang}/...`" pattern multiplies the English
+   page count by the number of languages, which on a corpus with
+   ~2,000 English pages and 9 languages crosses the cap immediately.
+3. **Split into multiple Pages projects.** Each project has its own
+   20K cap, so e.g. `api.wheelofheaven.world` and
+   `assets.wheelofheaven.world` are independent budgets. Splitting an
+   over-cap site into two projects is the escape hatch when no other
+   reduction is acceptable.
+
+**The api.wheelofheaven.world incident, 2026-05-31:** The full
+multilingual library mirror (`039418a` — every of 9 langs × 103 books
+× ~18 chapters) produced 21,249 Zola pages, which the postbuild
+JSON-mirror doubled to ~46,000 deploy files. CF rejected the deploy;
+the previous build (`890abec`, English-only library) stayed live for
+~30 minutes while the cap-fit refactor (`b67c96e`) was prepared. The
+fix: filter per-language books to those in `availableLangs` (~14 books
+across 6 non-English langs instead of 103 × 9), plus drop the
+`.json` mirror entirely. Final count: ~3,700 files.
+
+**Don't bother first:**
+
+- **Retry from the dashboard.** Same files, same cap failure.
+- **Empty-commit forced rebuilds.** Same.
+- **Toggling build cache.** Doesn't affect the post-build file count.
+
+**Don't bother second:**
+
+- **CF support ticket asking for an exemption.** The cap is enforced
+  per-deployment, not per-account; support can't lift it on a
+  per-project basis.
+
+**Cross-reference:** the API repo's `scripts/postbuild.sh` and
+`scripts/prebuild.py` enforce the working patterns. Don't reintroduce
+the JSON mirror without first verifying file count stays under cap.
