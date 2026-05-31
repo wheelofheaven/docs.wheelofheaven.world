@@ -42,13 +42,16 @@ form is canonical.
 | `GET /v1/library/books/` | `BookList` | All ~100 books (slug, code, tradition, chapters, paragraphs, status). |
 | `GET /v1/library/books/{slug}/` | `Book` | Book metadata + chapter index. |
 | `GET /v1/library/books/{slug}/meta` | `BookMeta` | Lightweight metadata only. |
+| `GET /v1/library/books/{slug}/chapters/` | `ChapterList` | Chapter index for a book. |
 | `GET /v1/library/books/{slug}/chapters/{n}` | `Chapter` | Single chapter with paragraphs and refIds. |
 | `GET /v1/library/traditions/` | `TraditionList` | The catalog's library-shelf traditions. |
 | `GET /v1/library/traditions/{slug}/` | `Tradition` | Single tradition with its book list. |
 
-The historical paths `/v1/catalog/`, `/v1/books/`, `/v1/books/{slug}/`,
-`/v1/traditions/` are **preserved as stable aliases** of the
-library-prefixed paths.
+The historical paths `/v1/catalog/`, `/v1/books/`, and `/v1/traditions/`
+are **preserved as stable listing aliases**: hitting them returns the
+same listing data with `links.canonical` pointing at the library-prefixed
+URL. Per-item legacy paths (`/v1/books/{slug}/`, `/v1/traditions/{slug}/`)
+issue a `301` to the canonical library-prefixed URL.
 
 ## Sources & hubs
 

@@ -129,11 +129,13 @@ for the full deep-dive.
 
 | Endpoint | Returns |
 |---|---|
-| `GET /v1/library/books/` | All ~100 books with slug, code, tradition, chapter count |
+| [`GET /v1/library/books/`](https://api.wheelofheaven.world/v1/library/books/) | All ~100 books with slug, code, tradition, chapter count |
 | `GET /v1/library/books/{slug}/` | Single book + chapter index |
 | `GET /v1/library/books/{slug}/meta` | Lightweight metadata only |
-| `GET /v1/library/books/{slug}/chapters/{n}` | Single chapter with verses + refIds |
-| `GET /v1/library/traditions/` | Tradition shelves (e.g. raelian, biblical, mesopotamian) |
+| `GET /v1/library/books/{slug}/chapters/` | Chapter list for a book |
+| `GET /v1/library/books/{slug}/chapters/{n}` | Single chapter with paragraphs and refIds |
+| [`GET /v1/library/traditions/`](https://api.wheelofheaven.world/v1/library/traditions/) | Tradition shelves (e.g. raelian, biblical, mesopotamian) |
+| `GET /v1/library/traditions/{slug}/` | Single tradition with its book list |
 
 ### 5. Sources — bibliography records
 
