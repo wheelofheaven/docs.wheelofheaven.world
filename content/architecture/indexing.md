@@ -194,6 +194,50 @@ keep an eye on the dynamic-rule count.
 - The sitemap is auto-discovered by Search Console on the first crawl —
   no manual submission needed.
 
+## Regional search engines (not yet set up)
+
+Google Search Console is currently the only webmaster property registered
+for the site. Because www.wheelofheaven.world publishes in 10 languages,
+several regional engines are worth setting up — but only where the engine
+actually dominates its market *and* the matching language edition has
+substantive content.
+
+The list below is a parking lot for a future pass. Nothing here is set up
+yet.
+
+### Worth setting up
+
+- **Bing Webmaster Tools** — covers Bing, Yahoo, DuckDuckGo, and ChatGPT
+  search grounding from a single property. Broad reach across all 10
+  languages, low friction. The obvious first step after Google.
+- **Yandex Webmaster** — for the `ru` edition. Yandex still holds the
+  majority of Russian search.
+- **Baidu Ziyuan (资源)** — only for the `zh` (Simplified Chinese)
+  edition, and only if we're willing to deal with ICP licensing,
+  mainland-China reachability requirements, slow indexing, and a
+  Chinese-language admin UI. High effort, real reach inside the PRC.
+- **Naver Search Advisor** — for the `ko` edition. Naver is roughly half
+  of Korean search but heavily favors its own walled-garden surfaces
+  (blogs, cafés), so a static site often underperforms regardless.
+
+### Skip
+
+- **Yahoo Japan** — runs on Bing's index. Bing Webmaster already covers
+  it; no separate property needed for the `ja` edition.
+- **Seznam** (Czech) — Google now holds ~85% of Czech search. We also
+  don't publish a `cs` edition, so this is doubly moot.
+- **Per-country Google properties** — one Search Console property already
+  covers all `hreflang` variants. No need to create separate properties
+  for google.de, google.fr, etc.
+
+### Realistic priority order
+
+1. Bing Webmaster (universal benefit).
+2. Yandex / Baidu / Naver, gated on whether the corresponding `ru` / `zh`
+   / `ko` editions have enough translated body content to be worth
+   submitting. Thinly-translated sections (e.g. library stubs in the
+   `en_only` pattern above) aren't worth the verification overhead.
+
 ## Known not-pursued items
 
 ### `/tags/` taxonomy index missing
