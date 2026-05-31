@@ -37,15 +37,31 @@ Full writeup: [Indexing & Multilingual SEO](@/architecture/indexing.md).
 
 ## 2026-05 — Landing-page performance pass
 
-First targeted Lighthouse pass on `www.wheelofheaven.world/`.
-LCP dropped from 5.4s to under 2s, Performance score 98, Accessibility /
-Best Practices / SEO all 100.
-Three landing-page-only changes: explicit `<link rel="preload">` for the
-§1 video poster, async-loaded `main.css` with the pre-existing
-`critical.css` filling above-the-fold, and a resized §1 poster
-(1280×720 132 KB → 800×450 53 KB).
+First targeted Lighthouse pass on `www.wheelofheaven.world/`, then a
+follow-up to recover a regression and harden CLS.
+
+Initial pass: explicit `<link rel="preload">` for the §1 video poster,
+async-loaded `main.css` with the pre-existing `critical.css` filling
+above-the-fold, and a resized §1 poster (1280×720 132 KB → 800×450
+53 KB).
 The mobile language pane was also given the `inert` attribute alongside
 `aria-hidden` to clear an accessibility violation.
+
+Follow-up after a regression to Performance 52: `critical.css` is now
+inlined as `<style>` (one fewer RTT on cold visits), the
+`iAWriterQuattroS` mono font was dropped from the landing critical path
+(per-selector swap to a system mono stack + `url()` removed from
+`@font-face`, leaving only `local()`), §2–§6 posters were resized to
+match §1's recipe, and the FOUC-prevention gate
+(`html:not(.css-loaded)`) was extended to cover footer, translation
+notice, navbar panes, §7 paths, claim badges, the reader-fab TOC sheet,
+and JS-mounted PWA / reading-list / offline indicators.
+A separate fix landed the `.read__paths` grid layout inside
+`critical.css` to eliminate a §7→§8 layout shift when `main.css`
+arrived, dropping CLS from 0.26 to 0.
+
+Current scores: Performance 90, Accessibility / Best Practices / SEO
+all 100; CLS 0.
 Full writeup: [Performance](@/architecture/performance.md).
 
 ## 2026-05 — Documentation site launched
