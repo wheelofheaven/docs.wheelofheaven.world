@@ -30,9 +30,14 @@ reflect the *current* framing and which are pre-reframe holdovers.
 
 | Code | What changed |
 |---|---|
-| `2026-05` | First major pass under the *modern, working-hypothesis, human-civilization* framing. Drops "democratization" / "knowledge base" / "lore" register; tightens claim discipline; uses "Elohim were a small advanced human civilization" rather than "extraterrestrial." |
+| `2026-05` | First major pass under the *modern, working-hypothesis, human-civilization* framing. Drops "democratization" / "knowledge base" / "lore" register; tightens claim discipline; uses "Elohim were a small advanced human civilization" rather than "extraterrestrial." Also included a library-book editorial sub-pass that split 35 long paragraphs across TBWTT, ETTMTTP, and LWTE into 83 pieces — see [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md). |
 
 Future passes will be added here as they happen.
+
+A pass can include both content rewrites (wiki, articles, essentials)
+and library-book editorial work (paragraph splits, attribution fixes,
+OCR cleanup). Both kinds of work mark the entries they touch with the
+same `editorial_pass` date code.
 
 ### When to set the field
 
