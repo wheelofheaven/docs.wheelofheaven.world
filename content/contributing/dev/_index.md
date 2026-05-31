@@ -21,6 +21,8 @@ pipelines are Python.
 | Image processing, build pipeline, content validation | [Pipelines](@/contributing/dev/pipelines.md) |
 | Per-page Open Graph cards (social unfurls) | [OG Image Pipeline](@/contributing/dev/og-image-pipeline.md) |
 | Auto-posting new content to Telegram, Bluesky, etc. | [Social Broadcast Pipeline](@/contributing/dev/social-broadcast.md) |
+| Splitting long library-book paragraphs across languages | [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md) |
+| Generating ElevenLabs audiobooks for library books | [Audiobook Pipeline](@/contributing/dev/audiobook-pipeline.md) |
 | Cloudflare Pages, DNS, headers, redirects | [CI & Deploy](@/contributing/dev/ci-deploy.md) |
 
 If you're starting cold, [Local Setup](@/contributing/dev/local-setup.md)
