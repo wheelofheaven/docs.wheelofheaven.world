@@ -227,18 +227,20 @@ Carry `lang` as a metadata field on every chunk and filter at retrieval
 time. The English chunks should always be retrievable as fallback,
 since translations may lag an editorial pass.
 
-The library tree is mirrored under `/v1/{lang}/library/...` for all 9
-languages, but per-paragraph translation coverage is sparse outside the
-Raëlian source family and the `-woh` translation books. Two practical
-implications for embedding pipelines:
+The library tree is mirrored under `/v1/{lang}/library/...` but
+per-language listings are filtered to books with translation coverage
+(see
+[Library and sources → Multilingual library access](@/ai-ingestion/library-and-sources.md)).
+Two practical implications for embedding pipelines:
 
-- Check `metadata.fallback` on each chapter response — when `true`,
-  the paragraph text is the primary language, not the requested one.
-  Decide whether to skip, embed-with-tag, or fold into the English
-  index.
-- The `paragraph.i18n` map is returned in every chapter response, so
-  you can index multiple language variants from a single fetch rather
-  than walking the language mirror N times.
+- Walk each language's `/v1/{lang}/library/books/` listing
+  independently — it'll be short for most languages, and you won't
+  embed phantom entries for books that don't have content in that
+  language.
+- Payloads return the requested-language strings only (the URL
+  carries the language signal). To index multiple language variants
+  of the same book, walk each language prefix in turn rather than
+  expecting a multi-language map in a single response.
 
 ## The pre-built client-side search index
 

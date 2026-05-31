@@ -112,9 +112,10 @@ discipline is in the provenance, not just the text.
 
 ### Multilingual library access
 
-The library tree is mirrored under `/v1/{lang}/library/...` for all 9
-supported languages (de, fr, es, ru, ja, zh, zh-Hant, ko, he), with
-English the unprefixed default:
+The library tree is mirrored under `/v1/{lang}/library/...` for the
+languages that have translation coverage, with English the unprefixed
+default. The URL prefix carries the language — payloads return the
+requested-language strings only, not the parallel i18n maps.
 
 ```bash
 curl https://api.wheelofheaven.world/v1/de/library/books/the-book-which-tells-the-truth/chapters/1
@@ -123,26 +124,41 @@ curl https://api.wheelofheaven.world/v1/ja/library/books/the-book-which-tells-th
 
 Behaviour:
 
-- **Catalog metadata** — `title`, tradition `name` and `description`
-  resolve from the requested language with English fallback. The raw
-  `titles` / `names` / `descriptions` maps are also returned so a
-  client can switch language without a refetch.
-- **Chapter titles** — pulled from `chapter.i18n.{lang}` with English
-  fallback to `chapter.title` (primary-language).
-- **Paragraph text** — pulled from `paragraph.i18n.{lang}` with
-  fallback to `paragraph.text` (primary-language).
-- **`metadata.fallback`** — set to `true` on `Book` and `BookMeta`
-  responses when the requested language is not in the book's
-  `completeLangs`. Lets a client warn the user that they're getting
-  the primary-language text.
-- **`paragraph.i18n`** — the full per-paragraph language map is
-  preserved in the chapter response, so clients can language-switch
-  in-flight without re-fetching.
+- **Per-language listings are filtered to coverage.**
+  `/v1/{lang}/library/books/` only lists books whose catalog
+  `availableLangs` includes `{lang}` — there's no "fallback to English"
+  ghost-listing for books that don't have a translation in the
+  requested language. To see the full corpus, hit `/v1/library/`
+  (English, canonical).
+- **Catalog metadata** — `title`, tradition `name`, and `description`
+  resolve to the requested language with English fallback when the
+  catalog has English-only metadata. The parallel `titles` / `names` /
+  `descriptions` maps are not returned (the URL says what was asked
+  for).
+- **Chapter titles** — pulled from the catalog's chapter-title i18n
+  map with English fallback.
+- **Paragraph text** — pulled from the per-paragraph i18n field with
+  fallback to the chapter's primary-language `text`.
+- **`availableLangs` / `completeLangs`** are kept on book responses
+  so a client knows which other language prefixes are valid.
 
-Coverage is sparse outside the Raëlian source family and the `-woh`
-translation books — biblical and ancient-text books typically have
-`completeLangs: ["en"]` only, so non-English requests return the
-English text with `fallback=true`.
+Coverage today (2026-05):
+
+| Language | Books with translation in the per-language listing |
+|---|---|
+| en (default, `/v1/library/`) | 103 (full corpus) |
+| de | 2 |
+| fr | 4 |
+| es | 2 |
+| ru | 2 |
+| ja | 2 |
+| zh | 2 |
+| ko, zh-Hant, he | 0 (overview + listings still resolve, empty) |
+
+The non-English books are primarily the Raëlian source corpus and the
+`-woh` translation family. The biblical and ancient-text books are
+English-only at the paragraph level, so they only appear in
+`/v1/library/...`.
 
 ### Useful retrieval patterns
 
