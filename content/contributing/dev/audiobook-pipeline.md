@@ -526,6 +526,402 @@ The service worker uses stale-while-revalidate for the bundle. Without
 the `CACHE_VERSION` bump, existing visitors will hold the stale bundle
 for one extra load before picking up the new one.
 
+## Layered roadmap — v1 → v4
+
+The audiobook is delivered in additive layers. Each layer is purely
+optional and falls back gracefully if absent: a missing word array
+falls back to paragraph highlight, a missing ambient track falls back
+to voice-only, and so on. All four layers share the same per-chapter
+MP3 + sidecar + manifest model on the CDN.
+
+| Layer | What | Status |
+|---|---|---|
+| **v1** | Voice-only MP3 + paragraph-level highlight | **shipped** |
+| **v2** | Word-level highlight via `with-timestamps` | designed |
+| **v3** | Per-speaker audio treatment (EQ + reverb) | designed |
+| **v4** | Ambient beds + generated SFX on a second track | designed |
+
+The end-to-end picture once all four layers are built:
+
+```mermaid
+flowchart TB
+    subgraph src["Source"]
+      ch["chapter-N.json<br/>+ scene tags (v4)"]
+      tts["chapter-N.{lang}.json"]
+      lex["lexicon/{lang}.yaml"]
+      vc["voices.yaml"]
+      tr["treatments.yaml (v3)"]
+      sc["scenes.yaml (v4)"]
+    end
+
+    subgraph gen["Generation"]
+      gv["generate_audio.py<br/>(with-timestamps)"]
+      ga["generate_ambient.py (v4)"]
+      api_tts["ElevenLabs<br/>/text-to-speech/with-timestamps"]
+      api_sfx["ElevenLabs<br/>/sound-generation (v4)"]
+    end
+
+    subgraph out["assets / audio / {lang} / {slug} /"]
+      mp3["c{N}.mp3<br/>voice + treatments"]
+      amb["c{N}.ambient.mp3<br/>ambience + SFX"]
+      ts["c{N}.timing.json<br/>paragraphs + words + maps"]
+      man["manifest.json"]
+    end
+
+    ch --> tts --> gv
+    lex --> gv
+    vc --> gv
+    tr --> gv
+    gv --> api_tts --> gv
+    gv --> mp3
+    gv --> ts
+
+    sc --> ga
+    ch --> ga
+    ts --> ga
+    ga --> api_sfx --> ga
+    ga --> amb
+
+    mp3 --> man
+    amb --> man
+    ts --> man
+
+    man --> player[("Bifrost prerecorded engine<br/>2× &lt;audio&gt; sync<br/>paragraph + word highlight")]
+```
+
+## v2 — Word-level highlighting (designed)
+
+The prerecorded engine currently highlights at paragraph granularity.
+v2 adds word-by-word highlight using ElevenLabs' built-in
+character-level alignment.
+
+### Generation change
+
+Switch the API call from `POST /v1/text-to-speech/{voice_id}` to
+`POST /v1/text-to-speech/{voice_id}/with-timestamps`. Response shape:
+
+```json
+{
+  "audio_base64": "...",
+  "alignment": {
+    "characters": ["T", "h", "e", " ", "E", "l", "o", "h", "i", "m", "..."],
+    "character_start_times_seconds": [0.000, 0.045, 0.082, ...],
+    "character_end_times_seconds":   [0.045, 0.082, 0.118, ...]
+  },
+  "normalized_alignment": { "...": "post-SSML character mapping" }
+}
+```
+
+Same per-character billing — no extra cost. Audio is bit-identical to
+the regular endpoint.
+
+`generate_audio.py` decodes `audio_base64` into the MP3 (same as
+today), then walks `characters[]` to build a word array per paragraph:
+a word ends at the first whitespace after a non-whitespace run; its
+`start` is the first non-space char's `start`, its `end` is the last
+non-space char's `end`.
+
+### Sidecar v2 format
+
+```json
+{
+  "paragraphs": [
+    {
+      "n": 1,
+      "speaker": "Narrator",
+      "start": 0.00,
+      "end": 12.34,
+      "words": [
+        {"t": "The",    "s": 0.00, "e": 0.18},
+        {"t": "Elohim", "s": 0.20, "e": 0.74},
+        {"t": "are",    "s": 0.78, "e": 0.96}
+      ]
+    }
+  ]
+}
+```
+
+### Display ↔ audio alignment
+
+Critical detail: the displayed paragraph text and the spoken `tts_text`
+may differ (citations stripped, footnote markers removed, contractions
+expanded for clearer TTS, etc.). Word indices into the two strings
+won't always match 1:1.
+
+The generator runs a longest-common-subsequence alignment between the
+display-text word stream and the tts_text word stream and emits a
+`display_word_map` per paragraph:
+
+```json
+{
+  "display_word_map": [
+    {"d": 0, "a": [0]},
+    {"d": 1, "a": [1]},
+    {"d": 2, "a": []},
+    {"d": 3, "a": [2]},
+    {"d": 4, "a": [3, 4]}
+  ]
+}
+```
+
+`d` = display word index, `a` = list of audio word indices that the
+display word maps to. Empty `a` means the display word isn't spoken
+(e.g. a citation marker). Multiple entries in `a` means one display
+word was expanded into multiple spoken words (e.g. "Yahweh's" →
+"Yahweh is").
+
+When the map is absent (most paragraphs have no normalization
+difference), the player assumes identity mapping (`d == a`).
+
+### Player change
+
+On engine activation, the prerecorded engine walks each
+`.library-book__paragraph` once and wraps each word in
+`<span class="library-book__word" data-w="N">…</span>`. Wrapping uses
+a whitespace split; the original text and inline markup are preserved.
+
+The existing `timeupdate` listener picks the active audio word
+(`time ≥ word.s && time < word.e`) within the current paragraph,
+resolves the matching display word(s) via `display_word_map`, and
+toggles `.library-book__word--reading` on those spans.
+
+Performance: 60 paragraphs × ~50 words = 3,000 spans per chapter. The
+active paragraph's word array (~50 entries) is scanned per
+`timeupdate` fire (~4 fires/sec) — well within budget.
+
+### Storage impact
+
+Sidecar grows from ~10 KB to ~80–120 KB per chapter (paragraph timings
+plus word arrays plus the occasional display map). Negligible on the
+CDN; gzips well.
+
+### Rollout
+
+This is additive: the existing player keeps working when `words` is
+absent. Sequence:
+
+1. Update `generate_audio.py` to call the `with-timestamps` endpoint
+   and emit the v2 sidecar shape.
+2. Wipe `_work/` once (cache keys change because the response shape is
+   now richer; cleanest to re-run from scratch).
+3. Regenerate the corpus. **Same billing**, just new sidecars.
+4. Ship the bifrost player update + bump SW `CACHE_VERSION`.
+
+No URL changes; no manifest schema bump.
+
+## v3 — Per-speaker audio treatment (designed)
+
+Subtle audio post-processing per speaker, applied in ffmpeg as a
+filter chain. Gives each voice a sonic identity beyond just the voice
+ID — Yahweh feels weighty, Raël close, Narrator neutral — without
+relying on ElevenLabs voice variation.
+
+### Treatment definitions
+
+`data-library/audio/treatments.yaml`:
+
+```yaml
+treatments:
+  Narrator:
+    ffmpeg_filter: "equalizer=f=200:t=q:w=1:g=-2"
+  Raël:
+    ffmpeg_filter: "equalizer=f=180:t=q:w=1.5:g=2"
+  Yahweh:
+    ffmpeg_filter: "aecho=0.8:0.88:60:0.4,equalizer=f=120:t=q:w=1:g=3"
+```
+
+Suggested starting filters:
+
+| Speaker | Treatment | Filter |
+|---|---|---|
+| Narrator | Light low-mid cut, neutral | `equalizer=f=200:t=q:w=1:g=-2` |
+| Raël | Close-mic warmth | `equalizer=f=180:t=q:w=1.5:g=2` |
+| Yahweh | Hall reverb + low-end weight | `aecho=0.8:0.88:60:0.4,equalizer=f=120:t=q:w=1:g=3` |
+
+### Where the filter applies
+
+The raw paragraph MP3 returned by ElevenLabs stays pristine in the
+per-paragraph cache. Treatment is applied at the **concat** step:
+ffmpeg loads each cached paragraph, runs the per-speaker filter, then
+concatenates with silence clips into `c{N}.mp3`. A single
+`-filter_complex` chain branches by paragraph index using `[0:a]`,
+`[1:a]`, etc.
+
+### Cache impact
+
+Each speaker's filter string is hashed into the **chapter** cache key
+(not the per-paragraph cache). Editing a filter forces a re-concat of
+affected chapters — but does not re-call the API. Iteration is fast:
+listen, tweak filter, re-run; cycle takes seconds per chapter, zero
+API spend.
+
+### Cost impact
+
+Zero — pure ffmpeg post-processing.
+
+## v4 — Ambient beds + generated SFX (designed)
+
+The richest layer: ambient soundscapes under scenes and short SFX at
+moments. Architectural choice: ambience plays from a **second
+`<audio>` element**, synced to the voice track. This keeps the voice
+MP3 as the canonical artifact, makes ambience user-toggleable, and
+lets us regenerate ambient layers without re-billing TTS.
+
+### Scene tagging
+
+Each paragraph gains an optional `scene` field in the source chapter
+JSON:
+
+```json
+{
+  "n": 12,
+  "speaker": "Yahweh",
+  "scene": "council-chamber",
+  "i18n": { "en": "…", "fr": "…" }
+}
+```
+
+Scenes are sparse — a single paragraph sets the scene, which persists
+until a different `scene` tag appears. No tag anywhere → no ambient
+track is built for that chapter.
+
+### Scene library
+
+`data-library/audio/scenes.yaml` maps scene IDs to their assets:
+
+```yaml
+scenes:
+  council-chamber:
+    ambient_loop: "ambient/council-chamber.flac"
+    gain_db: -12
+    sfx_at_start:
+      - prompt: "soft echoing footsteps on stone, distant low rumble"
+        duration_seconds: 3
+        gain_db: -6
+  eden-garden:
+    ambient_loop: "ambient/forest-birds-distant.flac"
+    gain_db: -14
+    sfx_at_start:
+      - prompt: "gentle breeze through leaves, faint birdsong"
+        duration_seconds: 2
+        gain_db: -8
+  spacecraft-interior:
+    ambient_loop: "ambient/spacecraft-hum.flac"
+    gain_db: -10
+```
+
+`ambient_loop` files are hand-sourced (CC0 from freesound.org or
+similar) and committed under `data-library/audio/ambient/`. SFX clips
+are generated on demand from ElevenLabs:
+
+```
+POST /v1/sound-generation
+{
+  "text": "soft echoing footsteps on stone, distant low rumble",
+  "duration_seconds": 3
+}
+```
+
+Returns an MP3. Results cached by `sha256(prompt + duration)` under
+`data-library/audio/_work/_sfx/`. Cost per clip is ~$0.08 on the Pro
+tier — corpus-wide SFX bill is in the single-dollar range.
+
+### Generation script
+
+```sh
+python3 data-library/scripts/generate_ambient.py \
+    --slug the-book-which-tells-the-truth --lang en --chapter 1
+```
+
+Algorithm:
+
+1. Load the voice `c{N}.timing.json` to learn paragraph start/end
+   times. (Ambient is generated **per language** because timings
+   differ — but ambient files and SFX clips are language-shared.)
+2. Walk paragraphs, tracking the current scene (latest `scene` tag
+   wins; no tag means "no scene right now").
+3. For each contiguous scene span, tile the scene's `ambient_loop`
+   into a track of exactly that span's duration, at `gain_db`, with
+   300 ms crossfades into adjacent spans.
+4. For each scene's `sfx_at_start`, mix the SFX clip in at the scene's
+   first paragraph onset.
+5. Master with `ffmpeg amix` + a loudness normalization pass; output
+   stereo MP3.
+
+Output:
+`assets.wheelofheaven.world/audio/{lang}/{slug}/c{N}.ambient.mp3` —
+same duration as `c{N}.mp3`, sparse where no scene is set.
+
+### Manifest v4 additions
+
+```json
+{
+  "n": 1,
+  "audio_url": "audio/en/the-book-which-tells-the-truth/c1.mp3",
+  "ambient_url": "audio/en/the-book-which-tells-the-truth/c1.ambient.mp3",
+  "timing_url": "audio/en/the-book-which-tells-the-truth/c1.timing.json",
+  "duration_seconds": 687.13,
+  "paragraph_count": 64
+}
+```
+
+`ambient_url` is omitted when there's no ambient track for that
+chapter. Player checks for its presence before constructing the second
+`<audio>` element.
+
+### Player change
+
+Two `<audio>` elements; voice is authoritative:
+
+```js
+const voice   = new Audio(voiceUrl);
+const ambient = ambientUrl ? new Audio(ambientUrl) : null;
+
+voice.addEventListener('play',   () => { if (ambient) { ambient.currentTime = voice.currentTime; ambient.play(); } });
+voice.addEventListener('pause',  () => { ambient?.pause(); });
+voice.addEventListener('seeked', () => { if (ambient) ambient.currentTime = voice.currentTime; });
+
+// Drift correction every 5s while playing
+setInterval(() => {
+  if (ambient && !voice.paused && Math.abs(ambient.currentTime - voice.currentTime) > 0.15) {
+    ambient.currentTime = voice.currentTime;
+  }
+}, 5000);
+```
+
+A toggle in the Listen-button menu — **Immersive mode** — controls
+whether `ambient.play()` ever fires. Off by default; the canonical
+experience is voice-first.
+
+### Storage impact
+
+Per chapter: ~11 MB voice + ~9 MB ambient ≈ 2× storage. Full corpus
+(2 books × 9 languages × ~12 chapters): ~4 GB voice + ~4 GB ambient =
+~8 GB on the CDN. Cloudflare Pages serves all of it with 1-year
+immutable caching.
+
+### Cost impact
+
+| Item | Cost |
+|---|---|
+| Ambient loops (CC0 sourcing) | $0 |
+| SFX generation (~50 unique prompts, one-time) | ~$4 |
+| Voice TTS | unchanged |
+
+### Why a second `<audio>` and not a pre-mixed master
+
+Three reasons:
+
+1. **Toggleable.** Users who want focused listening can keep ambience
+   off; users who want immersion turn it on. A pre-mixed master forces
+   one experience.
+2. **Independent regeneration.** Tweaking an ambient loop or adding a
+   scene re-generates `c{N}.ambient.mp3` only — voice MP3 untouched,
+   no TTS bill.
+3. **CDN caching.** Voice MP3s are essentially permanent once a
+   chapter ships. Ambient tracks may iterate. Separate URLs mean
+   ambient cache-busts on its own.
+
 ## Troubleshooting
 
 | Symptom | Fix |
