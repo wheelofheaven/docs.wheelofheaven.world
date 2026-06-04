@@ -41,7 +41,8 @@ Three repos hold pieces of the pipeline:
 |---|---|
 | [`data-library`](https://github.com/wheelofheaven/data-library) | Source text + TTS sidecars + pronunciation lexicon + voice config + the generation script |
 | [`assets.wheelofheaven.world`](https://github.com/wheelofheaven/assets.wheelofheaven.world) | Final per-chapter MP3s + per-chapter timing sidecars + per-book manifest — served at `https://assets.wheelofheaven.world/audio/…` |
-| [`bifrost`](https://github.com/wheelofheaven/bifrost) (future) | Player updates to consume pre-recorded audio via the manifest |
+| [`bifrost`](https://github.com/wheelofheaven/bifrost) | Listen button's **prerecorded engine** in `static/js/listen-button.js` — fetches the manifest, streams the MP3, drives paragraph highlight from the timing sidecar |
+| [`www.wheelofheaven.world`](https://github.com/wheelofheaven/www.wheelofheaven.world) | Consumes the bifrost bundle via submodule; the service-worker `CACHE_VERSION` in `static/sw.js` must be bumped whenever the bundle changes |
 
 ## What's already in place
 
@@ -97,12 +98,40 @@ The vocabulary is small:
 voices:
   en:
     Narrator:
-      voice_id: "21m00Tcm4TlvDq8ikWAM"   # paste from voice library
+      voice_id: "I1T6PEfqPxl45yKRN4aS"   # Marcel — warm, expressive
     Raël:
-      voice_id: "21m00Tcm4TlvDq8ikWAM"   # can share Narrator's voice
+      voice_id: "I1T6PEfqPxl45yKRN4aS"   # share Marcel; different prosody via defaults
     Yahweh:
-      voice_id: "AZnzlk1XvdvUeBnXmlld"
+      voice_id: "sB7vwSCyX0tQmU24cW2C"   # Jon — relaxed, deep, weightier
 ```
+
+### Voice library: "Add to my voices" gotcha
+
+Voices from the ElevenLabs **voice library** (not the premade voices)
+must be added to your collection before they're accessible via the API.
+A library voice ID in `voices.yaml` will cause `402 Payment Required`
+errors at generation time even on paid plans, until you click
+**Add to my voices** on the voice's library page. Confirm with:
+
+```sh
+curl -s -H "xi-api-key: $ELEVENLABS_API_KEY" \
+    https://api.elevenlabs.io/v1/voices | jq '.voices[].voice_id'
+```
+
+The voice IDs in `voices.yaml` must appear in that list.
+
+### Cross-language voice reuse
+
+`eleven_multilingual_v2` (the default model) supports the same voice
+across 29 languages. For the rollout we deliberately reuse the English
+voices (Marcel + Jon) for all 9 i18n languages — same voice characters,
+different language output. This keeps the character identity consistent
+across translations and skips per-language voice casting entirely.
+
+Override per language only if a specific voice sounds wrong for that
+language; in practice the multilingual model handles French, German,
+Spanish, Russian, Japanese, Korean, and Chinese (both scripts) without
+recasting.
 
 ### Voice settings
 
@@ -223,52 +252,128 @@ pick up the new files and serve them at
 `https://assets.wheelofheaven.world/audio/en/the-book-which-tells-the-truth/c1.mp3`
 with 1-year immutable caching (see `_headers` in that repo).
 
-## Scaling beyond the MVP
+## Full-corpus rollout
 
-After the MVP sounds right:
+After the MVP sounds right, the rollout target is **TBWTT + ETTMTTP
+across all 9 i18n languages** (en, fr, de, es, ru, ja, ko, zh, zh-Hant).
+LWTE is intentionally excluded — its translations don't exist in source,
+only FR + EN do.
+
+### Step 1 — pick a plan tier
+
+Generation cost is the dominant variable. Dry-run totals (all
+2,358,966 chars at $0.30/1k credit price):
+
+| Tier | Monthly cost | Char allowance | Effective $/1M chars | Months to cover corpus |
+|---|---|---|---|---|
+| Starter | $5 | 30k | $166.67 | unusable for batch |
+| Creator | $22 | 100k | $220.00 | 24 months ≈ **$528 total** |
+| Pro | $99 | 500k | $198.00 | 5 months ≈ **$495 total** |
+| Scale | $330 | 2M | $165.00 | 2 months ≈ **$660 total** |
+
+**Recommendation:** **Scale ($330)** for two months. The corpus fits in
+the second month with overhead for re-runs after lexicon tweaks; cancel
+after the work is done. Pro is the alternative if you want to pace the
+work across 5 months.
+
+A naïve creator-tier dry-run estimate (no plan factored in) reports
+**$707.69** at $0.30/1k credit price — that's the published per-credit
+rate, not the plan-adjusted cost. The plan-tier table above reflects the
+real out-of-pocket cost.
+
+### Step 2 — cast voices
+
+For the pragmatic shortcut, leave `voices.yaml` with Marcel + Jon (the
+English MVP voices) and just **copy the English mapping into every
+language's stanza**. `eleven_multilingual_v2` will speak French,
+German, etc. in those voices. Per-language MVP listening (next step)
+will confirm.
+
+### Step 3 — per-language MVP
+
+Before generating the whole book in a new language, generate **just
+chapter 1** and listen end-to-end. Cost is ~$1.50/chapter; the goal is
+to catch pronunciation regressions before paying for the whole book.
 
 ```sh
-# Whole book in one language
 python3 data-library/scripts/generate_audio.py \
-    --slug the-book-which-tells-the-truth --lang en
-
-# Other books
-python3 data-library/scripts/generate_audio.py \
-    --slug extraterrestrials-took-me-to-their-planet --lang en
-
-# Other languages (need voices set in voices.yaml first)
-python3 data-library/scripts/generate_audio.py \
-    --slug the-book-which-tells-the-truth --lang fr
+    --slug the-book-which-tells-the-truth --lang fr --chapter 1
 ```
 
-The cache means re-running these is cheap if nothing changed — only
-new paragraphs get sent to the API.
+If anything sounds wrong, refine `data-library/lexicon/fr.yaml` and
+re-run — only affected paragraphs re-bill.
+
+### Step 4 — generate the full corpus
+
+```sh
+for slug in the-book-which-tells-the-truth extraterrestrials-took-me-to-their-planet; do
+  for lang in en fr de es ru ja ko zh zh-Hant; do
+    python3 data-library/scripts/generate_audio.py --slug "$slug" --lang "$lang"
+  done
+done
+```
+
+Runs sequentially across all chapters per (slug, lang). The cache
+means re-running is cheap — only new or changed paragraphs hit the API.
+
+### Step 5 — publish
+
+```sh
+cd assets.wheelofheaven.world
+git add audio/
+git commit -m "Add TBWTT + ETTMTTP audiobooks across 9 languages"
+git push origin main
+```
+
+Cloudflare Pages picks up the new files; `_headers` already serves
+`/audio/*` with 1-year immutable + `Access-Control-Allow-Origin: *`.
+
+### Step 6 — bump the service-worker cache
+
+The Listen button's prerecorded engine is already wired into bifrost,
+but visitors with a registered service worker will hold the prior
+bundle until `CACHE_VERSION` increments. After any bifrost change
+that touches `listen-button.js`:
+
+```sh
+cd www.wheelofheaven.world
+# edit static/sw.js — bump CACHE_VERSION (e.g. 'v5' → 'v6')
+git add static/sw.js
+git commit -m "Bump SW cache for prerecorded engine update"
+git push origin main
+```
+
+Without this bump, existing visitors will continue to fall back to the
+client-side MMS/Piper engine even though the manifest exists.
 
 ## Cost reference
 
-At ElevenLabs creator tier ($0.30 per 1k characters), the 3-book
-corpus dry-run estimates:
+### Per-chapter (English MVP measurements)
 
-| Book | EN chars | EN cost | FR chars | FR cost |
-|---|---|---|---|---|
-| TBWTT | 168k | $50.44 | 174k | $52.31 |
-| ETTMTTP | 194k | $58.33 | 203k | $60.90 |
-| LWTE | — | — | 264k | $79.16 |
-| **Subtotal (EN + FR)** | **362k** | **$108.77** | **641k** | **$192.37** |
+| Chapter | Chars | API cost (creator-tier credit) |
+|---|---|---|
+| TBWTT ch1 | ~9.6k | **$2.87** (measured) |
+| TBWTT ch2 | ~22.5k | $6.75 |
+| TBWTT ch3 | ~53.9k | $16.17 (largest chapter) |
 
-Full 3-book × 9-language run is roughly **$1300–1800** at creator-tier
-pricing. ElevenLabs has higher tiers (Pro, Scale) with cheaper per-
-character pricing; check the current pricing page when budgeting.
+### Whole-book dry runs
 
-A single chapter is much cheaper:
+| Book | Chars | Credit cost @ $0.30/1k |
+|---|---|---|
+| TBWTT (EN) | 168k | $50.44 |
+| TBWTT (FR) | 174k | $52.31 |
+| ETTMTTP (EN) | 194k | $58.33 |
+| ETTMTTP (FR) | 203k | $60.90 |
 
-| Chapter | Cost (EN) |
-|---|---|
-| TBWTT ch1 | $2.87 |
-| TBWTT ch2 | $6.75 |
-| TBWTT ch3 | $16.17 (the largest) |
+### Full corpus (2 books × 9 languages)
 
-The MVP is essentially free.
+- **2,358,966 characters total**
+- **$707.69 at $0.30/1k credit price**
+- **~$660 actual** on the Scale plan (2 months × $330)
+- **~$495 actual** on the Pro plan (5 months × $99)
+
+See the [full-corpus rollout](#full-corpus-rollout) section above for
+the plan-tier strategy.
 
 ## Storage layout
 
@@ -335,10 +440,12 @@ paragraph; remove the highlight at `end`.
 }
 ```
 
-The player can check the manifest on page load to decide: does
+The bifrost prerecorded engine checks the manifest on page load: does
 pre-recorded audio exist for this book and language? If yes, use it +
 the timing sidecar for paragraph highlight. If no, fall back to the
-client-side TTS engine in `listen-button.js`.
+client-side TTS engine in `listen-button.js`. See
+[Player integration (live)](#player-integration-live) below for the
+full handoff.
 
 ## Caching mechanics — what gets regenerated when
 
@@ -359,23 +466,65 @@ The chapter MP3 + timing sidecar always get regenerated on each run
 (concatenation is fast and deterministic). The expensive part — API
 calls — only happens for cache-miss paragraphs.
 
-## Player integration (planned, not yet wired)
+## Player integration (live)
 
-The current Listen button in
+The Listen button in
 [`bifrost/static/js/listen-button.js`](https://github.com/wheelofheaven/bifrost/blob/main/static/js/listen-button.js)
-uses client-side TTS (MMS-TTS via transformers.js, Piper for Chinese,
-System voice fallback). The audiobook integration will:
+has a **prerecorded engine** that runs ahead of the client-side TTS
+engines. Engine priority on the library reader:
 
-1. On Listen-button click, fetch the per-book manifest at
+1. **Prerecorded** — `<audio>` element streams the chapter MP3 from
+   `https://assets.wheelofheaven.world/audio/{lang}/{slug}/c{N}.mp3`;
+   paragraph highlight driven by the timing sidecar.
+2. **Studio** — MMS-TTS via transformers.js (Piper for Chinese).
+3. **System** — `window.speechSynthesis` fallback.
+
+The engine selects automatically. On Listen click:
+
+1. `detectBookContext(unitList)` reads `data-book-slug` from the
+   enclosing `.library-book` element and extracts the chapter number
+   from the `c{ch}p{n}` unit IDs.
+2. `fetchManifest(slug, lang)` (module-scope cached) probes
    `https://assets.wheelofheaven.world/audio/{lang}/{slug}/manifest.json`.
-2. If the manifest exists and includes the current chapter: stream
-   the MP3 + load the timing sidecar; highlight paragraphs by
-   `[start, end]` against `audio.currentTime`.
-3. If the manifest is missing or the chapter isn't listed: fall back
-   to the current client-side engine.
+   The language code is derived via `audioLangCode({family, tag})` so
+   `zh-Hant` keeps its full tag and other variants fall back to family.
+3. If the manifest exists **and** includes the current chapter,
+   `createPrerecordedEngine()` fetches the timing sidecar and
+   constructs an HTML5 `<audio>` element pointing at the MP3.
+4. A `timeupdate` listener crosses `audio.currentTime` against each
+   paragraph's `[start, end]` and toggles
+   `.library-book__paragraph--reading` on the matching element —
+   the same class the studio engine uses.
+5. If the probe fails (no manifest, no chapter, network error), the
+   engine falls through to studio/system silently.
 
-Same controls, two backends, graceful degradation. Implementing this
-is a future task; the audio generation and CDN setup are independent.
+The CDN base is configurable: `window.WOH_ASSETS_BASE` overrides the
+default `https://assets.wheelofheaven.world` for staging/local testing.
+
+### Bundle + cache invalidation
+
+The reader loads `/js/dist/core.bundle.js`, built by
+`bifrost/scripts/bundle.js` from the `listen-button.js` source. After
+any change to the prerecorded engine:
+
+```sh
+cd bifrost
+node scripts/bundle.js                                  # rebuilds the bundle
+git add static/js/dist/core.bundle.js static/js/listen-button.js
+git commit -m "Update prerecorded engine"
+git push origin main
+
+cd ../www.wheelofheaven.world
+git submodule update --remote themes/bifrost            # bump submodule SHA
+# also edit static/sw.js — bump CACHE_VERSION
+git add themes/bifrost static/sw.js
+git commit -m "Bump bifrost + SW cache for prerecorded engine"
+git push origin main
+```
+
+The service worker uses stale-while-revalidate for the bundle. Without
+the `CACHE_VERSION` bump, existing visitors will hold the stale bundle
+for one extra load before picking up the new one.
 
 ## Troubleshooting
 
@@ -385,11 +534,14 @@ is a future task; the audio generation and CDN setup are independent.
 | `Symbol not found: _XML_SetAllocTrackerActivationThreshold` | Python 3.13/3.14 libexpat mismatch on macOS. Use system Python (`/usr/bin/python3`) or `pyenv` with an older version. |
 | `ELEVENLABS_API_KEY env var not set` | `export ELEVENLABS_API_KEY="sk_..."` from the dashboard. Or use `--dry-run` to skip API calls. |
 | `No voice_id set for ('Speaker', 'lang')` | Pick a voice from the library and set the `voice_id` in `data-library/audio/voices.yaml`. Dry-run works without this. |
+| `ElevenLabs API 402 Payment Required` | Two causes: (a) you're on the free tier — upgrade to Starter or higher; (b) the voice is a library voice that isn't in **your** collection yet — open it at `https://elevenlabs.io/app/voice-library?voiceId=<id>` and click **Add to my voices**. Confirm with `curl -H "xi-api-key: $ELEVENLABS_API_KEY" https://api.elevenlabs.io/v1/voices`. |
 | `ElevenLabs API 429` | Rate limited. The script auto-retries with exponential backoff. If repeated, throttle by running smaller batches (one chapter at a time). |
 | `ffmpeg: command not found` | `brew install ffmpeg`. Required for paragraph concatenation and duration measurement. |
 | Voice sounds wrong on a specific name | Add or refine the entry in `data-library/lexicon/{lang}.yaml`. Re-run — only affected paragraphs re-generate. |
 | Audio cuts off mid-paragraph | Paragraph too long for the API. Split it via the paragraph split tooling (see [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md)). |
 | Per-paragraph cache grew huge | `_work/` is gitignored; safe to `rm -rf data-library/audio/_work/` to reclaim space. Next run will re-fetch what it needs. |
+| Listen button says "Loading studio voice…" when a prerecorded chapter exists | Stale service worker is holding the old `core.bundle.js`. Bump `CACHE_VERSION` in `www.wheelofheaven.world/static/sw.js` and redeploy. For local dev, unregister the SW in DevTools → Application → Service Workers. |
+| Prerecorded engine never activates even with manifest present | Check the browser console for the manifest fetch URL — must match `https://assets.wheelofheaven.world/audio/{lang}/{slug}/manifest.json`. Verify `data-book-slug` is set on the enclosing `.library-book` element and that paragraph IDs follow the `c{ch}p{n}` pattern. |
 
 ## Related
 
