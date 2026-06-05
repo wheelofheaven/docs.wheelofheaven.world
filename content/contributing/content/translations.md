@@ -56,7 +56,190 @@ Every translation file:
   `description`)
 - Inherits its `template` from the English source
 
-## Workflow
+## Two ways to translate: automated fan-out vs. manual
+
+Two paths produce the same output. Pick by section and by how many
+target languages you need at once.
+
+| Path | When to use | How |
+|---|---|---|
+| **Automated fan-out** (recommended for `/timeline/`) | Translating a `/timeline/` chapter into one or many target languages in one go. Pipeline applies the glossary, preserves shortcodes, runs a reviewer pass. | `/woh-fanout` skill |
+| **Manual workflow** | Any other section (`/wiki/`, `/articles/`, `/news/`), or single-file touch-ups where the pipeline overhead doesn't pay. | Copy + edit + validate, described below |
+
+The automated fan-out is **timeline-only at present** because the
+timeline chapters' shortcode density and structural complexity make
+mechanical preservation rules worth automating. The pipeline will
+extend to other sections as it earns confidence; until then, follow
+the manual workflow for those.
+
+## Automated fan-out pipeline (timeline)
+
+The `woh-fanout` skill orchestrates a translator + reviewer pass per
+target language for one timeline chapter.
+
+### Pipeline shape
+
+```
+English source (content/timeline/{slug}.md)
+        │
+        ▼
+   ┌──────────────────┐         ┌──────────────────┐
+   │ woh-fan-translator│ ──draft─▶│ woh-fan-reviewer │ ──verdict─▶ ready / flagged
+   └──────────────────┘         └──────────────────┘
+        ▲                              ▲
+        │                              │
+    one per target lang            independent (does not see
+    (de, es, fr, …)                translator's narrative)
+```
+
+Per target language:
+
+1. **`woh-fan-translator`** reads the English source, the
+   [glossary](#the-glossary), and the
+   [per-language conventions](#per-language-notes); writes the
+   target-language file at `content/{lang}/timeline/{slug}.md`.
+   Returns a structured summary including any
+   `missing_glossary_terms`.
+2. **`woh-fan-reviewer`** reads source + translation independently
+   and runs structural checks (see
+   [shortcode preservation](#shortcode-preservation-rules) and
+   [frontmatter rules](#frontmatter-what-to-translate-what-to-preserve)),
+   applies mechanical fixes via Edit, surfaces substantive flags
+   for human judgement.
+3. The skill reports per-language outcomes and rolls up
+   missing-glossary terms across languages for the human to triage.
+
+### Invoking
+
+```
+/woh-fanout
+```
+
+Then specify the source chapter and target languages. The skill
+asks for what it needs:
+
+- **Source chapter** — e.g. `timeline/age-of-aries.md`.
+- **Target languages** — one (`de`), a subset (`de,fr,ja`), or
+  `all` (= all nine non-English site languages).
+- **Stale-replacement policy** — most existing `/timeline/`
+  translations are pre-2026-05 and will be cleanly overwritten;
+  the skill flags any target that's on the current editorial pass
+  and asks before overwriting.
+
+### Pre-flight requirements on the English source
+
+The fan-out skill **refuses to start** if the source has any of
+these issues — they're cheap to fix once in English and expensive
+to clean up after distribution across 9 languages:
+
+1. **Raw internal markdown links.** `[Moses](/wiki/moses/)` or
+   `[Genesis 1:1](/library/genesis-woh/#c1p1)` hard-point at the
+   English path from every translated chapter. Convert to
+   [`wiki`](@/components/shortcodes/wiki.md) and
+   [`libref`](@/components/shortcodes/libref.md) shortcodes
+   first.
+2. **Malformed frontmatter** (closing `+++` glued to the previous
+   line without a newline). Zola tolerates it; downstream tooling
+   does not. Fix in English first.
+3. **Shortcode calls with corrupted args** (e.g. `[Elohim](/wiki/elohim/)`
+   embedded in a `scripture(translit="…")` arg, which renders as
+   literal markdown). Fix in English first.
+
+### When the pipeline is the wrong tool
+
+- Non-timeline content (see Manual workflow below).
+- Source-text translations (Hebrew → English, etc.) — those use the
+  separate
+  [WoH Translation Program](@/contributing/content/source-text-translation/_index.md).
+- Single-file touch-ups to an already-translated file — use
+  `woh-fan-reviewer` directly with a narrow scope, or edit by hand.
+
+## Shortcode preservation rules
+
+Every Tera shortcode in the source must appear in the translation
+with **identical argument values**. Only the visible body text of
+paired-tag shortcodes is translated. The reviewer pass (and any
+human reviewer) will diff shortcode calls between source and
+translation; a mismatch on args is a hard fail.
+
+| Shortcode | Translate | Preserve verbatim |
+|---|---|---|
+| `{%/* wiki(slug="elohim") */%}Elohim{%/* end */%}` | the body label | `slug="elohim"` |
+| `{%/* libref(book="zephaniah", chapter=1, verse=10) */%}Zephaniah 1:10{%/* end */%}` | the body label (book name + ref localised) | `book="zephaniah", chapter=1, verse=10` |
+| `{%/* library(book="genesis-woh", chapter=1, verse=1) */%}…{%/* end */%}` | the quoted body | `book="genesis-woh", chapter=1, verse=1` |
+| `{{/* scripture(book="exodus", chapter=3, verse=2, english="…", translit="…", hebrew="…") */}}` | `english=` arg only | `book=`, `chapter=`, `verse=`, `translit=`, `hebrew=` |
+| `{{/* figure(src="…", alt="…", caption="…") */}}` | `alt=` and `caption=` (incl. the `Ill. N -` prefix → `Abb./Илл./图…` per locale) | `src=` |
+| `{{/* footnote(id="2") */}}` | nothing | the whole call |
+| `{{/* cite(id="3") */}}` | nothing | the whole call |
+
+The common failure mode is translating a `book="..."` or `slug="..."`
+arg because the value *looks* like English. These are path
+identifiers, not prose — never touch them.
+
+Hebrew script and italic transliterations are also preserved verbatim
+across all target languages. Only the English gloss in quotes (e.g.
+`*na'aseh*, "let us make"` → translate `"let us make"`, leave the
+Hebrew and the *na'aseh* alone) gets localised.
+
+## Frontmatter: what to translate, what to preserve
+
+| Field | Action |
+|---|---|
+| `title` | translate |
+| `description` | translate |
+| `[extra].summary` | translate |
+| `[extra].footnotes[].content` | translate prose; rewrite any inline markdown link `[label](/wiki/foo/)` as `[label](/{lang}/wiki/foo/)` (shortcodes don't work inside TOML strings) |
+| `[extra].references[].title` | translate display title; keep original-language book title in parens where appropriate |
+| `[extra].references[].description` | translate |
+| `[extra].references[].path` | preserve as English (`/library/...`); library translations route automatically through Zola |
+| `template` | preserve verbatim |
+| `weight`, `sort_by` | preserve verbatim |
+| `[extra].claim_type`, `editorial_pass`, `start_year`, `end_year`, `zodiac_sign`, `symbol` | preserve verbatim |
+| `aliases` | **drop entirely** — aliases are URL-level redirects from the source page's old English path; the translated page never had that old URL, and keeping the alias causes a path collision with the English page |
+
+The reviewer diffs the preserve-verbatim fields byte-for-byte. Any
+drift is a mechanical fix.
+
+## TOML quote-escape gotcha
+
+When you render a target-language closing curly-quote inside a TOML
+frontmatter string — most commonly the `description` field — the
+**closing curly-quote must be its proper Unicode codepoint**, not an
+ASCII `"`. ASCII `"` inside a TOML string delimited by `"` terminates
+the string prematurely and Zola fails to parse the file.
+
+| Language | Opening | Closing curly-quote codepoint |
+|---|---|---|
+| de | `„` U+201E | `"` **U+201C** (not ASCII `"`) |
+| fr | `«` U+00AB | `»` U+00BB |
+| zh / zh-Hant / ja | `「` U+300C | `」` U+300D |
+| he | `»` U+00BB (opens — reversed) | `«` U+00AB |
+| ru | `«` U+00AB | `»` U+00BB |
+
+The fix is to use the correct Unicode codepoint for the closing
+curly-quote. A safer alternative for `description` is to escape
+internal ASCII `"` with `\"`, or to use a TOML literal string
+(single-quoted) when the content contains internal quote-marks.
+
+## Markdown links inside TOML frontmatter strings
+
+Shortcodes don't work inside TOML — they only execute in markdown
+body. So when a markdown link appears inside `extra.footnotes[].content`
+(or any frontmatter string rendered through the markdown filter), the
+translator and reviewer must hand-prefix the path with the target
+language code:
+
+| English source | German | Japanese |
+|---|---|---|
+| `[Satan](/wiki/satan/)` | `[Satan](/de/wiki/satan/)` | `[サタン](/ja/wiki/satan/)` |
+| `[Genesis](/library/genesis-woh/)` | `[Genesis](/de/library/genesis-woh/)` | `[創世記](/ja/library/genesis-woh/)` |
+
+Inside the body (not frontmatter), the expectation is that the
+source has already converted these to `wiki` / `libref`
+shortcodes during pre-flight, so this rule applies only to
+frontmatter survivors.
+
+## Manual workflow (non-timeline content)
 
 ### 1. Find what needs translating
 
