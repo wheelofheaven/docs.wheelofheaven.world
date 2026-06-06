@@ -41,7 +41,7 @@ summary = "Genesis contains specific, peculiar details — sequence of creation,
 category = "Hermeneutics"
 keywords = ["Genesis", "Elohim hypothesis", "parsimony", "hermeneutics"]
 references = [
-    { title = "Intelligent Design", author = "Raël", date = "2005" },
+    { id = "the-book-which-tells-the-truth", locator = "Chapter 1" },
     { title = "Genesis 1–11: From Creation to Babel", author = "Gordon Wenham", date = "1987" },
     { title = "The Anchor Bible: Genesis", author = "Speiser", date = "1964" },
     { title = "The Combat Myth in the Hebrew Bible", author = "Day", date = "1985" },
@@ -107,7 +107,7 @@ unmotivated literary devices...
 | `summary` | string | 2–4 sentence TL;DR, displayed prominently and used by AI extraction |
 | `category` | string | One of: Hermeneutics, Comparative, Method, History, Critique |
 | `keywords` | string[] | 3–5 keywords for SEO |
-| `references` | object[] | Sources — six-source minimum, see [wiki-entry sourcing](@/contributing/content/wiki-entry.md) |
+| `references` | object[] | Sources — six-source minimum. Prefer stable `data/sources.json` IDs when available; legacy title/url records remain valid. See [wiki-entry sourcing](@/contributing/content/wiki-entry.md). |
 | `image` | string | Optional header image path |
 
 ## Structure
@@ -167,6 +167,8 @@ Rashi{{/* cite(id="1", text="[1]", title="Rashi commentary on Genesis 1:26") */}
 
 The reference list at the bottom of the page is rendered automatically
 from the `references` array in frontmatter.
+If a source already exists in `data/sources.json`, use its stable `id` and add
+page-specific `note` or `locator` fields as needed.
 
 ## Linking out
 

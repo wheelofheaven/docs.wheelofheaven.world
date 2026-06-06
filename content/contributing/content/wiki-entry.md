@@ -33,8 +33,8 @@ external_links = [
     { title = "Elohim — Wikipedia", url = "https://en.wikipedia.org/wiki/Elohim" }
 ]
 references = [
-    { title = "Intelligent Design", author = "Raël", date = "2005", url = "..." },
-    { title = "Hebrew–English Lexicon", author = "Brown, Driver, Briggs", date = "1907" }
+    { id = "the-book-which-tells-the-truth", locator = "Chapter 1" },
+    { id = "a-hebrew-and-english-lexicon-of-the-old-testament" }
 ]
 +++
 
@@ -82,7 +82,7 @@ Mesopotamian texts describe similar collective creator-figures...
 | `alternative_names` | string[] | Other names this entry is known by — searched and surfaced |
 | `see_also` | object[] | Internal links to closely-related wiki entries |
 | `external_links` | object[] | Outbound references (Wikipedia, papers, etc.) |
-| `references` | object[] | Sources cited in the body |
+| `references` | object[] | Sources cited in the body. Prefer stable `data/sources.json` IDs: `{ id = "sefaria", note = "...", locator = "Genesis 1:26" }`. Legacy title/url records remain valid while new source records are being added. |
 
 ## Structure
 

@@ -97,7 +97,7 @@ The available taxonomies are configured in `config.toml` (currently
 | `alternative_names` | string[] | Other names this entry is known by. Searchable. |
 | `see_also` | object[] | Related wiki entries. Format: `{ title = "Yahweh", path = "/wiki/yahweh/" }` |
 | `external_links` | object[] | Outbound references. Format: `{ title = "Wikipedia", url = "https://..." }` |
-| `references` | object[] | Sources cited in the body. Format: `{ title = "...", author = "...", date = "...", url = "..." }` |
+| `references` | object[] | Sources cited in the body. Prefer stable source IDs: `{ id = "sefaria", note = "..." }`. Legacy title/url records remain valid: `{ title = "...", author = "...", date = "...", url = "..." }`. |
 
 ### Timeline — `[extra]` additions
 
@@ -107,6 +107,7 @@ The available taxonomies are configured in `config.toml` (currently
 | `end_year` | string | End of the precessional age (e.g. `"4105"`) |
 | `zodiac_sign` | string | Lowercase zodiac slug (e.g. `"aquarius"`) |
 | `symbol` | string | Unicode glyph (e.g. `"♒"`) |
+| `references` | object[] | External sources cited by the chapter. Prefer stable source IDs when the source exists in `data/sources.json`; legacy title/url records remain valid. Rendered after the chapter body and aggregated into `/sources/`. Use ordinary Markdown links in the body for hosted `/wiki/` and `/library/` material. |
 
 ### Library book — `[extra]` additions
 
@@ -124,6 +125,39 @@ For the section `_index.md` only (individual books come from
 
 (See universal fields above; Articles primarily use `summary`,
 `claim_type`, `category`, `keywords`, `references`.)
+
+### Reference objects
+
+Use stable source IDs whenever the cited source already exists in
+`data/sources.json`.
+The site resolves the visible title, author/date metadata, and source URL
+from that manifest.
+
+```toml
+[[extra.references]]
+id = "sefaria"
+note = "Primary digital access point for Hebrew Bible and Jewish source traditions."
+locator = "Genesis 1:26"
+```
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | Stable `data/sources.json` source ID. Validated by `mise run check` in the website repo. |
+| `note` | string | Optional page-specific explanation of why this source is cited here. |
+| `locator` | string | Optional page, chapter, passage, section, or other local citation locator. |
+
+Legacy records can still be used for sources that do not yet exist in the
+manifest.
+They are aggregated by the source builder and can later be converted to stable
+IDs.
+
+```toml
+[[extra.references]]
+title = "Hamlet's Mill"
+author = "Giorgio de Santillana and Hertha von Dechend"
+date = "1969"
+url = "https://wheelofheaven.github.io/de-santillana-von-dechend-hamlets-mill/"
+```
 
 ### Newsroom Dispatch — `[extra]` additions
 
@@ -252,8 +286,8 @@ external_links = [
     { title = "Elohim — Wikipedia", url = "https://en.wikipedia.org/wiki/Elohim" }
 ]
 references = [
-    { title = "Intelligent Design", author = "Raël", date = "2005" },
-    { title = "Hebrew–English Lexicon", author = "Brown, Driver, Briggs", date = "1907" }
+    { id = "the-book-which-tells-the-truth", locator = "Chapter 1" },
+    { id = "a-hebrew-and-english-lexicon-of-the-old-testament" }
 ]
 +++
 ```
@@ -274,6 +308,9 @@ start_year = "1945"
 end_year = "4105"
 zodiac_sign = "aquarius"
 symbol = "♒"
+references = [
+    { title = "Hamlet's Mill", author = "Giorgio de Santillana and Hertha von Dechend", date = "1969", url = "https://wheelofheaven.github.io/de-santillana-von-dechend-hamlets-mill/" }
+]
 +++
 ```
 
@@ -293,7 +330,7 @@ summary = "Genesis contains specific, peculiar details — sequence of creation,
 category = "Hermeneutics"
 keywords = ["Genesis", "Elohim hypothesis", "parsimony", "hermeneutics"]
 references = [
-    { title = "Intelligent Design", author = "Raël", date = "2005" }
+    { id = "the-book-which-tells-the-truth", locator = "Chapter 1" }
 ]
 +++
 ```
