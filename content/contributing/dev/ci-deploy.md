@@ -295,6 +295,37 @@ Use the curl-download method in the build command.
 Zola builds are lightweight; rarely an issue. Contact Cloudflare support
 if persistent.
 
+#### "Pages only supports files up to 25 MiB in size"
+
+Cloudflare Pages rejects any individual file over **25 MiB** during
+the validate-assets step. The whole deploy fails — none of the
+push's files ship, regardless of how many were under the cap.
+Symptom: every push to a repo with one oversized file silently
+fails CF Pages while CDN keeps serving the last successful build,
+and `curl` shows stale content even after manual cache purges. The
+2026-06-07 audiobook v2/v2.5/v3/v4 rollouts hit this — `c3.mp3` at
+51 MiB blocked the assets repo for hours before the dashboard build
+log surfaced the cap error.
+
+Verify the cap locally before pushing audio (or any large binaries):
+
+```sh
+find audio -type f -size +25M -exec ls -lh {} \;
+```
+
+Fixes when a file exceeds the cap:
+
+| Asset class | Fix |
+|---|---|
+| Audio MP3 fallback for an Opus-shipping chapter | Drop the MP3, keep Opus only. Modern browsers all support Opus; ~2% legacy-browser visitors lose audio for that chapter. The bifrost manifest writer (`generate_audio.py update_book_manifest`) drops MP3 from `formats[]` and falls `audio_url` back to Opus when the .mp3 file is absent. |
+| Audio MP3 that needs to stay (legacy fallback required) | Re-encode at lower bitrate. 80 kbps mono fits ~26 min, 56 kbps mono fits ~37 min, both with audible quality loss on voice. |
+| Image / data | Split into chunks, compress harder, or move to a non-Pages CDN (R2, separate origin). |
+
+There's no plan-level setting to raise the 25 MiB cap on CF Pages
+— the limit is platform-wide. See
+[`audiobook-pipeline.md`](@/contributing/dev/audiobook-pipeline.md#bundle-cache-invalidation)
+for the audio-specific workflow.
+
 #### "Pages only supports up to 20,000 files in a deployment"
 
 Cloudflare Pages caps every deployment at 20,000 files, across all
