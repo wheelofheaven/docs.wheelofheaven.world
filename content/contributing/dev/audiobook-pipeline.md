@@ -667,13 +667,15 @@ so future-you recognises them:
 The audiobook is delivered in additive layers. Each layer is purely
 optional and falls back gracefully if absent: a missing word array
 falls back to paragraph highlight, a missing ambient track falls back
-to voice-only, and so on. All four layers share the same per-chapter
-MP3 + sidecar + manifest model on the CDN.
+to voice-only, and so on. All shipped layers share the same per-chapter
+MP3 + sidecar + manifest model on the CDN; designed layers extend that
+model without breaking compatibility.
 
 | Layer | What | Status |
 |---|---|---|
 | **v1** | Voice-only MP3 + paragraph-level highlight | **shipped** |
 | **v2** | Word-level highlight via `with-timestamps` | **shipped** (2026-06-07, TBWTT EN) |
+| **v2.5** | Opus re-encode for 50–65% bandwidth/storage savings | designed |
 | **v3** | Per-speaker audio treatment (EQ + reverb) | designed |
 | **v4** | Ambient beds + generated SFX on a second track | designed |
 
@@ -920,6 +922,175 @@ This is the sequence that shipped TBWTT EN:
    the v1 timing sidecar from cache forever.
 7. **Commit + push** the three repos: `bifrost`, `assets`,
    `www`. Three deploys fire in parallel.
+
+## v2.5 — Opus re-encode (designed)
+
+Chapter MP3s are currently delivered at 128 kbps mono. Voice content
+fits comfortably into Opus at **32–48 kbps mono** with quality at or
+above MP3 128 — Opus was literally designed for low-bitrate speech.
+The shift halves storage and bandwidth across the corpus without
+any quality loss perceptible on a voice-only stream, removes the
+GitHub 50 MB warning on large chapters (TBWTT c3 is currently
+52 MB), and improves mobile playback on data-constrained connections.
+
+This is a pure encoding-layer change — no API spend, no shape
+changes to the timing sidecars or manifest, and the player only
+needs a tiny adjustment to prefer `.opus` when present.
+
+### Why we ship MP3 today (path dependence)
+
+`generate_audio.py` posts to ElevenLabs with `Accept: audio/mpeg`
+and receives MP3 bytes. The script never explicitly picked MP3 —
+it's the API default. `ffmpeg -c copy` then concatenates per-chapter
+MP3s without re-encode, which is fast and bit-exact. We've shipped
+v1 and v2 on that pipeline.
+
+ElevenLabs **does not return Opus or AAC natively** — its supported
+output formats are MP3 (several bitrates), uncompressed PCM, and
+µ-law. So the codec change happens locally, not at the API.
+
+### Two transcoding paths
+
+| Path | Trade-off |
+|---|---|
+| **A. PCM from API → Opus locally** | No transcoding quality loss (Opus encodes from lossless PCM). Costs ~10× more API bandwidth (PCM is uncompressed) but **no extra credit billing** — character cost is independent of output format. Requires a fresh corpus regeneration. |
+| **B. Existing MP3 → Opus locally** | Tiny double-compression quality loss (imperceptible for voice at the target bitrates). No re-billing, no fresh generation — re-encodes whatever's already in `assets.wheelofheaven.world/audio/`. Best path for the already-shipped TBWTT EN. |
+
+Both produce the same player-facing artifact. Recommend **path B**
+for any already-generated content (TBWTT EN today, more languages
+later) and **path A** going forward for new books generated after
+v2.5 lands — switches the API call to PCM, encodes once, no
+generation loss.
+
+### Container choice
+
+Three reasonable options:
+
+| Container | Extension | Notes |
+|---|---|---|
+| Raw Opus | `.opus` | Simplest. Smallest header overhead. Native browser playback in Chrome/Firefox/Edge/Safari 14.1+ via `<audio>`. |
+| Opus in WebM | `.webm` | Better seekability for very long files. Same browser support. |
+| Opus in OGG | `.ogg` | Pre-2020 spec; works but `.opus` is the modern preferred form. |
+
+Recommend `.opus` — simplest, smallest, current.
+
+### Pipeline change
+
+A new script, `data-library/scripts/transcode_audio.py`:
+
+```python
+# Walks assets.wheelofheaven.world/audio/**/*.mp3 and emits
+# c{N}.opus alongside each c{N}.mp3 (idempotent: skips if .opus
+# is newer than .mp3).
+subprocess.run([
+    'ffmpeg', '-y', '-i', str(mp3_path),
+    '-c:a', 'libopus',
+    '-b:a', '40k',          # 40 kbps mono — voice sweet spot
+    '-application', 'voip', # speech-tuned mode (better quality at low bitrate)
+    '-ac', '1',             # force mono
+    '-vbr', 'on',           # variable bitrate for natural speech rhythm
+    str(opus_path),
+])
+```
+
+Decision points to verify on first run:
+
+- **Bitrate**: 32 kbps is the floor for clean speech; 40–48 kbps
+  has more head-room for the mild reverbs in v3. Listen-test before
+  committing the corpus.
+- **`-application voip` vs `audio`**: `voip` is optimised for
+  speech at low bitrates; `audio` is general-purpose. For our
+  voice-only content, `voip` wins; once v4 layers ambient beds
+  underneath, `audio` may be needed there (but the voice track
+  stays `voip`).
+- **VBR on**: matches Opus's design intent. CBR is wasteful for
+  speech (silences encode to nearly nothing).
+
+### Manifest + player changes
+
+Manifest gains an optional `formats` array per chapter, listing
+the available codecs in preference order:
+
+```json
+{
+  "chapters": [
+    {
+      "n": 1,
+      "audio_url": "audio/en/the-book-which-tells-the-truth/c1.mp3",
+      "timing_url": "audio/en/the-book-which-tells-the-truth/c1.timing.json",
+      "duration_seconds": 687.551,
+      "paragraph_count": 64,
+      "formats": [
+        {"type": "audio/ogg; codecs=opus",
+         "url": "audio/en/the-book-which-tells-the-truth/c1.opus"},
+        {"type": "audio/mpeg",
+         "url": "audio/en/the-book-which-tells-the-truth/c1.mp3"}
+      ]
+    }
+  ]
+}
+```
+
+The bifrost prerecorded engine, instead of `new Audio(audioUrl)`,
+emits a `<source>` element per format and lets the browser pick:
+
+```js
+const audioEl = document.createElement('audio');
+audioEl.preload = 'auto';
+if (chapEntry.formats) {
+  for (const f of chapEntry.formats) {
+    const s = document.createElement('source');
+    s.src = `${ASSETS_BASE}/${f.url}`;
+    s.type = f.type;
+    audioEl.appendChild(s);
+  }
+} else {
+  audioEl.src = `${ASSETS_BASE}/${chapEntry.audio_url}`;
+}
+```
+
+Old manifests (no `formats`) keep using the single `audio_url` field —
+fully backward-compatible. Old players (no `formats` handling) read
+`audio_url` and get MP3 as today.
+
+### Word-timing alignment
+
+The `start`/`end` times in `c{N}.timing.json` reference seconds in the
+audio timeline. Re-encoding (MP3 → Opus) preserves the timeline
+exactly — same content, same duration, same paragraph and word
+boundaries. The sidecars don't need regeneration. Validate on the
+first chapter by spot-checking that word highlights still land
+correctly on the Opus track.
+
+### Storage impact
+
+| Asset | MP3 128 kbps | Opus 40 kbps |
+|---|---|---|
+| TBWTT EN c3 (the big one) | 52 MB | ~18 MB |
+| TBWTT EN whole book | 167 MB | ~55 MB |
+| Full corpus (2 books × 9 langs, projected) | ~660 MB | ~220 MB |
+
+Plus the GitHub 50 MB warning on c3 goes away.
+
+### Rollout
+
+1. Write `transcode_audio.py` (~30 lines).
+2. Run it against `assets.wheelofheaven.world/audio/en/the-book-which-tells-the-truth/`
+   — produces 7 `.opus` files alongside the existing MP3s.
+3. Listen-check one chapter — verify quality and word-timing alignment.
+4. Update `generate_audio.py` to emit both `mp3` and `opus` entries
+   in `formats[]` when writing the manifest.
+5. Update bifrost prerecorded engine to use `<source>` elements
+   from `formats[]` (with `audio_url` fallback).
+6. Commit + push the new sidecars + bundle update.
+7. Cache-bust per the [Bundle + cache invalidation](#bundle-cache-invalidation)
+   section. Opus files at new URLs — no purge needed for them.
+
+MP3s stay alongside Opus as a fallback for any browser that doesn't
+support Opus playback (effectively nobody on a modern browser, but
+the cost of keeping them is just storage). If storage pressure
+becomes real, MP3s can be deleted in a separate cleanup pass after
+some weeks of telemetry confirms Opus is the universally-used path.
 
 ## v3 — Per-speaker audio treatment (designed)
 
