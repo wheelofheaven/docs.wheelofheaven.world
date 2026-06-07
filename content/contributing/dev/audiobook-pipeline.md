@@ -581,6 +581,13 @@ also rebuilt in step 1 — CF Pages serves from the checked-in dist/.
 > become unnecessary — CF Pages will rebuild on every push, matching
 > the GitHub Actions deploy path.
 
+After the four-step push above, in most cases you also need a
+**manual Cloudflare cache purge** on the www and assets zones — CF
+edge cache doesn't auto-invalidate for stable-URL assets when their
+bytes change. See [CI & Deploy → Manual cache purge after deploy](@/contributing/dev/ci-deploy.md#manual-cache-purge-after-deploy)
+for the full checklist (which URLs need purging, when it's
+unnecessary, and the rough shape of the future automation).
+
 #### Why each bump matters
 
 | Layer | Without the bump… |

@@ -99,6 +99,95 @@ flowchart LR
 2. Cloudflare clones the repository (with submodules)
 3. Build command executes
 4. Output deployed globally to the edge network
+5. **Manual cache purge may be required** (see next section)
+
+## Manual cache purge after deploy
+
+CF Pages auto-purges its edge cache on deploy **only for HTML pages**
+(`networkFirst`-style — fetched fresh on next request). Static assets
+served with long `max-age` headers from `_headers` (CSS, JS, audio,
+JSON sidecars) are **not** auto-purged. If the asset URL is unchanged
+but the bytes are new, edge keeps serving the old bytes until TTL
+expires (7 days for `/js/*`, 1 year for `/audio/*` with `immutable`).
+
+The 2026-06-07 audiobook v2 + v2.5 rollouts both hit this — even
+after deploys succeeded, visitors got old JS and old timing JSON
+until a manual CF dashboard purge. Skip the checklist below at your
+peril.
+
+### When to purge
+
+| Changed file | URL stable? | Auto-busted? | Manual purge needed? |
+|---|---|---|---|
+| Any HTML page | Yes | Yes (CF Pages network-first) | No |
+| `main.css` | No (`?v=<sha>` from `inline-critical`) | Yes (URL changes) | No |
+| `core.bundle.js` | Yes (URL `?v=N` is hand-bumped in `scripts.html`) | Partial (bumping `?v=N` busts CF Pages' per-key cache, but edge tier-2 can still hold stale; bumping doesn't reach existing cached visitors either) | **Yes** — purge the bundle URL plus prior `?v=N` variants |
+| `sw.js` | Yes | Yes (CF Pages honors the `no-cache` header from `_headers`) | No |
+| `audio/**/c{N}.mp3` (new bytes, same path) | Yes | No (1-year immutable cache) | **Yes** if URL is reused (re-render). New rollouts at new URLs are fine. |
+| `audio/**/c{N}.opus` (new file) | New URL | Yes (URL never cached before) | No |
+| `audio/**/c{N}.timing.json` (new shape) | Yes | No (also 1-year immutable in `_headers`) | **Yes** |
+| `audio/**/manifest.json` | Yes | No | **Yes** |
+
+### Post-deploy checklist
+
+After any push that ships new bytes to a previously-existing URL, in
+the Cloudflare dashboard:
+
+**For `www.wheelofheaven.world` zone** (any change touching bifrost
+bundled JS):
+
+- Caching → Configuration → Purge Cache → Custom Purge → enter:
+  - `https://www.wheelofheaven.world/js/dist/core.bundle.js`
+  - `https://www.wheelofheaven.world/js/dist/core.bundle.js?v=N` (each prior version still in active circulation)
+
+Or just **Purge Everything** for the www zone — blunt but fast, and
+the rest is HTML which auto-refreshes anyway.
+
+**For `assets.wheelofheaven.world` zone** (any change to audio or
+sidecars at a stable URL):
+
+- Caching → Configuration → Purge Cache → Custom Purge → enter:
+  - The `manifest.json` for the affected book/language
+  - Each `c{N}.timing.json` whose bytes changed
+  - Each `c{N}.mp3` whose bytes changed (rare — re-rendering only)
+
+Or **Purge Everything** for the assets zone.
+
+After the purges, verify with a fresh-bust curl that the new bytes
+are live:
+
+```sh
+curl -sI "https://www.wheelofheaven.world/js/dist/core.bundle.js?bust=$(uuidgen)" \
+  | grep content-length
+curl -s "https://assets.wheelofheaven.world/audio/en/the-book-which-tells-the-truth/c1.timing.json?bust=$(uuidgen)" \
+  | python3 -c "import json,sys;t=json.load(sys.stdin);print('p1 has words:', 'words' in t['paragraphs'][0])"
+```
+
+If content-length still matches the previous build, the purge didn't
+land — try again, or verify you purged the right zone.
+
+### Why this isn't automated yet
+
+The Cloudflare API supports purge-by-URL via:
+
+```sh
+curl -X POST "https://api.cloudflare.com/client/v4/zones/{ZONE_ID}/purge_cache" \
+  -H "Authorization: Bearer $CF_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"files":["https://www.wheelofheaven.world/js/dist/core.bundle.js"]}'
+```
+
+The right home for this is a GitHub Actions step that fires after a
+successful `peaceiris/actions-gh-pages` step (or after the CF Pages
+deploy webhook reports success). Two prerequisites before adding it:
+
+1. Mint a scoped CF API token (zone-level cache-purge only) and add
+   it to repo secrets as `CF_CACHE_PURGE_TOKEN`.
+2. Discover and store the zone IDs for `www.wheelofheaven.world` and
+   `assets.wheelofheaven.world` as workflow env vars or secrets.
+
+Until that lands, every deploy that ships new-bytes-to-stable-URL
+needs the manual purge above.
 
 ## Submodule support
 
