@@ -544,9 +544,46 @@ git push origin main
 
 | Layer | Without the bump… |
 |---|---|
-| `core.bundle.js?v=N` querystring | Cloudflare's edge cache (`max-age=604800`, 7 days) keeps serving the old bundle bytes under the unchanged URL. The CI build does rebuild `dist/core.bundle.js` and the gh-pages branch does ship the new content — but the CDN never asks the origin because the URL is unchanged. Visitors get old JS for up to 7 days. |
+| `core.bundle.js?v=N` querystring | Cloudflare's edge cache (`max-age=604800`, 7 days) keeps serving the old bundle bytes under the unchanged URL. CF Pages caches each `?v=N` value as a **distinct** entry, so bumping the number forces a MISS on the new URL and an origin fetch. (Caveat — the origin chain matters; see below.) |
 | `sw.js` `CACHE_VERSION` | The service worker uses `cacheFirst` for everything on `assets.wheelofheaven.world` (manifest, timing JSON, MP3). On `cacheFirst` the SW returns cached bytes **without revalidating** — so any CDN content the visitor fetched before the change is sticky forever, until cache namespaces change. Bumping `CACHE_VERSION` renames the cache (`woh-images-v6` → `woh-images-v7`) and the old one gets deleted on SW activation; new fetches then hit the network. |
 | Bifrost submodule pointer in www | `www` pins a specific bifrost SHA. Without bumping the pointer, the next www build still pulls the old bifrost commit and the source change never reaches production. |
+
+#### The origin-chain caveat
+
+The www site is **two CDN layers deep**: the gh-pages branch is the
+git origin → GitHub Pages serves it (with Fastly in front, ~10-minute
+asset cache) → Cloudflare proxies the custom domain (7-day edge
+cache, configured via `static/_headers`).
+
+When the bundle URL changes via `?v=N`:
+
+1. Cloudflare gets the request, sees a new cache key, MISSes.
+2. CF fetches from origin (GitHub Pages via Fastly).
+3. **If Fastly is still serving the old bundle bytes** (gh-pages
+   branch was updated < 10 min ago), CF caches those old bytes
+   under the new URL for 7 days.
+4. The cache-bust **didn't actually bust** — it just renamed the
+   cache key for the stale content.
+
+Practical implication: bump `?v=N` **after** the gh-pages deploy
+has had time to propagate through Fastly (or do the bump in a
+follow-up commit ~15 min after the initial deploy).
+
+Verify before declaring victory:
+
+```sh
+# What gh-pages serves:
+git show origin/gh-pages:js/dist/core.bundle.js | wc -c
+# What CF edge serves to a fresh URL (forces MISS):
+curl -sI "https://www.wheelofheaven.world/js/dist/core.bundle.js?bust=$(uuidgen)" | grep -i content-length
+```
+
+If these don't match, Fastly hasn't refreshed yet — wait, then bump
+the `?v=N` again so CF caches the fresh response under the new key.
+
+For an emergency override (e.g. shipping a critical fix), use a
+Cloudflare cache purge via the dashboard or API instead of waiting
+on Fastly + a `?v=N` bump.
 
 #### Things that don't need a bump
 

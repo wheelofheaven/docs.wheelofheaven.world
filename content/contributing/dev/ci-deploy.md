@@ -210,10 +210,12 @@ honest), see
 
 #### Stale `core.bundle.js` after a deploy that touched `bifrost`
 
-Cloudflare's edge caches `/js/dist/core.bundle.js` with
-`max-age=604800` (7 days) keyed by the **URL string**, not by content
-hash. If the bundle bytes change but the request URL doesn't, CF
-keeps serving the old bytes from edge until the TTL expires.
+The www site is two CDN layers deep — **gh-pages branch →
+GitHub Pages (Fastly, ~10-min asset cache) → Cloudflare (7-day
+edge cache from `static/_headers`) → user**. Both layers cache
+JS bundles, both layers key on URL string (not content hash),
+and both layers ignore the gh-pages branch update until their
+own TTL expires.
 
 The bundle is loaded via
 `bifrost/templates/partials/scripts.html`:
@@ -224,21 +226,29 @@ The bundle is loaded via
 
 When bundled JS source changes (`listen-button.js`,
 `reader-fab.js`, etc.), bump the `?v=N` querystring in
-`scripts.html` so CF sees a new URL and refetches from origin.
+`scripts.html` — CF Pages caches each `?v=N` as a distinct key,
+so the bump forces a MISS on the new URL. **But** if Fastly is
+still serving the previous bundle when CF MISSes (i.e. the bump
+went out within ~10 min of the original deploy), CF will cache
+the stale bytes under the new URL for 7 more days. So bump
+`?v=N` either with the deploy (and then again ~15 min later if
+verification fails) or in a separate follow-up commit.
 
-Verify a deploy is actually live with content-comparison, not just a
-deploy-succeeded log line:
+Verify the deploy is actually live with content-comparison, not
+just a deploy-succeeded log line:
 
 ```sh
 # what gh-pages shipped:
 git show origin/gh-pages:js/dist/core.bundle.js | wc -c
 
-# what CF edge is serving:
-curl -sI https://www.wheelofheaven.world/js/dist/core.bundle.js | grep content-length
+# what CF edge is serving (forces MISS to bypass any existing cache):
+curl -sI "https://www.wheelofheaven.world/js/dist/core.bundle.js?bust=$(uuidgen)" | grep -i content-length
 ```
 
-If those differ, the `?v=N` bump was missed. Full deploy-gotcha
-table for the audiobook stack:
+If these don't match, Fastly hasn't refreshed. Wait, then bump
+`?v=N` again so CF caches the fresh response. For an emergency
+override (critical fix), purge via the Cloudflare dashboard or
+API instead. Full deploy-gotcha table for the audiobook stack:
 [Audiobook Pipeline → Bundle + cache invalidation](@/contributing/dev/audiobook-pipeline.md#bundle-cache-invalidation).
 
 #### Stale CDN asset for visitors with a service worker
