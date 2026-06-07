@@ -683,7 +683,7 @@ model without breaking compatibility.
 | **v1** | Voice-only MP3 + paragraph-level highlight | **shipped** |
 | **v2** | Word-level highlight via `with-timestamps` | **shipped** (2026-06-07, TBWTT EN) |
 | **v2.5** | Opus re-encode for ~70% bandwidth/storage savings | **shipped** (2026-06-07, TBWTT EN) |
-| **v3** | Per-speaker audio treatment (EQ + reverb) | designed |
+| **v3** | Per-speaker audio treatment (EQ + reverb) | **shipped** (2026-06-07, TBWTT EN) |
 | **v4** | Ambient beds + generated SFX on a second track | designed |
 
 The end-to-end picture once all four layers are built:
@@ -1116,7 +1116,47 @@ the cost of keeping them is just storage). If storage pressure
 becomes real, MP3s can be deleted in a separate cleanup pass after
 some weeks of telemetry confirms Opus is the universally-used path.
 
-## v3 — Per-speaker audio treatment (designed)
+## v3 — Per-speaker audio treatment (shipped 2026-06-07)
+
+Shipped state: TBWTT EN all 7 chapters re-concatenated through the
+v3 pipeline. Narrator clean, Raël warm + close, Yahweh spacious with
+a light hall. No API spend — pure ffmpeg post-processing on the
+v2-cached paragraphs. ~50 MB Opus total (unchanged from v2.5),
+chapter durations drift +10..+100 ms from `c{N}.timing.json` (below
+word-highlight perceptual threshold so word arrays remain valid).
+
+Other books and languages still ship voice-dry — they'll pick up
+v3 on their next regeneration with `treatments.yaml` in place.
+
+### Implementation notes worth recording
+
+Two non-obvious things came up that the original design didn't call
+out:
+
+1. **Duration preservation** — the Yahweh `aecho` filter extends the
+   audio with a decay tail. To keep `c{N}.timing.json` word arrays
+   valid without regeneration, every treatment is wrapped with
+   `apad,atrim,asetpts` to lock output duration to input duration
+   within ~10 ms. EQ-only chains see no audible change; reverb
+   chains get the tail trimmed (which is musically correct — the
+   tail should bleed into the next paragraph's silence, not extend
+   the paragraph's boundary).
+
+2. **Concat re-encode required** — `ffmpeg -f concat -c copy` of
+   libmp3lame-encoded files **preserves each file's encoder delay
+   padding** (~100 ms of silence at every boundary). Across 64
+   paragraphs that's 6+ seconds of drift between
+   `sum(individual_durations)` and `concat_output_duration`. Fix:
+   `ffmpeg_concat` takes a `reencode` flag that's auto-flipped on
+   when any treated speaker is in the chapter; the chapter then
+   re-encodes through libmp3lame as a single stream, re-stitching
+   frames without honoring per-file padding. Adds a few seconds to
+   chapter assembly, eliminates the drift.
+
+The rest of this section is the original design, which landed
+essentially unchanged.
+
+### Original design notes
 
 Subtle audio post-processing per speaker, applied in ffmpeg as a
 filter chain. Gives each voice a sonic identity beyond just the voice
