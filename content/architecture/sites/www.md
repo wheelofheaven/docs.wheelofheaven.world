@@ -69,6 +69,17 @@ System-aware default, manual toggle in navbar, persisted in localStorage.
 Paragraph-level navigation, keyboard shortcuts (j/k/n/p), bookmarks and
 highlights, reading progress tracking, font size preferences.
 
+### Version provenance
+
+Library book pages surface a provenance panel so readers can inspect the
+version/source context that backs the text they are reading.
+
+### Wiki references
+
+Wiki citations resolve against stable source IDs from
+`data/sources.json`. Unknown IDs fail the build before deploy, so the
+rendered reference list and the inline citation markers stay aligned.
+
 ### PWA support
 
 Offline page, installable, service worker caching.

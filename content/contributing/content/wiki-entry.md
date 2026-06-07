@@ -82,7 +82,18 @@ Mesopotamian texts describe similar collective creator-figures...
 | `alternative_names` | string[] | Other names this entry is known by — searched and surfaced |
 | `see_also` | object[] | Internal links to closely-related wiki entries |
 | `external_links` | object[] | Outbound references (Wikipedia, papers, etc.) |
-| `references` | object[] | Sources cited in the body. Prefer stable `data/sources.json` IDs: `{ id = "sefaria", note = "...", locator = "Genesis 1:26" }`. Legacy title/url records remain valid while new source records are being added. |
+| `references` | object[] | Sources cited in the body. Prefer stable `data/sources.json` IDs: `{ id = "sefaria", note = "...", locator = "Genesis 1:26" }`. The `cite` shortcode uses the same ID so the inline marker lands on the correct reference. Legacy title/url records remain valid while new source records are being added. |
+
+## Reference anchors
+
+On wiki pages, the visible citation marker and the reference list entry
+share the same identifier. That means a citation written as
+`cite(id="sefaria")` lands on the entry rendered from
+`[[extra.references]]` with `id = "sefaria"`.
+
+Use stable source IDs whenever the source already exists in
+`data/sources.json`. If a source has not been registered yet, keep using a
+legacy title/url record for the time being and convert it later.
 
 ## Structure
 

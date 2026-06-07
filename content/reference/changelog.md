@@ -8,6 +8,23 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-06 — Provenance panel and source-ID citation rollout
+
+Two linked releases landed on the reading site.
+
+First, library book pages gained a visible version provenance panel so
+readers can inspect which source text/version a page is tied to before
+they rely on it. The shared theme and docs theme were updated together so
+the component reads consistently across `www` and `docs`.
+
+Second, wiki references moved onto stable source IDs as the canonical
+citation key. `extra.references` now accepts `id = "<source-id>"`, the
+`cite` shortcode lands on the matching `#ref-<source-id>` anchor, and the
+site build validates those IDs against `data/sources.json` before deploy.
+A small pilot backfill seeded the new contract in
+`reference-corpus-of-the-raelian-canon.md`, and the docs here were updated
+to make the ID-based form the default guidance.
+
 ## 2026-05 — Search Console / hreflang fix
 
 First Google Search Console audit of `www.wheelofheaven.world`,

@@ -97,7 +97,7 @@ The available taxonomies are configured in `config.toml` (currently
 | `alternative_names` | string[] | Other names this entry is known by. Searchable. |
 | `see_also` | object[] | Related wiki entries. Format: `{ title = "Yahweh", path = "/wiki/yahweh/" }` |
 | `external_links` | object[] | Outbound references. Format: `{ title = "Wikipedia", url = "https://..." }` |
-| `references` | object[] | Sources cited in the body. Prefer stable source IDs: `{ id = "sefaria", note = "..." }`. Legacy title/url records remain valid: `{ title = "...", author = "...", date = "...", url = "..." }`. |
+| `references` | object[] | Sources cited in the body. Prefer stable source IDs: `{ id = "sefaria", note = "..." }`. The wiki template and `cite` shortcode use the same ID to keep the inline marker and reference list aligned. Legacy title/url records remain valid: `{ title = "...", author = "...", date = "...", url = "..." }`. |
 
 ### Timeline — `[extra]` additions
 
@@ -132,6 +132,8 @@ Use stable source IDs whenever the cited source already exists in
 `data/sources.json`.
 The site resolves the visible title, author/date metadata, and source URL
 from that manifest.
+The same ID is what body citations use via `cite(id="...")` on wiki pages,
+so the inline marker and the reference entry stay in sync.
 
 ```toml
 [[extra.references]]
@@ -142,9 +144,13 @@ locator = "Genesis 1:26"
 
 | Field | Type | Notes |
 |---|---|---|
-| `id` | string | Stable `data/sources.json` source ID. Validated by `mise run check` in the website repo. |
+| `id` | string | Stable `data/sources.json` source ID. Validated by `mise run build` in the website repo. |
 | `note` | string | Optional page-specific explanation of why this source is cited here. |
 | `locator` | string | Optional page, chapter, passage, section, or other local citation locator. |
+
+Unknown IDs fail the website build before deploy. That keeps the content
+manifest, the rendered reference list, and the citation anchors on the page
+in lockstep.
 
 Legacy records can still be used for sources that do not yet exist in the
 manifest.
