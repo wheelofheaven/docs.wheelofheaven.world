@@ -23,17 +23,41 @@ Cloudflare-side view: projects, domains, headers.
 ### www.wheelofheaven.world
 
 Since Cloudflare doesn't ship Zola pre-installed, we download it at
-build time:
+build time. We also need to rebuild the Bifrost JS bundle here —
+without it, CF Pages serves a stale `dist/core.bundle.js` from
+whatever was last committed to the bifrost submodule (see
+[Bundle gotcha](#bundle-rebuild-on-cf-pages) below).
 
 **Build command:**
 
 ```sh
-curl -sL https://github.com/getzola/zola/releases/download/v0.22.0/zola-v0.22.0-x86_64-unknown-linux-gnu.tar.gz -o zola.tar.gz && tar xzf zola.tar.gz && ./zola build
+curl -sL https://github.com/getzola/zola/releases/download/v0.22.0/zola-v0.22.0-x86_64-unknown-linux-gnu.tar.gz -o zola.tar.gz && tar xzf zola.tar.gz && cd themes/bifrost && npm ci && npm run bundle && cd ../.. && ./zola build
 ```
 
 **Build output directory:** `public`
 
 **Environment variables:** none required (Zola reads `config.toml`).
+
+#### Bundle rebuild on CF Pages
+
+There are two parallel deploy paths for `www`:
+
+| Path | Origin | Bundle step |
+|---|---|---|
+| GitHub Actions (`gh-pages` branch) | Repo, with submodules | Runs `npm run bundle` before `zola build` |
+| Cloudflare Pages (production fronting `www.wheelofheaven.world`) | Repo, with submodules | Historically: **no bundle step** |
+
+The "no bundle step" history caused a real production bug on
+2026-06-07: the audiobook v2 word-highlight code shipped to
+`bifrost/static/js/listen-button.js`, GitHub Actions rebuilt the
+bundle and pushed it to `gh-pages` correctly — but Cloudflare Pages
+(which actually serves `www.wheelofheaven.world`) ran only
+`zola build`, served the previous `dist/core.bundle.js` from the
+bifrost submodule, and visitors got no word highlight. The fix:
+either commit the rebuilt `dist/core.bundle.js` to bifrost in every
+bundle-source change, **or** update the CF Pages build command above
+to include the bundle step. The build command shown above is the
+"fixed" form — once configured, CF Pages rebuilds on every push.
 
 ### api.wheelofheaven.world
 

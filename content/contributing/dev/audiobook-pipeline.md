@@ -508,21 +508,45 @@ it loads `/js/dist/core.bundle.js`, an esbuild-minified bundle that
 concatenates `listen-button.js` together with `navbar.js`,
 `reader-fab.js`, `pwa.js`, etc. (see `bundles['core.bundle.js']` in
 `bifrost/scripts/bundle.js`). Editing `listen-button.js` alone is not
-enough — the bundle must rebuild, the bundle URL must change so
-Cloudflare's edge cache refetches, and the service worker's caches
-must invalidate so visitors with a registered SW pick up the new
-bytes. **All three things must happen** or visitors will keep getting
-the previous build.
+enough — the bundle must be rebuilt and the bundle bytes must reach
+the live CDN. Two parallel deploy paths matter here, and they handle
+the bundle rebuild differently:
 
-The three repos involved:
+- **GitHub Actions** (`.github/workflows/deploy.yml`) runs
+  `npm run bundle` before `zola build` and pushes the result to
+  `gh-pages`. So `gh-pages` always has a freshly-built bundle from
+  the current source.
+- **Cloudflare Pages** (the project that actually fronts
+  `www.wheelofheaven.world`) runs only `./zola build` — **no
+  bundle step**. So CF Pages serves whatever `dist/core.bundle.js`
+  is checked into the bifrost submodule at the time of build.
+
+Until CF Pages' build command is updated to include the bundle step,
+**the rebuilt `dist/core.bundle.js` must be committed to bifrost**
+or CF Pages will silently ship the previous build's bundle even when
+the source files (`listen-button.js`, etc.) reach the submodule.
+
+Symptom of this gotcha (observed 2026-06-07): `gh-pages` branch ships
+the new bundle (verified with `git show origin/gh-pages:js/dist/core.bundle.js | wc -c`),
+but `curl -sI https://www.wheelofheaven.world/js/dist/core.bundle.js`
+returns the old `content-length` and no amount of `?v=N`
+cache-busting helps — because CF Pages' origin **is** the old
+bundle, not gh-pages.
+
+The full update flow that actually ships changes to production:
+
+The four steps that actually ship a bundle change to production:
 
 ```sh
-# 1. bifrost — source changes + bundle URL bump
+# 1. bifrost — source changes + REBUILT bundle + URL bump
 cd bifrost
 # edit static/js/listen-button.js (and any other source files)
 # edit templates/partials/scripts.html — bump core.bundle.js?v=N → ?v=N+1
-git add static/js/listen-button.js templates/partials/scripts.html
-git commit -m "listen-button: <change> + bump core.bundle.js cache to vN+1"
+npm ci && npm run bundle                             # CRITICAL — rebuild dist/
+git add static/js/listen-button.js \
+        static/js/dist/core.bundle.js \
+        templates/partials/scripts.html
+git commit -m "listen-button: <change> + rebuilt bundle + ?v=N+1"
 git push origin main
 
 # 2. www — bifrost pointer + SW cache version bump
@@ -538,7 +562,24 @@ cd ../assets.wheelofheaven.world
 git add audio/
 git commit -m "<feature>: new audio + sidecars"
 git push origin main
+
+# 4. Cloudflare cache purge (if visitors might have stale entries)
+# Manual: CF dashboard → www zone → Caching → Purge → Purge Everything
+# (or surgical purge of /js/dist/core.bundle.js + the affected /audio/...)
 ```
+
+The first three steps are git-only; the fourth is a Cloudflare
+dashboard action. None of `?v=N` bumps, SW `CACHE_VERSION` bumps, or
+submodule pointer bumps will help if `dist/core.bundle.js` wasn't
+also rebuilt in step 1 — CF Pages serves from the checked-in dist/.
+
+> **Permanent fix**: update the CF Pages build command for the www
+> project to include the bundle step:
+> `cd themes/bifrost && npm ci && npm run bundle && cd ../.. && ./zola build`
+> (prepend the existing zola download). After that, step 1's
+> `npm run bundle` and the `git add static/js/dist/core.bundle.js`
+> become unnecessary — CF Pages will rebuild on every push, matching
+> the GitHub Actions deploy path.
 
 #### Why each bump matters
 
