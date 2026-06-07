@@ -675,7 +675,7 @@ model without breaking compatibility.
 |---|---|---|
 | **v1** | Voice-only MP3 + paragraph-level highlight | **shipped** |
 | **v2** | Word-level highlight via `with-timestamps` | **shipped** (2026-06-07, TBWTT EN) |
-| **v2.5** | Opus re-encode for 50–65% bandwidth/storage savings | designed |
+| **v2.5** | Opus re-encode for ~70% bandwidth/storage savings | **shipped** (2026-06-07, TBWTT EN) |
 | **v3** | Per-speaker audio treatment (EQ + reverb) | designed |
 | **v4** | Ambient beds + generated SFX on a second track | designed |
 
@@ -923,7 +923,24 @@ This is the sequence that shipped TBWTT EN:
 7. **Commit + push** the three repos: `bifrost`, `assets`,
    `www`. Three deploys fire in parallel.
 
-## v2.5 — Opus re-encode (designed)
+## v2.5 — Opus re-encode (shipped 2026-06-07)
+
+Shipped state: TBWTT EN ships both `.opus` (Opus 40 kbps mono VBR,
+voip mode) and `.mp3` (legacy fallback) alongside each chapter. The
+prerecorded engine prefers Opus via `<source>` selection. Storage
+dropped **70%** — 166.7 MB → 50.0 MB for the 7-chapter book. c3's
+GitHub 50 MB warning is gone (52 MB → 16 MB).
+
+Other books and languages still ship MP3-only — they'll pick up
+Opus on a single pass with `transcode_audio.py` (no API spend).
+
+### Original design notes
+
+The rest of this section captures the design and rollout sketch
+that landed essentially unchanged. The single empirical correction
+worth flagging: in practice the Opus encode hit **70% savings, not
+the 50–65% projected** — speech at 40 kbps is very compressible
+once silences are squeezed.
 
 Chapter MP3s are currently delivered at 128 kbps mono. Voice content
 fits comfortably into Opus at **32–48 kbps mono** with quality at or
