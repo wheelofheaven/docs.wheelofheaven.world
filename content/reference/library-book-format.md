@@ -49,6 +49,81 @@ data-library/
 }
 ```
 
+## Version provenance metadata
+
+Books may include a structured `version` object in `_meta.json`. This
+describes the edition or translation being displayed, separately from the
+work title. The public API exposes this object, and the website renders a
+sidebar provenance panel when it is present.
+
+```json
+{
+  "versionTitles": {
+    "en": "Wheel of Heaven Translation"
+  },
+  "shortVersionTitles": {
+    "en": "WoH, 2026"
+  },
+  "version": {
+    "schemaVersion": 1,
+    "title": "Wheel of Heaven Translation",
+    "shortTitle": "WoH, 2026",
+    "type": "curated-translation",
+    "language": "en",
+    "sourceLanguage": "arc",
+    "refSystem": "chapter-verse",
+    "scope": "1 Enoch 1-36 and 72-82",
+    "license": {
+      "status": "project-cc0",
+      "spdx": "CC0-1.0",
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    "provenance": {
+      "sourceRecordId": "book-of-enoch",
+      "baseText": "Layered Aramaic, Greek, and Ge'ez witness reconstruction",
+      "method": "Best-effort reconstruction with per-verse layered witness attribution.",
+      "citation": "See sourceCitation for bibliography.",
+      "witnesses": [
+        {
+          "role": "primary",
+          "language": "arc",
+          "label": "Aramaic Dead Sea Scrolls fragments"
+        },
+        {
+          "role": "secondary",
+          "language": "grc",
+          "label": "Greek Akhmim Panopolitanus witness where extant"
+        }
+      ]
+    },
+    "responsibility": {
+      "translator": "Wheel of Heaven",
+      "reviewer": "zarazinsfuss"
+    }
+  },
+  "sourceCitation": "Milik, J. T., The Books of Enoch..."
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `version.schemaVersion` | number | Version-provenance schema revision. Current value is `1`. |
+| `version.title` | string | Human-readable edition or translation title. |
+| `version.shortTitle` | string | Compact label for chips and dense UI. |
+| `version.type` | string | Edition class, such as `translation` or `curated-translation`. |
+| `version.language` | string | BCP-47 language code for the rendered version. |
+| `version.sourceLanguage` | string | BCP-47 language code for the source language or primary source witness. |
+| `version.refSystem` | string | Reference system used by the record, such as `chapter-verse`. |
+| `version.scope` | string | Coverage statement for partial or staged editions. |
+| `version.license` | object | License metadata. Prefer SPDX identifiers when available. |
+| `version.provenance.sourceRecordId` | string | Library slug for the source or base record when one exists. |
+| `version.provenance.sourceUrl` | string | External source URL when there is no internal source record, or when the record needs an upstream issue/source link. |
+| `version.provenance.baseText` | string | Source text, critical edition, or witness stack used as the base. |
+| `version.provenance.method` | string | Concise statement of how the version was produced. |
+| `version.provenance.citation` | string | Short citation note. Long bibliography belongs in top-level `sourceCitation`. |
+| `version.provenance.witnesses` | array | Ordered witness list for layered reconstructions. |
+| `version.responsibility` | object | Translator, editor, reviewer, or other responsibility labels. |
+
 ## Chapter format (`chapter-N.json`)
 
 ```json
