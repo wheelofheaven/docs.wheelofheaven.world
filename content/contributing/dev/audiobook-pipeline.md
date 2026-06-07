@@ -684,7 +684,7 @@ model without breaking compatibility.
 | **v2** | Word-level highlight via `with-timestamps` | **shipped** (2026-06-07, TBWTT EN) |
 | **v2.5** | Opus re-encode for ~70% bandwidth/storage savings | **shipped** (2026-06-07, TBWTT EN) |
 | **v3** | Per-speaker audio treatment (EQ + reverb) | **shipped** (2026-06-07, TBWTT EN) |
-| **v4** | Ambient beds + generated SFX on a second track | designed |
+| **v4** | Ambient beds + generated SFX on a second track | **shipped** (2026-06-07, TBWTT EN, ambient-only) |
 
 The end-to-end picture once all four layers are built:
 
@@ -1206,7 +1206,58 @@ API spend.
 
 Zero — pure ffmpeg post-processing.
 
-## v4 — Ambient beds + generated SFX (designed)
+## v4 — Ambient beds + generated SFX (shipped 2026-06-07)
+
+Shipped state: **MVP** — TBWTT EN ships one scene (`elohim-vessel`)
+playing under every Yahweh paragraph, sourced as a 30-second ambient
+bed generated once via ElevenLabs `/v1/sound-generation` ($0.08, then
+cached and tiled across the chapter). Player constructs a second
+`<audio>` element and syncs it to the voice track via
+play/pause/seek + 5-second drift correction. **Immersive Mode on by
+default** (opt-out via `localStorage.setItem('woh:listen:immersive', '0')`)
+— first-class UI toggle in the audio player bar is the obvious next
+step but doesn't ship in this MVP.
+
+Not yet shipped from the original v4 spec:
+- **SFX at scene start** — `sfx_at_start` field in `scenes.yaml` is
+  defined but the generator doesn't emit one-shot SFX clips yet.
+  Adding it is a 30-line change to `generate_ambient.py`: same
+  cache+API pattern as the bed, mixed into the per-span FLAC via
+  `amix` at the span's `start` offset before concat.
+- **More scenes** — only `elohim-vessel` is defined. Adding scenes
+  (`eden-garden`, `council-chamber`, `desert-mountain`, …) is
+  editorial work: pick the scene, write the prompt, define the gain,
+  add the scene tag to relevant paragraphs in the chapter JSONs.
+- **Immersive toggle UI** — currently localStorage-only.
+- **Other books/languages** — TBWTT EN only.
+
+### Implementation notes worth recording
+
+Two non-obvious things came up that the original design didn't call
+out:
+
+1. **Sample-format pinning on intermediate FLACs.** The per-span FLAC
+   pieces (silence gaps + tiled beds) must explicitly set
+   `-sample_fmt s16`. Without it, ffmpeg's FLAC encoder picks
+   different bit-depths per piece depending on its input source, and
+   the final concat fails with `switching bps mid-stream is not
+   supported` (FLAC frames in a single stream must share bit-depth).
+   The bed comes from MP3 (24-bit float internally), the silence
+   from `lavfi anullsrc` (different default), so without explicit
+   `s16` they mismatch.
+
+2. **Drift correction interval = 5 s, threshold = 150 ms.** The
+   ambient track is a separate `<audio>` element with its own
+   playback clock — over a 56-minute chapter (TBWTT c3) the clocks
+   can drift 200–500 ms. Snapping every 5 s with a 150 ms threshold
+   keeps sync without audible jumps (a small `currentTime` jump on
+   a continuous low hum is inaudible; would be obvious on a clip
+   with transients).
+
+The rest of this section is the original design, which landed
+essentially unchanged.
+
+### Original design notes
 
 The richest layer: ambient soundscapes under scenes and short SFX at
 moments. Architectural choice: ambience plays from a **second
