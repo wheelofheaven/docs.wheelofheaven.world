@@ -503,28 +503,86 @@ default `https://assets.wheelofheaven.world` for staging/local testing.
 
 ### Bundle + cache invalidation
 
-The reader loads `/js/dist/core.bundle.js`, built by
-`bifrost/scripts/bundle.js` from the `listen-button.js` source. After
-any change to the prerecorded engine:
+The reader does **not** load `static/js/listen-button.js` directly —
+it loads `/js/dist/core.bundle.js`, an esbuild-minified bundle that
+concatenates `listen-button.js` together with `navbar.js`,
+`reader-fab.js`, `pwa.js`, etc. (see `bundles['core.bundle.js']` in
+`bifrost/scripts/bundle.js`). Editing `listen-button.js` alone is not
+enough — the bundle must rebuild, the bundle URL must change so
+Cloudflare's edge cache refetches, and the service worker's caches
+must invalidate so visitors with a registered SW pick up the new
+bytes. **All three things must happen** or visitors will keep getting
+the previous build.
+
+The three repos involved:
 
 ```sh
+# 1. bifrost — source changes + bundle URL bump
 cd bifrost
-node scripts/bundle.js                                  # rebuilds the bundle
-git add static/js/dist/core.bundle.js static/js/listen-button.js
-git commit -m "Update prerecorded engine"
+# edit static/js/listen-button.js (and any other source files)
+# edit templates/partials/scripts.html — bump core.bundle.js?v=N → ?v=N+1
+git add static/js/listen-button.js templates/partials/scripts.html
+git commit -m "listen-button: <change> + bump core.bundle.js cache to vN+1"
 git push origin main
 
+# 2. www — bifrost pointer + SW cache version bump
 cd ../www.wheelofheaven.world
-git submodule update --remote themes/bifrost            # bump submodule SHA
-# also edit static/sw.js — bump CACHE_VERSION
-git add themes/bifrost static/sw.js
-git commit -m "Bump bifrost + SW cache for prerecorded engine"
+git add themes/bifrost                               # follows bifrost HEAD
+# edit static/sw.js — bump CACHE_VERSION (e.g. 'v7' → 'v8')
+git add static/sw.js
+git commit -m "Bump bifrost + SW cache for <feature>"
+git push origin main
+
+# 3. assets — only if audio/timing changed
+cd ../assets.wheelofheaven.world
+git add audio/
+git commit -m "<feature>: new audio + sidecars"
 git push origin main
 ```
 
-The service worker uses stale-while-revalidate for the bundle. Without
-the `CACHE_VERSION` bump, existing visitors will hold the stale bundle
-for one extra load before picking up the new one.
+#### Why each bump matters
+
+| Layer | Without the bump… |
+|---|---|
+| `core.bundle.js?v=N` querystring | Cloudflare's edge cache (`max-age=604800`, 7 days) keeps serving the old bundle bytes under the unchanged URL. The CI build does rebuild `dist/core.bundle.js` and the gh-pages branch does ship the new content — but the CDN never asks the origin because the URL is unchanged. Visitors get old JS for up to 7 days. |
+| `sw.js` `CACHE_VERSION` | The service worker uses `cacheFirst` for everything on `assets.wheelofheaven.world` (manifest, timing JSON, MP3). On `cacheFirst` the SW returns cached bytes **without revalidating** — so any CDN content the visitor fetched before the change is sticky forever, until cache namespaces change. Bumping `CACHE_VERSION` renames the cache (`woh-images-v6` → `woh-images-v7`) and the old one gets deleted on SW activation; new fetches then hit the network. |
+| Bifrost submodule pointer in www | `www` pins a specific bifrost SHA. Without bumping the pointer, the next www build still pulls the old bifrost commit and the source change never reaches production. |
+
+#### Things that don't need a bump
+
+- **Audio MP3 URLs.** They live at the same `c{N}.mp3` path forever.
+  Re-pushed bytes won't propagate through CF because of
+  `immutable, max-age=31536000` on `_headers`, **but** the SW
+  `CACHE_VERSION` bump above clears the SW's stale copy on the
+  client side, and CF will eventually pull fresh bytes from origin
+  when its edge entry expires. (For an emergency cache-bust on the
+  CDN side, the path would be a manual Cloudflare cache-purge.)
+- **`main.css`.** Already cache-busted automatically by the
+  `inline-critical` step using `BUILD_VERSION = github.sha`. No
+  manual bump needed.
+- **`dist/core.bundle.js` itself in git.** It's checked in but CI
+  always rebuilds it during deploy. Committing only the source
+  files is enough — the rebuilt bundle ends up on `gh-pages`.
+
+#### Symptoms when one of the bumps is missed
+
+These are the symptoms observed in the 2026-06-07 v2 deploy, recorded
+so future-you recognises them:
+
+- **"Button does nothing" in a logged-in browser; works in
+  Incognito.** SW is serving a stale `core.bundle.js` from
+  `woh-static-v6` while Incognito has no SW and gets the new bundle
+  from the network. Fix: bump `sw.js CACHE_VERSION`.
+- **"Audio works in Incognito but words don't highlight."** The
+  bundle on CDN is still the old bytes despite a fresh deploy
+  because the bundle URL `?v=N` wasn't bumped. Fix: bump
+  `templates/partials/scripts.html`.
+- **`curl -s https://www.wheelofheaven.world/js/dist/core.bundle.js
+  | wc -c` returns the pre-deploy size, even after deploy success.**
+  Same root cause: CF edge cached the previous bytes against the
+  unchanged URL. Verify with `git show origin/gh-pages:js/dist/core.bundle.js
+  | wc -c` — if that's the new size but the live URL is still the
+  old size, it's the `?v=N` problem.
 
 ## Layered roadmap — v1 → v4
 
@@ -537,7 +595,7 @@ MP3 + sidecar + manifest model on the CDN.
 | Layer | What | Status |
 |---|---|---|
 | **v1** | Voice-only MP3 + paragraph-level highlight | **shipped** |
-| **v2** | Word-level highlight via `with-timestamps` | designed |
+| **v2** | Word-level highlight via `with-timestamps` | **shipped** (2026-06-07, TBWTT EN) |
 | **v3** | Per-speaker audio treatment (EQ + reverb) | designed |
 | **v4** | Ambient beds + generated SFX on a second track | designed |
 
@@ -589,15 +647,23 @@ flowchart TB
     man --> player[("Bifrost prerecorded engine<br/>2× &lt;audio&gt; sync<br/>paragraph + word highlight")]
 ```
 
-## v2 — Word-level highlighting (designed)
+## v2 — Word-level highlighting (shipped 2026-06-07)
 
-The prerecorded engine currently highlights at paragraph granularity.
-v2 adds word-by-word highlight using ElevenLabs' built-in
-character-level alignment.
+The prerecorded engine highlights at both paragraph and word granularity.
+Word timings come from ElevenLabs' built-in character-level alignment,
+emitted as `words[]` arrays inside the existing chapter timing sidecar.
+
+Shipped state:
+
+- **TBWTT EN** all 7 chapters (752 paragraphs, 29 725 words, 3h 1min,
+  cost: $50.44).
+- Other languages and books still on v1 — they will pick up v2 on
+  their next regeneration with the updated generator.
 
 ### Generation change
 
-Switch the API call from `POST /v1/text-to-speech/{voice_id}` to
+`generate_audio.py` switched from
+`POST /v1/text-to-speech/{voice_id}` to
 `POST /v1/text-to-speech/{voice_id}/with-timestamps`. Response shape:
 
 ```json
@@ -607,107 +673,175 @@ Switch the API call from `POST /v1/text-to-speech/{voice_id}` to
     "characters": ["T", "h", "e", " ", "E", "l", "o", "h", "i", "m", "..."],
     "character_start_times_seconds": [0.000, 0.045, 0.082, ...],
     "character_end_times_seconds":   [0.045, 0.082, 0.118, ...]
-  },
-  "normalized_alignment": { "...": "post-SSML character mapping" }
+  }
 }
 ```
 
-Same per-character billing — no extra cost. Audio is bit-identical to
-the regular endpoint.
+Same per-character billing — no extra cost. Audio is acoustically
+equivalent to the regular endpoint (it's a new take with the same
+voice and settings — not bit-identical, because TTS is non-deterministic).
 
-`generate_audio.py` decodes `audio_base64` into the MP3 (same as
-today), then walks `characters[]` to build a word array per paragraph:
-a word ends at the first whitespace after a non-whitespace run; its
-`start` is the first non-space char's `start`, its `end` is the last
-non-space char's `end`.
+The script:
+
+1. Decodes `audio_base64` to MP3 bytes (same path as before).
+2. Saves the raw per-paragraph alignment to
+   `_work/{slug}/{lang}/c{N}/p{n}.alignment.json`.
+3. At chapter-concat time, walks `characters[]` and groups them into
+   words: characters inside `<…>` SSML tags are skipped (so `<phoneme
+   alphabet="ipa" ph="rɑːɛl">Raël</phoneme>` becomes a single `"Raël"`
+   token), whitespace delimits words, punctuation stays attached
+   (`"nine,"` is one word).
+4. Offsets each word's start/end by the running chapter time
+   (paragraphs are separated by 600-/900-ms silences in the concat —
+   the offset accounts for both prior audio and prior silences).
+5. Emits the enriched chapter sidecar (shape below) and bumps
+   `manifest.json`'s `timing_version` to `2`.
+
+### Cache invalidation
+
+The per-paragraph cache check now requires:
+
+```python
+meta.endpoint == "with-timestamps"
+```
+
+in addition to the existing `(text, voice_id, settings, model)` key.
+v1 paragraphs (no `alignment.json`, no `endpoint` field in meta) are
+treated as cache misses and re-call the API. **Full regeneration cost
+applies** — see the TBWTT EN measurement above (~$50 for a 168k-char
+book).
 
 ### Sidecar v2 format
 
 ```json
 {
+  "book": "the-book-which-tells-the-truth",
+  "lang": "en",
+  "chapter": 1,
+  "duration_seconds": 687.551,
   "paragraphs": [
     {
       "n": 1,
       "speaker": "Narrator",
-      "start": 0.00,
-      "end": 12.34,
+      "start": 0.0,
+      "end": 36.827,
       "words": [
-        {"t": "The",    "s": 0.00, "e": 0.18},
-        {"t": "Elohim", "s": 0.20, "e": 0.74},
-        {"t": "are",    "s": 0.78, "e": 0.96}
+        {"w": "Since", "start": 0.0,   "end": 0.348},
+        {"w": "the",   "start": 0.383, "end": 0.522},
+        {"w": "age",   "start": 0.604, "end": 0.848},
+        {"w": "of",    "start": 0.882, "end": 0.975},
+        {"w": "nine,", "start": 1.068, "end": 1.521}
       ]
     }
   ]
 }
 ```
 
+Backward-compat:
+
+- A v1 player (no `words` handling) reads only paragraph timings and
+  ignores the array — paragraph-level highlight still works.
+- A v2 player on v1 timing (no `words` field) falls back to
+  paragraph-only highlight silently. The shape is additive in both
+  directions.
+
+The `manifest.json` gains a `timing_version: 2` field for downstream
+tools that want to know which shape to expect; the player itself
+sniffs `words` per paragraph and degrades gracefully.
+
 ### Display ↔ audio alignment
 
-Critical detail: the displayed paragraph text and the spoken `tts_text`
-may differ (citations stripped, footnote markers removed, contractions
-expanded for clearer TTS, etc.). Word indices into the two strings
-won't always match 1:1.
+Originally the design called for a longest-common-subsequence pass
+between display text and `tts_text` (with a `display_word_map`
+emitted per paragraph) to handle citation strips, contractions, etc.
+**In practice this wasn't needed** for TBWTT EN — after stripping
+SSML tags and collapsing whitespace, display word count matched audio
+word count in 100% of the 64 paragraphs of chapter 1, and in every
+spot-checked paragraph of chapters 2–7.
 
-The generator runs a longest-common-subsequence alignment between the
-display-text word stream and the tts_text word stream and emits a
-`display_word_map` per paragraph:
-
-```json
-{
-  "display_word_map": [
-    {"d": 0, "a": [0]},
-    {"d": 1, "a": [1]},
-    {"d": 2, "a": []},
-    {"d": 3, "a": [2]},
-    {"d": 4, "a": [3, 4]}
-  ]
-}
-```
-
-`d` = display word index, `a` = list of audio word indices that the
-display word maps to. Empty `a` means the display word isn't spoken
-(e.g. a citation marker). Multiple entries in `a` means one display
-word was expanded into multiple spoken words (e.g. "Yahweh's" →
-"Yahweh is").
-
-When the map is absent (most paragraphs have no normalization
-difference), the player assumes identity mapping (`d == a`).
+The shipped player therefore uses simple **position-based mapping**:
+audio word `i` highlights display word `i`. If the counts mismatch
+on any paragraph, the player logs once to the console and falls back
+to paragraph-only highlight for that paragraph. The LCS layer remains
+designed but unbuilt — it can land later if a real divergence shows
+up (e.g. a book where `tts_text` paraphrases for pronunciation).
 
 ### Player change
 
-On engine activation, the prerecorded engine walks each
-`.library-book__paragraph` once and wraps each word in
-`<span class="library-book__word" data-w="N">…</span>`. Wrapping uses
-a whitespace split; the original text and inline markup are preserved.
+In `bifrost/static/js/listen-button.js`:
 
-The existing `timeupdate` listener picks the active audio word
-(`time ≥ word.s && time < word.e`) within the current paragraph,
-resolves the matching display word(s) via `display_word_map`, and
-toggles `.library-book__word--reading` on those spans.
+- New `wrapParagraphWords(unitId)` helper (above
+  `createPrerecordedEngine`). Lazily wraps the active paragraph's
+  `.library-book__para-translation` text nodes into
+  `<span class="library-book__word">word</span>` the first time the
+  paragraph becomes current. Idempotent. Skips text inside the
+  `.library-book__commentary-link` button.
+- Inside the prerecorded engine's `ontimeupdate`, when the active
+  paragraph changes, it wraps the new paragraph's words and caches
+  the resulting `NodeList`. On each tick it binary-locates the
+  current audio word within the paragraph's `words[]` array and
+  toggles `.library-book__word--reading` on the matching span.
+- `stop()` clears the highlight, the span cache, and the word array.
 
-Performance: 60 paragraphs × ~50 words = 3,000 spans per chapter. The
-active paragraph's word array (~50 entries) is scanned per
-`timeupdate` fire (~4 fires/sec) — well within budget.
+The wrapping happens **on-demand per paragraph**, not at page load
+— so library pages stay light for visitors who never hit Listen.
+
+### CSS
+
+`bifrost/sass/pages/_library.scss` adds:
+
+```scss
+.library-book {
+    &__word {
+        transition: color 0.1s ease;
+
+        &--reading {
+            color: var(--color-accent-primary);
+            font-weight: 600;
+        }
+    }
+}
+```
+
+Subtle by design — colour shift only, no layout shift, no background.
+The word band sits inside the existing paragraph-level reading band
+so both highlights compose cleanly.
 
 ### Storage impact
 
-Sidecar grows from ~10 KB to ~80–120 KB per chapter (paragraph timings
-plus word arrays plus the occasional display map). Negligible on the
-CDN; gzips well.
+Per-chapter sidecar grew from ~10 KB to ~180–385 KB on TBWTT EN
+(c1: 180 KB, c3: 3.4 MB on disk uncompressed because c3 is 299
+paragraphs × ~30 words avg). Gzips well; negligible on the CDN.
 
-### Rollout
+### Rollout sequence (record for future books)
 
-This is additive: the existing player keeps working when `words` is
-absent. Sequence:
+This is the sequence that shipped TBWTT EN:
 
-1. Update `generate_audio.py` to call the `with-timestamps` endpoint
-   and emit the v2 sidecar shape.
-2. Wipe `_work/` once (cache keys change because the response shape is
-   now richer; cleanest to re-run from scratch).
-3. Regenerate the corpus. **Same billing**, just new sidecars.
-4. Ship the bifrost player update + bump SW `CACHE_VERSION`.
-
-No URL changes; no manifest schema bump.
+1. **Update `generate_audio.py`** to call `/with-timestamps` and emit
+   the v2 sidecar shape.
+2. **Re-run the book** — paragraphs from the old endpoint don't have
+   `alignment.json`, so they re-bill at full character cost (~$50 for
+   TBWTT EN).
+3. **Update `bifrost/static/js/listen-button.js`** with the
+   `wrapParagraphWords` helper + word-highlight in the prerecorded
+   engine, and `_library.scss` with the new `__word` style.
+4. **Rebuild the bundle.** This is the step that's easy to forget —
+   see the deploy gotchas below. The `listen-button.js` source is
+   compiled into `static/js/dist/core.bundle.js` by
+   `bifrost/scripts/bundle.js`. **CI rebuilds the bundle on every
+   push**, so committing only the source file is enough — but the
+   bundle URL also needs busting (next step).
+5. **Bump the bundle cache-bust** in
+   `bifrost/templates/partials/scripts.html`:
+   `core.bundle.js?v=N` → `?v=N+1`. Without this, Cloudflare's edge
+   cache keeps serving the previous bundle's bytes under the
+   unchanged URL.
+6. **Bump the SW** `CACHE_VERSION` in `www/static/sw.js`. The SW
+   uses `cacheFirst` for everything on the assets CDN — without a
+   version bump, visitors with a registered SW will keep serving
+   the v1 timing sidecar from cache forever.
+7. **Commit + push** the three repos: `bifrost`, `assets`,
+   `www`. Three deploys fire in parallel.
 
 ## v3 — Per-speaker audio treatment (designed)
 

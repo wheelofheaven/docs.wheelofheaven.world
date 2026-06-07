@@ -203,9 +203,61 @@ honest), see
 
 #### Stale content after deploy
 
-- Cloudflare purges cache on deploy automatically
-- Browser cache may persist — hard-refresh
-- Check `Cache-Control` headers
+- Cloudflare purges cache on deploy automatically for **same-URL HTML
+  pages** (network-first via Cloudflare Pages' default behaviour).
+- Browser cache may persist — hard-refresh.
+- Check `Cache-Control` headers.
+
+#### Stale `core.bundle.js` after a deploy that touched `bifrost`
+
+Cloudflare's edge caches `/js/dist/core.bundle.js` with
+`max-age=604800` (7 days) keyed by the **URL string**, not by content
+hash. If the bundle bytes change but the request URL doesn't, CF
+keeps serving the old bytes from edge until the TTL expires.
+
+The bundle is loaded via
+`bifrost/templates/partials/scripts.html`:
+
+```tera
+<script src="{{ get_url(path='js/dist/core.bundle.js') | safe }}?v=N" defer></script>
+```
+
+When bundled JS source changes (`listen-button.js`,
+`reader-fab.js`, etc.), bump the `?v=N` querystring in
+`scripts.html` so CF sees a new URL and refetches from origin.
+
+Verify a deploy is actually live with content-comparison, not just a
+deploy-succeeded log line:
+
+```sh
+# what gh-pages shipped:
+git show origin/gh-pages:js/dist/core.bundle.js | wc -c
+
+# what CF edge is serving:
+curl -sI https://www.wheelofheaven.world/js/dist/core.bundle.js | grep content-length
+```
+
+If those differ, the `?v=N` bump was missed. Full deploy-gotcha
+table for the audiobook stack:
+[Audiobook Pipeline → Bundle + cache invalidation](@/contributing/dev/audiobook-pipeline.md#bundle-cache-invalidation).
+
+#### Stale CDN asset for visitors with a service worker
+
+The `www` service worker uses **`cacheFirst` (no revalidation)** for
+any cross-origin request to `assets.wheelofheaven.world` — images,
+audio MP3s, timing JSON, manifests. Once a visitor has the asset in
+their SW cache, they keep it forever until cache namespaces change.
+
+The cache namespace embeds `CACHE_VERSION` from `static/sw.js`
+(`woh-images-${CACHE_VERSION}` etc.). Old namespaces get deleted on
+SW activation. So when CDN content changes (new audio takes, updated
+manifest shape, etc.), **bump `CACHE_VERSION`** in `www/static/sw.js`
+and push — visitors pick up v(N+1) on their next page load and the
+v(N) cache is dropped.
+
+Symptom when the bump is missed: a visitor's normal browser keeps
+serving the old audio / old timing / old manifest forever, while
+Incognito works fine.
 
 ## Comparison: GitHub Pages vs Cloudflare Pages
 
