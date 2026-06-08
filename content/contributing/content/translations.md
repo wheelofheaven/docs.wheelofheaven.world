@@ -190,15 +190,82 @@ Hebrew and the *na'aseh* alone) gets localised.
 | `[extra].summary` | translate |
 | `[extra].footnotes[].content` | translate prose; rewrite any inline markdown link `[label](/wiki/foo/)` as `[label](/{lang}/wiki/foo/)` (shortcodes don't work inside TOML strings) |
 | `[extra].references[].title` | translate display title; keep original-language book title in parens where appropriate |
+| `[extra].references[].note` | translate |
 | `[extra].references[].description` | translate |
-| `[extra].references[].path` | preserve as English (`/library/...`); library translations route automatically through Zola |
+| `[extra].see_also[].title` | translate (this is the display label that renders on the See also list) |
+| `[extra].see_also[].description` | translate |
 | `template` | preserve verbatim |
 | `weight`, `sort_by` | preserve verbatim |
 | `[extra].claim_type`, `editorial_pass`, `start_year`, `end_year`, `zodiac_sign`, `symbol` | preserve verbatim |
+| `[extra].category`, `[extra].entry_type`, `[extra].timeline` | **preserve verbatim — taxonomy KEYS, not display text.** See the [Taxonomy-key vs display-text](#taxonomy-key-vs-display-text-and-the-zola-0-19-2-production-gotcha) section below. |
+| `[extra].see_also[].path` | preserve as English (`/wiki/...`); Zola routes per language automatically |
+| `[[extra.references]].id` | preserve verbatim — `data/sources.json` keys, not display text |
+| `[[extra.references]].path` | preserve as English (`/library/...`); library translations route automatically |
 | `aliases` | **drop entirely** — aliases are URL-level redirects from the source page's old English path; the translated page never had that old URL, and keeping the alias causes a path collision with the English page |
 
 The reviewer diffs the preserve-verbatim fields byte-for-byte. Any
 drift is a mechanical fix.
+
+## Taxonomy-key vs display-text — and the Zola 0.19.2 production gotcha
+
+Some `[extra]` fields *look* like display strings but are actually
+keys that Zola's templates look up against a translation map. The
+most common mistake is to translate them. **The mistake breaks the
+production build.**
+
+Specifically: `category`, `entry_type`, and `timeline` are looked
+up by the template via `bindings.wiki_category."<key>"` (and similar)
+against the per-language label map in `i18n/`. Translating the key
+produces a lookup miss locally on **Zola 0.21.0** (silent — the label
+just doesn't render) and a build-breaking panic on **Zola 0.19.2**:
+
+```
+thread '<unnamed>' panicked at tera-1.20.0/src/context.rs:281:46:
+byte index 29 is not a char boundary; it is inside '宙' (bytes 27..30)
+of `bindings.wiki_category."宇宙年代学"`
+```
+
+This is a multi-byte char-boundary bug in Tera 1.20 (the version
+bundled with Zola 0.19.2). It triggers whenever a non-ASCII key
+appears in a Tera `Context` field-access path. The local Zola
+version doesn't hit it; Cloudflare Pages currently pins Zola
+0.19.2 in production, so a translated `category` will land on `main`
+green from `mise run build` and then fail Cloudflare's deploy.
+
+**Rule:** if a field is named in the preserve-verbatim section of the
+frontmatter table, treat it as a key. Translate the *display label*
+elsewhere (the bindings file, the see_also `title=`, the reference
+`note=`) but never the key itself.
+
+The same logic applies to `see_also[].path`, `[[extra.references]].id`,
+and `[[extra.references]].path` — they look like display strings,
+they aren't.
+
+Quick check before reporting a translation as done:
+
+```sh
+diff <(grep -E '^(category|entry_type|timeline) =' src.md) \
+     <(grep -E '^(category|entry_type|timeline) =' tgt.md)
+```
+
+Empty output means the keys are preserved. Anything else is a
+build-breaker waiting to happen.
+
+## Use a single Write call for the file, not chunked Edits
+
+The translator agents have a chunked-write protocol that opens with
+a `Write` for the first section and appends subsequent sections
+via `Edit`. That works reliably for files up to roughly 500 lines
+but stalls catastrophically on larger files (~700+ lines): every
+agent in a parallel batch hits the 600-second watchdog and the
+whole fan-out fails.
+
+For long entries (the `great-flood` and `hebrew-bible` entries are
+~670 and ~804 lines respectively), instruct the translator
+explicitly to use a **single Write call** for the whole file.
+Translate the entire content mentally first, then commit it in one
+operation. This bypasses the Edit cascade entirely and the same
+batch that stalled on chunked-Edit completes cleanly with single-Write.
 
 ## TOML quote-escape gotcha
 
