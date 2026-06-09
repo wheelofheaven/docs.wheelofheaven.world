@@ -1439,6 +1439,10 @@ Three reasons:
 
 ## Related
 
+- [Audiobook Cue Sheets](@/contributing/dev/audiobook-cue-sheets.md)
+  — the production scaffolding (scenes, SFX, pauses, voice tweaks)
+  that sits on top of this rendering pipeline. Start here once you
+  want to direct a book beyond default voice + ambient.
 - [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md)
   — the 35-paragraph editorial pass that made paragraphs the right
   size for audio

@@ -23,6 +23,7 @@ pipelines are Python.
 | Auto-posting new content to Telegram, Bluesky, etc. | [Social Broadcast Pipeline](@/contributing/dev/social-broadcast.md) |
 | Splitting long library-book paragraphs across languages | [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md) |
 | Generating ElevenLabs audiobooks for library books | [Audiobook Pipeline](@/contributing/dev/audiobook-pipeline.md) |
+| Scaffolding scenes / SFX / pauses for a full-featured audiobook | [Audiobook Cue Sheets](@/contributing/dev/audiobook-cue-sheets.md) |
 | Cloudflare Pages, DNS, headers, redirects | [CI & Deploy](@/contributing/dev/ci-deploy.md) |
 
 If you're starting cold, [Local Setup](@/contributing/dev/local-setup.md)
