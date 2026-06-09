@@ -1,12 +1,19 @@
 +++
-title = "Audiobook Pipeline"
-description = "ElevenLabs-driven audiobook generation: from TTS sidecars + lexicon + voice config to per-chapter MP3s on the assets CDN."
+title = "Audio Play Pipeline"
+description = "ElevenLabs-driven audio play generation: from TTS sidecars + lexicon + voice config to per-chapter MP3s on the assets CDN."
 template = "page.html"
 weight = 45
+aliases = ["/contributing/dev/audio play-pipeline/"]
 +++
 
-How library books become audiobooks: the editorial prep, the generation
-pipeline, the storage layout, the costs, and the operational loop.
+How library books become audio plays: the editorial prep, the generation
+pipeline, the storage layout, the costs, and the operational loop. The
+project ships "audio plays" rather than plain audio plays — multi-voice,
+per-character treatment, ambient bedding, and (planned) SFX cues take
+the production beyond a single-narrator read. See
+[Audio Play Cue Sheets](@/contributing/dev/audio-play-cue-sheets.md)
+for the production-direction layer that sits on top of this rendering
+pipeline.
 
 The pipeline turns the per-paragraph TTS-normalized text in
 `data-library/{slug}/tts/chapter-N.{lang}.json` into per-chapter MP3
@@ -55,7 +62,7 @@ Before the first ElevenLabs call, the data side is done:
    a `speaker` field (`Narrator`, `Raël`, or `Yahweh`). This is what
    the generation script reads to pick the right voice. See the
    `Re-attribute 49 paragraphs in ETTMTTP ch2` commit for the
-   curation pass. LWTE is out of scope for the audiobook MVP — all
+   curation pass. LWTE is out of scope for the audio play MVP — all
    its paragraphs are labeled `Narrator` pending its own curation.
 3. **TTS text normalization.** Each paragraph has a `tts_text` in
    `{slug}/tts/chapter-N.{lang}.json` with citations stripped, quote
@@ -243,7 +250,7 @@ The per-chapter MP3s and timing sidecars land in
 ```sh
 cd assets.wheelofheaven.world
 git add audio/
-git commit -m "Add TBWTT ch1 EN audiobook"
+git commit -m "Add TBWTT ch1 EN audio play"
 git push origin main
 ```
 
@@ -321,7 +328,7 @@ means re-running is cheap — only new or changed paragraphs hit the API.
 ```sh
 cd assets.wheelofheaven.world
 git add audio/
-git commit -m "Add TBWTT + ETTMTTP audiobooks across 9 languages"
+git commit -m "Add TBWTT + ETTMTTP audio plays across 9 languages"
 git push origin main
 ```
 
@@ -671,7 +678,7 @@ so future-you recognises them:
 
 ## Layered roadmap — v1 → v4
 
-The audiobook is delivered in additive layers. Each layer is purely
+The audio play is delivered in additive layers. Each layer is purely
 optional and falls back gracefully if absent: a missing word array
 falls back to paragraph highlight, a missing ambient track falls back
 to voice-only, and so on. All shipped layers share the same per-chapter
@@ -1439,7 +1446,7 @@ Three reasons:
 
 ## Related
 
-- [Audiobook Cue Sheets](@/contributing/dev/audiobook-cue-sheets.md)
+- [Audio play Cue Sheets](@/contributing/dev/audio play-cue-sheets.md)
   — the production scaffolding (scenes, SFX, pauses, voice tweaks)
   that sits on top of this rendering pipeline. Start here once you
   want to direct a book beyond default voice + ambient.

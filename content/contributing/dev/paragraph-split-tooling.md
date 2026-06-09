@@ -22,11 +22,11 @@ broader editorial context.
 ## When to use this
 
 Reach for it when a library book has paragraphs that are too long for
-comfortable reading or audiobook playback. Symptoms:
+comfortable reading or audio play playback. Symptoms:
 
 - A paragraph spans many distinct thoughts and would benefit from being
   split into multiple beats.
-- Audiobook playback of a single paragraph runs long enough that
+- Audio play playback of a single paragraph runs long enough that
   per-paragraph highlight loses its anchor in the reader's attention.
 - A long monologue (e.g., Yahweh in TBWTT chs. 5–7) has clear
   topical pivots that could each anchor a paragraph.
@@ -163,7 +163,7 @@ This is acceptable because **each language is read independently** from
 its own chapter file. Cross-language paragraph IDs stay aligned (both
 FR and JA have a `p55`, `p56`, `p57`, ...), but the *content* boundary
 at each ID can drift by a sentence in JA/KO/ZH. The interlinear feature
-keeps working; the audiobook for each language reads a coherent piece.
+keeps working; the audio play for each language reads a coherent piece.
 
 When alignment really matters (rare — usually only when you want a
 specific quote at the same `c{ch}p{n}` across all languages), override
@@ -352,4 +352,4 @@ hand-edit to preserve refs (e.g. via letter suffixes like `p3a`,
 - [data-library Source of Truth](@/architecture/data-library-source-of-truth.md)
   — why these edits live in `data-library/` rather than going back
   through `ingest/`, and how cross-language paragraph ID alignment
-  feeds the future audiobook pipeline.
+  feeds the future audio play pipeline.

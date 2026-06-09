@@ -48,7 +48,7 @@ There are two parallel deploy paths for `www`:
 | Cloudflare Pages (production fronting `www.wheelofheaven.world`) | Repo, with submodules | Historically: **no bundle step** |
 
 The "no bundle step" history caused a real production bug on
-2026-06-07: the audiobook v2 word-highlight code shipped to
+2026-06-07: the audio play v2 word-highlight code shipped to
 `bifrost/static/js/listen-button.js`, GitHub Actions rebuilt the
 bundle and pushed it to `gh-pages` correctly — but Cloudflare Pages
 (which actually serves `www.wheelofheaven.world`) ran only
@@ -110,7 +110,7 @@ JSON sidecars) are **not** auto-purged. If the asset URL is unchanged
 but the bytes are new, edge keeps serving the old bytes until TTL
 expires (7 days for `/js/*`, 1 year for `/audio/*` with `immutable`).
 
-The 2026-06-07 audiobook v2 + v2.5 rollouts both hit this — even
+The 2026-06-07 audio play v2 + v2.5 rollouts both hit this — even
 after deploys succeeded, visitors got old JS and old timing JSON
 until a manual CF dashboard purge. Skip the checklist below at your
 peril.
@@ -303,7 +303,7 @@ push's files ship, regardless of how many were under the cap.
 Symptom: every push to a repo with one oversized file silently
 fails CF Pages while CDN keeps serving the last successful build,
 and `curl` shows stale content even after manual cache purges. The
-2026-06-07 audiobook v2/v2.5/v3/v4 rollouts hit this — `c3.mp3` at
+2026-06-07 audio play v2/v2.5/v3/v4 rollouts hit this — `c3.mp3` at
 51 MiB blocked the assets repo for hours before the dashboard build
 log surfaced the cap error.
 
@@ -323,7 +323,7 @@ Fixes when a file exceeds the cap:
 
 There's no plan-level setting to raise the 25 MiB cap on CF Pages
 — the limit is platform-wide. See
-[`audiobook-pipeline.md`](@/contributing/dev/audiobook-pipeline.md#bundle-cache-invalidation)
+[`audio-play-pipeline.md`](@/contributing/dev/audio-play-pipeline.md#bundle-cache-invalidation)
 for the audio-specific workflow.
 
 #### "Pages only supports up to 20,000 files in a deployment"
@@ -392,8 +392,8 @@ curl -sI "https://www.wheelofheaven.world/js/dist/core.bundle.js?bust=$(uuidgen)
 If these don't match, Fastly hasn't refreshed. Wait, then bump
 `?v=N` again so CF caches the fresh response. For an emergency
 override (critical fix), purge via the Cloudflare dashboard or
-API instead. Full deploy-gotcha table for the audiobook stack:
-[Audiobook Pipeline → Bundle + cache invalidation](@/contributing/dev/audiobook-pipeline.md#bundle-cache-invalidation).
+API instead. Full deploy-gotcha table for the audio play stack:
+[Audio Play Pipeline → Bundle + cache invalidation](@/contributing/dev/audio-play-pipeline.md#bundle-cache-invalidation).
 
 #### Stale CDN asset for visitors with a service worker
 

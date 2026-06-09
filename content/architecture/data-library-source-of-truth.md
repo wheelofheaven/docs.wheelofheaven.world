@@ -11,7 +11,7 @@ exported there and hand-edited, the upstream ingest pipeline becomes a
 historical artifact, not a replayable source. This page explains why
 that's the case, the cross-language paragraph ID alignment principle
 the format relies on, and how those IDs are about to feed the
-audiobook pipeline.
+audio play pipeline.
 
 ## The pipeline that gets a book here
 
@@ -146,7 +146,7 @@ languages. Several downstream features assume this:
   language.
 - **Search results** — a hit in EN points at the corresponding `p42`
   in the user's preferred reading language.
-- **Audiobook timing sidecars** (planned — see below) — per-paragraph
+- **Audio play timing sidecars** (planned — see below) — per-paragraph
   timestamps key off `refId`.
 
 ### Implication for paragraph splits
@@ -173,13 +173,13 @@ sentence later because JA compressed two FR sentences into one.
 That drift is acceptable. The **paragraph IDs stay aligned** even when
 the **content boundary at each ID drifts by a sentence or two between
 languages**. Each language reads its own chapter file; the user
-listening in JA hears coherent JA paragraphs at JA pacing. The audiobook
+listening in JA hears coherent JA paragraphs at JA pacing. The audio play
 timing sidecar is per-language anyway, so the sentence-level drift
 doesn't break timing alignment within a language.
 
-## How this feeds the audiobook pipeline
+## How this feeds the audio play pipeline
 
-The eventual library audiobook surface (planned, design pending) keys
+The eventual library audio play surface (planned, design pending) keys
 off paragraph IDs. The high-level shape:
 
 ```mermaid
@@ -210,11 +210,11 @@ For this to work, two preconditions must hold:
 2. **Pieces must be small enough for usable per-paragraph highlight** —
    too-long paragraphs make the highlight feel sluggish. This is why
    the paragraph split tooling exists and why the 2026-05 editorial
-   pass invested in it: the audiobook pipeline needs reasonable
+   pass invested in it: the audio play pipeline needs reasonable
    paragraph granularity to work as a reading aid, not just background
    audio.
 
-The audiobook pipeline itself is still being designed. Open design
+The audio play pipeline itself is still being designed. Open design
 questions include the TTS engine (Coqui XTTS-v2 vs. cloud APIs vs.
 local Piper), where audio is hosted (likely `assets.wheelofheaven.world`
 under `/audio/`), and the alignment confidence threshold for accepting

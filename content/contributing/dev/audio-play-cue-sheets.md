@@ -1,13 +1,13 @@
 +++
-title = "Audiobook Cue Sheets"
-description = "How audio production directives (scenes, SFX, pauses, voice tweaks) are scaffolded outside the source-text chapter JSONs so audiobooks can iterate without polluting the library content."
+title = "Audio Play Cue Sheets"
+description = "How audio production directives (scenes, SFX, pauses, voice tweaks) are scaffolded outside the source-text chapter JSONs so audio plays can iterate without polluting the library content."
 template = "page.html"
 weight = 46
 +++
 
-How a polished audiobook gets directed without bleeding production
+How a polished audio play gets directed without bleeding production
 notes into the source text. The
-[Audiobook Pipeline](@/contributing/dev/audiobook-pipeline.md) covers
+[Audio Play Pipeline](@/contributing/dev/audio-play-pipeline.md) covers
 the rendering side (TTS → MP3/Opus → CDN); this page covers the
 **production scaffolding** that drives it.
 
@@ -50,7 +50,7 @@ data-library/
 
   {slug}/                         ← per-book
     chapter-N.json                ← STAYS LEAN: text + speaker + translations
-    audiobook/
+    audioplay/
       manifest.yaml               ← book-level: theme music, casting overrides, fades
       cues/
         c1.yaml                   ← per-paragraph cues for chapter 1
@@ -64,17 +64,67 @@ data-library/
 |---|---|---|
 | Source text, translations | `chapter-N.json` | Editors, translators |
 | Speaker labels (Narrator/Raël/Yahweh) | `chapter-N.json` | Editors (it's editorial, not just audio) |
-| Per-paragraph scene tags | `audiobook/cues/cN.yaml` | Producers |
-| SFX cues at scene boundaries | `audiobook/cues/cN.yaml` | Producers |
-| Pre/post pause overrides | `audiobook/cues/cN.yaml` | Producers |
-| Per-paragraph voice tweaks (stability, similarity_boost) | `audiobook/cues/cN.yaml` | Producers |
-| Per-book theme music / title music | `audiobook/manifest.yaml` | Producers |
-| Per-book casting overrides | `audiobook/manifest.yaml` | Producers |
+| Per-paragraph scene tags | `audioplay/cues/cN.yaml` | Producers |
+| SFX cues at scene boundaries | `audioplay/cues/cN.yaml` | Producers |
+| Pre/post pause overrides | `audioplay/cues/cN.yaml` | Producers |
+| Per-paragraph voice tweaks (stability, similarity_boost) | `audioplay/cues/cN.yaml` | Producers |
+| Per-book theme music / title music | `audioplay/manifest.yaml` | Producers |
+| Per-book casting overrides | `audioplay/manifest.yaml` | Producers |
 | Global SFX clip library | `audio/sfx.yaml` | Producers (shared across books) |
 | Scene ambient-bed definitions | `audio/scenes.yaml` | Producers (shared across books) |
 | Voice cast | `audio/voices.yaml` | Producers (shared across books) |
 
 Editors edit text. Producers edit cues. No file is owned by both.
+
+## Paragraph kinds (editorial, in `chapter-N.json`)
+
+Some "paragraphs" in source-text JSONs aren't body prose. The pipeline
+needs to know which is which — both the audio renderer (different
+cadence and pause shape) and the library book reader (different
+visual rendering). The kind is editorial — it's a fact about what the
+text **is**, not a production choice — so it lives in
+`chapter-N.json` alongside `speaker`.
+
+```json
+{"n": 47, "kind": "title",        "i18n": {"en": "The Atomic Bombs"}}
+{"n": 48, "speaker": "Yahweh",    "i18n": {"en": "Since the great explosion..."}}
+{"n": 102, "speaker": "Narrator", "i18n": {"en": "By these were the nations divided..."}}
+{"n": 103, "speaker": "Narrator", "kind": "continuation",
+ "i18n": {"en": "Flood. (Genesis 10:32)"}}
+```
+
+| `kind`         | What it is                          | Audio render                                | Library render                |
+|---|---|---|---|
+| `body`         | Regular prose (default if omitted)  | Speaker reads at normal cadence, default pauses around it | Standard verse paragraph    |
+| `title`        | A section header inside a chapter — e.g. "The Atomic Bombs", "Overpopulation", "The Tower of Babel" in TBWTT | Longer pre/post pause, may carry an SFX cue from the cue sheet, may read with a different cadence | Rendered as `<h3>` / styled differently from body paragraphs |
+| `continuation` | Continues the immediately-prior paragraph mid-sentence (a paragraph break that exists in the source for layout, not narrative pacing) | TTS-concatenated with the previous paragraph, no inter-paragraph silence | Visually joined or rendered with a tighter spacing |
+
+`kind` is **language-agnostic**: a section title is a section title in
+every language. The field lives in the source-text chapter JSON once
+and applies across all translations.
+
+### Why `kind` isn't in the cue sheet
+
+Cue sheets carry production directives — what the producer chooses to
+do with each paragraph (add SFX, change pause, override voice). Kind
+is upstream of that: it tells the producer (and the reader, and the
+library renderer) what each paragraph IS. The cue sheet then says
+how to PERFORM each kind.
+
+A title paragraph might or might not get an extra SFX cue depending
+on the producer's call. But it's always a title.
+
+### Editorial pass on existing books
+
+Existing chapter JSONs default everything to `body` (the field is
+omitted on every paragraph). An editorial pass on TBWTT — the first
+shipped audio play — identifies titles and continuations chapter
+by chapter. A small helper script
+(`data-library/scripts/scan_kinds.py`) flags candidate paragraphs:
+short paragraphs without verbs that match a title vocabulary,
+paragraphs that end mid-sentence followed by a paragraph that starts
+with a continuation marker. Human reviews the candidates and tags
+them in the chapter JSON.
 
 ## File shapes
 
@@ -111,7 +161,7 @@ Each entry is generated **once** via the ElevenLabs
 `data-library/audio/_work/_sfx/{hash}.mp3`. Subsequent re-renders
 across any book or chapter reuse the cached clip for free.
 
-### `audiobook/manifest.yaml` — book-level config
+### `audioplay/manifest.yaml` — book-level config
 
 ```yaml
 # Schema 1
@@ -138,6 +188,37 @@ title_music:
   fade_in_ms: 1500
   fade_out_ms: 2000
 
+# Audio Play Intro — a scripted opener that runs BEFORE chapter 1's
+# first paragraph. NOT part of the source text. The intro narrator is
+# a separate voice cast (AudioplayNarrator) from any in-text speaker —
+# they sit outside the audio play's fictional frame and tell the
+# listener what's about to happen.
+#
+# In TBWTT specifically: the in-text "Narrator" is Raël himself,
+# writing after the fact from his perspective as author. The intro
+# narrator is a neutral voice OUTSIDE that frame who explains the
+# setup to the listener (who Raël is, when the encounters happened,
+# what the listener will hear, who's who in the cast).
+intro:
+  speaker: AudioplayNarrator      # cast in audio/voices.yaml
+  text: |
+    The Book Which Tells the Truth is a 1973 work by Raël — a French
+    journalist and racing-car driver who, in December 1973, reports
+    a series of encounters with an extraterrestrial being named
+    Yahweh. Over six days, Yahweh teaches him the true origin of
+    humanity, the meaning of the major world religions, and the
+    role he is being asked to play.
+
+    Raël wrote down what he heard, in his own voice, after the
+    encounters ended. You will hear three voices in this audio
+    play: Raël speaking as the narrator from his author's chair,
+    looking back; Raël speaking inside the encounters, asking
+    questions in real time; and Yahweh, teaching. Yahweh's voice
+    carries a subtle hall reverb to mark his off-world origin.
+  pre_pause_ms: 1000              # silence before intro starts
+  post_pause_ms: 2000              # silence after intro, before chapter 1 p1
+  ambient_under: book-overture     # optional sfx.yaml id playing under intro
+
 # Default scene transition crossfade. Cues can override per-chapter.
 default_scene_fade_ms: 300
 
@@ -147,7 +228,32 @@ default_pause_ms_between_paragraphs: 600
 default_pause_ms_between_speakers: 900
 ```
 
-### `audiobook/cues/cN.yaml` — per-chapter cue sheet
+### The voice cast for an audio play
+
+For a book like TBWTT, four cast roles emerge — three in-text plus
+one outside-the-frame:
+
+| Role                  | Who they are                                                          | Where cast      |
+|---|---|---|
+| `Narrator`            | The in-text narrator — Raël writing after the fact, looking back     | `audio/voices.yaml` + per-paragraph in `chapter-N.json` |
+| `Raël`                | Raël inside the encounters, asking questions in real time            | `audio/voices.yaml` |
+| `Yahweh`              | The off-world teacher                                                  | `audio/voices.yaml` |
+| `AudioplayNarrator`   | The neutral outside-the-frame voice that delivers the intro and any  outro / chapter prefaces | `audio/voices.yaml` (per-language) |
+
+`AudioplayNarrator` is a NEW role added when intros / chapter
+prefaces / outros come into play. It uses its own voice ID per
+language (the intro is scripted English in EN, scripted French in
+FR, etc. — the text gets translated and re-rendered).
+
+In TBWTT, `Narrator` and `Raël` could plausibly share a voice (it's
+the same person, just from different temporal vantage points). Today
+both are cast to Marcel in voices.yaml. If a future production wants
+to differentiate "narrator-Raël (writing later)" from "in-scene Raël
+(asking questions)" — for example by giving the in-scene voice
+slightly more energy — that's a per-role casting override in
+`audio/voices.yaml`, no schema change needed.
+
+### `audioplay/cues/cN.yaml` — per-chapter cue sheet
 
 ```yaml
 # Schema 1
@@ -215,7 +321,7 @@ speaking IS part of the source text), not production-only.
 Top-level orchestrator:
 
 ```sh
-python3 data-library/scripts/render_audiobook.py \
+python3 data-library/scripts/render_audioplay.py \
     --slug the-book-which-tells-the-truth --lang en --chapter 1
 ```
 
@@ -225,8 +331,8 @@ Internally, the orchestrator:
 2. Loads `audio/treatments.yaml` → base per-speaker EQ/reverb
 3. Loads `audio/scenes.yaml` → scene id → ambient bed mapping
 4. Loads `audio/sfx.yaml` → SFX clip registry
-5. Loads `{slug}/audiobook/manifest.yaml` → book-level overrides
-6. Loads `{slug}/audiobook/cues/c{N}.yaml` → per-paragraph cues
+5. Loads `{slug}/audioplay/manifest.yaml` → book-level overrides
+6. Loads `{slug}/audioplay/cues/c{N}.yaml` → per-paragraph cues
 7. Loads `{slug}/chapter-{N}.json` → source text + speakers
 8. Loads `{slug}/tts/chapter-{N}.{lang}.json` → TTS-normalised text
 9. For each paragraph:
@@ -250,15 +356,15 @@ Internally, the orchestrator:
 
 The existing `generate_audio.py` and `generate_ambient.py` keep
 running as-is for backward compatibility; the new
-`render_audiobook.py` wraps both and adds the cue-sheet
+`render_audioplay.py` wraps both and adds the cue-sheet
 indirection layer.
 
 ## Operational loop
 
 ```
-edit audiobook/cues/c3.yaml          ← producer changes a cue
+edit audioplay/cues/c3.yaml          ← producer changes a cue
   ↓
-python3 scripts/render_audiobook.py --slug tbwtt --lang en --chapter 3
+python3 scripts/render_audioplay.py --slug tbwtt --lang en --chapter 3
   ↓
 listen → assets/audio/en/tbwtt/c3.mp3 (etc.)
   ↓
@@ -282,7 +388,7 @@ re-render (cached: only changed paragraphs/SFX re-bill the API)
   first line of a Yahweh monologue could ride at higher stability for
   declarative gravity; a Raël question could ride lower stability for
   more expressive uncertainty). No re-billing if cached.
-- **Multi-book scaling** → each book gets its own `audiobook/`
+- **Multi-book scaling** → each book gets its own `audioplay/`
   directory; the global `audio/` library scales linearly.
 
 ## What it does NOT give you (yet)
@@ -299,7 +405,7 @@ re-render (cached: only changed paragraphs/SFX re-bill the API)
   paragraph 9 can't yet be expressed. Add `time_offset_seconds` to
   the cue schema if/when needed.
 - **Multi-track mixing UI** — the cue sheet IS the multi-track
-  session. No DAW import/export yet. If audiobook production ever
+  session. No DAW import/export yet. If audio play production ever
   scales to needing a producer DAW workflow, the cue sheet → Reaper
   RPP / Pro Tools session conversion is straightforward but unbuilt.
 - **Live monitoring** — render is batch. No live "scrub through the
@@ -309,48 +415,85 @@ re-render (cached: only changed paragraphs/SFX re-bill the API)
 
 ## Rollout plan
 
-**Phase 1 (refactor, no audible change):**
+**Phase 1 — Refactor (no audible change):**
 
-1. Create `data-library/audio/sfx.yaml` (empty registry, schema doc'd)
-2. Create `data-library/the-book-which-tells-the-truth/audiobook/manifest.yaml`
-3. Create `data-library/the-book-which-tells-the-truth/audiobook/cues/c1.yaml`
+1. Create `data-library/audio/sfx.yaml` (empty registry, schema doc'd).
+2. Create `data-library/the-book-which-tells-the-truth/audioplay/manifest.yaml`
+   (book defaults; no intro yet, just paving the path).
+3. Create `data-library/the-book-which-tells-the-truth/audioplay/cues/c1.yaml`
    through `c7.yaml`, moving the v4 `scene: elohim-vessel` tags out of
-   the chapter JSONs
+   the chapter JSONs.
 4. Update `generate_ambient.py` to read cues first, fall back to
-   chapter JSON `scene` field for unconverted chapters/books
-5. Re-render TBWTT EN — output should be byte-identical to the
-   pre-refactor build
+   chapter JSON `scene` field for unconverted chapters/books.
+5. Re-render TBWTT EN — output byte-identical to the pre-refactor build.
 
-**Phase 2 (first SFX):**
+**Phase 2 — Paragraph kinds:**
+
+1. Add `kind: body | title | continuation` to the chapter-JSON schema
+   (documented in [Library Book Format](@/reference/library-book-format.md)).
+2. Write `data-library/scripts/scan_kinds.py` — surfaces candidate
+   titles (short paragraphs without verbs, matching a title vocabulary)
+   and candidate continuations (paragraphs ending mid-sentence, followed
+   by a paragraph beginning with a continuation marker) across all
+   chapters of a book.
+3. Human editorial review — apply `kind` tags to TBWTT chapter JSONs
+   (one-shot, applies across all 9 languages since `kind` is
+   language-agnostic).
+4. Update `generate_audio.py` to treat kinds specially:
+   - `title` → longer pre/post pause; ignores speaker label (an
+     `AudioplayNarrator` reads titles by default, unless the cue sheet
+     overrides)
+   - `continuation` → concatenated with previous paragraph's TTS, no
+     inter-paragraph silence, gets a single combined timing-sidecar
+     entry
+   - `body` (default) → unchanged from today
+5. Update Bifrost's library macros so the reader page renders
+   `kind: title` as `<h3>` (visual heading) and `kind: continuation`
+   with tighter spacing — see `themes/bifrost/templates/macros/library.html`.
+6. Re-render TBWTT EN.
+
+**Phase 3 — Audio Play Intro (`AudioplayNarrator`):**
+
+1. Cast an `AudioplayNarrator` voice per-language in `audio/voices.yaml`
+   — a neutral outside-the-frame voice that won't conflict with the
+   in-text Narrator / Raël voice.
+2. Write the intro script in `audioplay/manifest.yaml`'s `intro.text`
+   for the canonical language; translate when shipping in others.
+3. Render the intro as a special "p0" clip prepended to chapter 1's
+   timing + audio.
+4. Update the bifrost player to highlight the intro region (or not —
+   intro is unhighlighted prose).
+
+**Phase 4 — First SFX:**
 
 1. Add a small set of SFX entries to `audio/sfx.yaml` (yahweh-enter,
-   cosmic-chime, vessel-door-open — start with 3-5)
+   cosmic-chime, vessel-door-open — start with 3–5).
 2. Add `sfx_at_start` cues to TBWTT EN's cue sheets at meaningful
-   moments (Yahweh's first entrance, scene transitions, etc.)
-3. Update `generate_ambient.py` (or new `render_audiobook.py`) to
-   emit the SFX layer mixed under the voice track
-4. ~$1 total ElevenLabs sound-gen spend for the SFX palette
+   moments (Yahweh's first entrance, title transitions, etc.).
+3. Update `generate_ambient.py` (or the new `render_audioplay.py`)
+   to emit the SFX layer mixed under the voice track.
+4. ~$1 total ElevenLabs sound-gen spend for the SFX palette.
 
-**Phase 3 (top-level orchestrator):**
+**Phase 5 — Top-level orchestrator:**
 
-1. Build `render_audiobook.py` as the new top-level entry point
+1. Build `render_audioplay.py` as the new top-level entry point.
 2. Deprecate direct invocation of `generate_audio.py` /
-   `generate_ambient.py` (keep them as library functions)
+   `generate_ambient.py` (keep them as library functions).
 3. Add the `pre_pause_ms` / `post_pause_ms` / `voice_override`
-   per-paragraph directives
+   per-paragraph directives.
 
-**Phase 4 (theme music):**
+**Phase 6 — Theme music:**
 
-1. Add `title_music` support to `manifest.yaml` interpretation
-2. Generate per-book title music clips
-3. Mix at chapter 1 head + per-chapter outro (optional)
+1. Add `title_music` support to `manifest.yaml` interpretation.
+2. Generate per-book title music clips.
+3. Mix at chapter 1 head + per-chapter outro (optional).
 
 Each phase ships independently; no phase locks in commitments
 beyond itself.
 
 ## Related
 
-- [Audiobook Pipeline](@/contributing/dev/audiobook-pipeline.md) —
+- [Audio Play Pipeline](@/contributing/dev/audio-play-pipeline.md) —
   the v1→v4 rendering chain that this scaffolding sits on top of.
 - [Library Book Format](@/reference/library-book-format.md) —
   what `chapter-N.json` looks like today.
