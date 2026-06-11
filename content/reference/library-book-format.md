@@ -124,6 +124,54 @@ sidebar provenance panel when it is present.
 | `version.provenance.witnesses` | array | Ordered witness list for layered reconstructions. |
 | `version.responsibility` | object | Translator, editor, reviewer, or other responsibility labels. |
 
+## Licensing metadata
+
+The library's default dedication is **CC0-1.0** — every Wheel of Heaven
+text is public-domain unless a book declares otherwise. Books may add an
+optional top-level `licensing` object to `_meta.json` to state their
+rights explicitly and, when the underlying source text is not CC0, to
+disclose the source licence and the reason the WoH text inherits it.
+
+The website renders a **Licensing** section in the book sidebar for
+*every* book. When no `licensing` object is present the output licence
+resolves to `version.license` → flat `versionLicense` → CC0-1.0, so the
+panel never goes silent. The `source` row and the "About this licence"
+note appear only when declared.
+
+```json
+{
+  "licensing": {
+    "output": {
+      "spdx": "CC-BY-NC-SA-4.0",
+      "label": "CC BY-NC-SA 4.0",
+      "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+    },
+    "source": {
+      "spdx": "CC-BY-NC-SA-4.0",
+      "label": "CC BY-NC-SA 4.0",
+      "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "attribution": "electronic Babylonian Library (eBL), LMU München"
+    },
+    "model": "share-alike-inherited",
+    "note": "The Akkadian source transliteration is published by the electronic Babylonian Library under CC BY-NC-SA 4.0. Wheel of Heaven's use is non-commercial; under the source's ShareAlike term this translation inherits the same licence — a documented exception to the library's CC0 dedication. Attribution and non-commercial / share-alike terms pass to downstream reusers."
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `licensing.output` | object | Licence of the WoH text itself (`spdx`, optional `label`, optional `url`). Defaults to CC0-1.0 when the whole block is absent. |
+| `licensing.source` | object | Licence of the underlying source text, when it differs from CC0. Adds `attribution` (who to credit). Renders a "Source text" row. |
+| `licensing.model` | string | Machine-readable tag for the licensing situation, e.g. `cc0-default`, `public-domain-source`, `share-alike-inherited`. |
+| `licensing.note` | string | Human-readable explanation, shown in an "About this licence" disclosure. Use for any non-CC0 exception so the reasoning is transparent to readers. |
+
+**When to add it.** Most books need nothing — CC0 is the default and
+renders automatically. Add a `licensing` block only when a book's source
+text carries terms the WoH text must inherit (the first such case is the
+Atrahasis translation, whose eBL source transliteration is CC-BY-NC-SA).
+Be explicit and open: the `note` exists so a reader can see exactly why a
+text departs from the library's public-domain norm.
+
 ## Chapter format (`chapter-N.json`)
 
 ```json
