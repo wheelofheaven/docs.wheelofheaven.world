@@ -105,11 +105,13 @@ The vocabulary is small:
 voices:
   en:
     Narrator:
-      voice_id: "I1T6PEfqPxl45yKRN4aS"   # Marcel — warm, expressive
+      voice_id: "aaHNjm7ksE1iw31dNOq5"   # Phoenix — smooth, charming, rich
     Raël:
-      voice_id: "I1T6PEfqPxl45yKRN4aS"   # share Marcel; different prosody via defaults
+      voice_id: "aaHNjm7ksE1iw31dNOq5"   # share Phoenix; different prosody via defaults
     Yahweh:
       voice_id: "sB7vwSCyX0tQmU24cW2C"   # Jon — relaxed, deep, weightier
+    AudioplayNarrator:
+      voice_id: "c6SfcYrb2t09NHXiT80T"   # Jarnathan — the neutral WoH metadata voice
 ```
 
 ### Voice library: "Add to my voices" gotcha
@@ -131,7 +133,7 @@ The voice IDs in `voices.yaml` must appear in that list.
 
 `eleven_multilingual_v2` (the default model) supports the same voice
 across 29 languages. For the rollout we deliberately reuse the English
-voices (Marcel + Jon) for all 9 i18n languages — same voice characters,
+voices (Phoenix + Jon + Jarnathan) for all 9 i18n languages — same voice characters,
 different language output. This keeps the character identity consistent
 across translations and skips per-language voice casting entirely.
 
@@ -290,9 +292,9 @@ real out-of-pocket cost.
 
 ### Step 2 — cast voices
 
-For the pragmatic shortcut, leave `voices.yaml` with Marcel + Jon (the
-English MVP voices) and just **copy the English mapping into every
-language's stanza**. `eleven_multilingual_v2` will speak French,
+For the pragmatic shortcut, leave `voices.yaml` with Phoenix + Jon +
+Jarnathan (the production cast) and just **copy the English mapping
+into every language's stanza**. `eleven_multilingual_v2` will speak French,
 German, etc. in those voices. Per-language MVP listening (next step)
 will confirm.
 

@@ -43,7 +43,7 @@ Three layers, file-system separated:
 ```
 data-library/
   audio/                          ← global, reusable across books
-    voices.yaml                   ← casting (Narrator → Marcel, …)
+    voices.yaml                   ← casting (Narrator → Phoenix, …)
     treatments.yaml               ← per-speaker EQ/reverb chains
     scenes.yaml                   ← scene id → ambient bed prompt + gain
     sfx.yaml                      ← reusable one-shot clips by id
@@ -233,25 +233,27 @@ default_pause_ms_between_speakers: 900
 For a book like TBWTT, four cast roles emerge — three in-text plus
 one outside-the-frame:
 
-| Role                  | Who they are                                                          | Where cast      |
-|---|---|---|
-| `Narrator`            | The in-text narrator — Raël writing after the fact, looking back     | `audio/voices.yaml` + per-paragraph in `chapter-N.json` |
-| `Raël`                | Raël inside the encounters, asking questions in real time            | `audio/voices.yaml` |
-| `Yahweh`              | The off-world teacher                                                  | `audio/voices.yaml` |
-| `AudioplayNarrator`   | The neutral outside-the-frame voice that delivers the intro and any  outro / chapter prefaces | `audio/voices.yaml` (per-language) |
+| Role                  | Who they are                                                          | Voice (decided 2026-06)  | Where cast      |
+|---|---|---|---|
+| `Narrator`            | The in-text narrator — Raël writing after the fact, looking back     | Phoenix (`aaHNjm7ksE1iw31dNOq5`) | `audio/voices.yaml` + per-paragraph in `chapter-N.json` |
+| `Raël`                | Raël inside the encounters, asking questions in real time            | Phoenix (same voice, different prosody defaults) | `audio/voices.yaml` |
+| `Yahweh`              | The off-world teacher                                                  | Jon — Natural Authority (`sB7vwSCyX0tQmU24cW2C`) | `audio/voices.yaml` |
+| `AudioplayNarrator`   | The neutral outside-the-frame voice that delivers the intro and any  outro / chapter prefaces | Jarnathan — Confident and Versatile (`c6SfcYrb2t09NHXiT80T`) | `audio/voices.yaml` (per-language) |
 
-`AudioplayNarrator` is a NEW role added when intros / chapter
-prefaces / outros come into play. It uses its own voice ID per
-language (the intro is scripted English in EN, scripted French in
-FR, etc. — the text gets translated and re-rendered).
+`AudioplayNarrator` uses its own voice ID per language (the intro is
+scripted English in EN, scripted French in FR, etc. — the text gets
+translated and re-rendered). **Jarnathan is the project-wide neutral
+Wheel of Heaven voice**: any future non-book audio (metadata readers,
+announcements, site-level audio) should reuse it so the "voice of the
+site" stays consistent across projects.
 
-In TBWTT, `Narrator` and `Raël` could plausibly share a voice (it's
-the same person, just from different temporal vantage points). Today
-both are cast to Marcel in voices.yaml. If a future production wants
-to differentiate "narrator-Raël (writing later)" from "in-scene Raël
-(asking questions)" — for example by giving the in-scene voice
-slightly more energy — that's a per-role casting override in
-`audio/voices.yaml`, no schema change needed.
+In TBWTT, `Narrator` and `Raël` share a voice deliberately (it's the
+same person, just from different temporal vantage points) — both cast
+to Phoenix, differentiated only by prosody defaults (stability 0.55
+vs 0.60). Phoenix replaced the original Marcel casting after listener
+feedback flagged the French accent. If a future production wants to
+differentiate the two roles further, that's a per-role casting
+override in `audio/voices.yaml`, no schema change needed.
 
 ### `audioplay/cues/cN.yaml` — per-chapter cue sheet
 
