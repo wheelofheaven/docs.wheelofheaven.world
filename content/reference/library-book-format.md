@@ -172,6 +172,118 @@ Atrahasis translation, whose eBL source transliteration is CC-BY-NC-SA).
 Be explicit and open: the `note` exists so a reader can see exactly why a
 text departs from the library's public-domain norm.
 
+## Schema ladder (per-corpus structure)
+
+`_meta.json.schema` declares the structural ladder of the book —
+the names of the levels above the paragraph/verse leaf — and
+`schemaLabels` maps each level to display strings per language.
+
+The biblical default is `["book", "chapters", "verses"]`; other
+corpora use different ladders to honour their native structure:
+
+| Corpus | Ladder | Example book |
+|---|---|---|
+| Biblical / Christian / LDS / Apocrypha | `["book", "chapters", "verses"]` | `obadiah`, `book-of-abraham` |
+| Akkadian epic | `["composition", "tablets", "lines"]` | `gilgamesh-woh` (Tablet XI) |
+| Sumerian composition | `["composition", "lines"]` (or `["composition", "segments", "lines"]` for damaged compositions) | `song-of-the-hoe-woh`, `flood-story-woh` |
+| Ugaritic | `["composition", "tablets", "lines"]` | `baal-cycle-woh` |
+| Hittite myth | `["composition", "tablets", "lines"]` with CTH number in metadata | (planned) |
+| Avestan | `["book", "fargards", "verses"]` for Vendidad; `["book", "yasna", "stanzas"]` for Yasna; `["book", "yashts", "stanzas"]` for Yashts | (planned) |
+| Greek poetry | `["composition", "lines"]` | (planned) |
+| Plato | `["dialogue", "stephanus"]` | (planned) |
+| Coptic Thomas | `["book", "logia"]` | (planned) |
+| Hidden Words | `["book", "parts", "words"]` | (planned) |
+| Caodai messages | `["book", "messages", "paragraphs"]` | (planned) |
+
+```json
+{
+  "schema": ["composition", "tablets", "lines"],
+  "schemaLabels": {
+    "en": ["Composition", "Tablet", "Line"]
+  }
+}
+```
+
+## Refid conventions per corpus
+
+The refId is the canonical citation identifier — stable across
+versions and used by the website, the API, and downstream links.
+Conventions per corpus:
+
+| Corpus | Pattern | Example |
+|---|---|---|
+| Biblical chapter:verse | `{CODE}-{chapter}:{verse}` | `GEN-1:1`, `MAT-13:3` |
+| Akkadian | `{CODE}-{tablet-roman}:{line}` | `GILG-XI:14`, `ATRA-I:1` |
+| Sumerian | `{CODE}-{line}` (composite-text line) | `HOE-25`, `SKL-1` |
+| Ugaritic | KTU-anchored `{CODE}-{tablet}:{col}:{line}` | `BAAL-1.3.i:5` |
+| Hittite (with CTH number in meta) | `{CODE}-{tablet}:{line}` | `EMRG-1:18` (CTH 344) |
+| Avestan Vendidad | `{CODE}-{fargard}:{verse}` | `VID-2:21` |
+| Avestan Yasna | `YAS-{chapter}:{stanza}` | `YAS-30:3` |
+| Avestan Yashts | `YT-{n}:{stanza}` | `YT-19:35` |
+| Greek poetry | `{CODE}-{line}` | `THEO-116`, `ERGA-109` |
+| Plato | `{CODE}-{stephanus-page+letter}` | `TIM-22b`, `CRI-113c` |
+| Greek prose | `{CODE}-{book}.{chapter}.{section}` | `DIOD-1.10.1` |
+| Fragment corpora | F-number + carrier locus in commentary | `BER-F1` (Berossus, FGrH 680) |
+| Coptic NHC | `{CODE}-{page}.{line}` or `{CODE}-{logion}` | `THOM-77`, `AJOH-11:18` |
+| Pyramid Texts | `{CODE}-{utterance}:{line}` | `PT-261:1` |
+| Bahá'í aphoristic | `HWA-{n}` (Arabic), `HWP-{n}` (Persian) | `HWA-7` |
+| Bahá'í treatises | `{CODE}-{paragraph}` | `IQAN-13` |
+| Caodai messages | `{CODE}-{vol}:{paragraph}` | `TNHT-1:12` |
+| Oomoto Shin'yu | `OSHIN-{year}:{n}` | `OSHIN-1892:1` |
+| Oomoto Reikai Monogatari | `RM-{volume}:{chapter}:{n}` | `RM-1:4:7` |
+| LDS | `{CODE}-{chapter}:{verse}` | `ABR-3:9`, `MOSES-1:33`, `DC-76:24` |
+| Vedic | `RV-{maṇḍala}.{sūkta}:{ṛc}` | `RV-10.129:4` |
+
+Book codes are stable: once a book's `code` is set in
+`catalog.json` it is referenced by every external link and never
+renamed.
+
+## Source file format (Translation-track only)
+
+For books in the WoH Translation track, the **source language
+layer** lives in immutable `source-{lang}-{N}.json` files
+alongside the translation chapter files. The source file is the
+ground truth — never edited after commit; if the upstream edition
+is updated, a new source file is created with a new fetch date.
+
+```
+data-library/vendidad-woh/
+├── _meta.json
+├── source-ave-2.json          # immutable Avestan source — Fargard 2
+└── chapter-2.json             # the WoH English translation of fargard 2
+```
+
+```json
+{
+  "schemaVersion": 2,
+  "bookSlug": "vendidad-woh",
+  "chapter": 2,
+  "source": {
+    "type": "avestan-transliteration",
+    "versionTitle": "Geldner Avesta (1886-96)",
+    "license": "Public Domain (Geldner)…",
+    "versionSource": "Geldner, Avesta…",
+    "fetchedFrom": "https://www.avesta.org/vendidad/vd.htm#chapter2",
+    "fetchedAt": "2026-06-12"
+  },
+  "verses": [
+    {
+      "n": 1,
+      "refId": "VID-2:1",
+      "ave": "<Avestan verbatim>"
+    }
+  ]
+}
+```
+
+`source.type` should be one of the documented type strings (see
+[Source acquisition](@/contributing/content/source-text-translation/source-acquisition.md#source-file-format)).
+Free-form provenance fields (`witnessHeader`,
+`lineNumberingNote`, `verseDivisionNote`, `transliterationNote`,
+`editorialMarkupNote`, `siglaNote`, `fragmentationNote`,
+`scriptNote`, `messages`, `entries`) are encouraged when they
+help future readers reproduce or audit the file.
+
 ## Chapter format (`chapter-N.json`)
 
 ```json

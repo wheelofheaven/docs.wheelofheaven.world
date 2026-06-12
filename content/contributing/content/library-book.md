@@ -34,18 +34,37 @@ page covers the *authoring* side — what to do when you want to add a book.
 
 ### Traditions
 
-Religious/philosophical groupings:
+Religious/philosophical groupings. Each tradition's `name` and
+`description` are multilingual (see `catalog.json.traditions[].name`
+for the full keyed object):
 
 ```json
 {
   "id": "raelian",
-  "name": "Raëlian",
-  "description": "Scriptures of the Raëlian Movement",
-  "color": "#f9c74f"
+  "code": "RAE",
+  "order": 1,
+  "icon": "message-circle",
+  "name": {
+    "en": "Raëlian Corpus",
+    "fr": "Corpus Raëlien",
+    "de": "Raëlianisches Korpus"
+  },
+  "description": {
+    "en": "The foundational texts of the Raëlian Movement..."
+  }
 }
 ```
 
-Available: `raelian`, `biblical`, `apocrypha`, `ancient-astronaut`.
+The catalogue currently defines 20 traditions: `raelian`,
+`hebrew-bible`, `christian`, `judaic`, `apocrypha`, `islamic`,
+`mesopotamian`, `mormon`, `western_esoteric`, `egyptian`, `vedic`,
+`levantine`, `kabbalah`, `ancient-astronaut`, `bahai`, `caodai`,
+`oomoto`, `anatolian`, `persian`, `greek`. The full list with
+descriptions is at the
+[Library Acquisition Program](@/contributing/content/library-acquisition.md#the-20-traditions).
+Adding a new tradition is a strategic decision documented in that
+program; adding a new collection under an existing tradition is a
+local catalog edit.
 
 ### Collections
 
@@ -101,6 +120,54 @@ grid and groups `planned` ones in a separate "planned" list. A book
 with status `planned` is therefore invisible to the available-books
 filter even if chapters exist on disk — see
 [Catalog validation](#catalog-validation) below.
+
+### Planned-book scaffolding
+
+A book is **registered before any source acquisition** when it's
+part of the
+[Library Acquisition Program](@/contributing/content/library-acquisition.md)
+queue. The catalog entry carries all the strategic metadata up
+front so the queue is reviewable as a strategic catalogue, not
+just a TODO list:
+
+```json
+{
+  "slug": "vendidad-woh",
+  "code": "VID-WOH",
+  "tradition": "persian",
+  "collection": "woh-translations",
+  "order": 1,
+  "priority": 5,
+  "author": "Wheel of Heaven Translation Program",
+  "publicationYear": 2026,
+  "originalTitle": "Vidēvdād (Vendidad)",
+  "originalLang": "ave",
+  "primaryLang": "ave",
+  "versionSource": "Geldner, Avesta: the Sacred Books of the Parsis, vol. 3 (1886-96, PD); avesta.org as collation aid; Darmesteter SBE 4 (1880, PD) as reference",
+  "translationNote": "Planned Wheel of Heaven Translation from the Avestan. Initial scope: Fargard 2 — Ahura Mazda warns Yima of catastrophic winters and commands the vara, an enclosed refuge stocked with the seed of every species; the strongest engineered-survival narrative outside the flood cluster.",
+  "availableLangs": [],
+  "completeLangs": [],
+  "chapters": 0,
+  "paragraphs": 0,
+  "tags": ["vendidad", "yima", "vara", "avestan", "zoroastrian", "wheel-of-heaven-translation"],
+  "topics": ["catastrophe-refuge", "yima", "seed-preservation"],
+  "status": "planned",
+  "hasAudio": false,
+  "hasVideo": false,
+  "versionTitle": "Wheel of Heaven Translation",
+  "shortVersionTitle": "WoH, 2026",
+  "versionLicense": "CC0-1.0",
+  "wohCurated": true,
+  "translationProgram": true
+}
+```
+
+`priority` orders the queue coarsely (5 = pilot wave, 6 =
+build-out, 7 = long tail). `versionSource` must name the specific
+open-licensed source edition the translation will be built from —
+a planned book without a verified source edition does not enter
+the catalogue. `translationProgram: true` marks Translation-track
+books for downstream tooling; Edition-track books omit it.
 
 ## Catalog validation
 

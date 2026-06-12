@@ -25,6 +25,11 @@ that fits before you start writing — they're not interchangeable.
 | A translation of an existing English page into another site language | [Translations (i18n localisation)](@/contributing/content/translations.md) | `data-content/{lang}/{section}/{slug}.md` |
 | An original English translation of a religious/mythological source text (Hebrew, Greek, Akkadian, etc.) through the WoH lens | [Source-Text Translation](@/contributing/content/source-text-translation/_index.md) | `data-library/{book-slug}-woh/` (source + chapter JSON + glossary entries) |
 
+The decision behind *which* texts enter the Library at all — the
+20 traditions, the original-language-first rule, the Edition vs
+Translation tracks — is documented at the
+[Library Acquisition Program](@/contributing/content/library-acquisition.md).
+
 If you're not sure which one to write, the per-type guides each open
 with a "when to write this" decision table.
 

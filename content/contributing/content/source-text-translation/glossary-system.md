@@ -10,8 +10,8 @@ sit at different points in the content flow.
 
 | Layer | Purpose | File path | Direction | Status |
 |---|---|---|---|---|
-| **Production glossary** | Cross-corpus source-language → English lexical decisions | `data-content/i18n/translation-glossary.json` | Hebrew / Greek / Akkadian / etc. → English | Live: v1.9.0, 147 Hebrew entries |
-| **Per-translation overlay** | Text-specific source-language → English decisions that do not generalise | `data-library/{book-slug}/_translation-glossary.json` | Same direction, scoped to one text | Designed, not yet instantiated |
+| **Production glossary** | Cross-corpus source-language → English lexical decisions | `data-content/i18n/translation-glossary.json` | Hebrew / Greek / Akkadian / Sumerian / Ugaritic / Arabic → English | Live: v2.69.0, 789 terms |
+| **Per-translation overlay** | Text-specific source-language → English decisions that do not generalise | `data-library/{book-slug}/_translation-glossary.json` | Same direction, scoped to one text | Live for 19 books (every shipped translation except Genesis-WoH) |
 | **Distribution glossary** | Per-book multi-language localisation (proper nouns, concepts, scripture policy) | `data-library/{book-slug}/_glossary.json` | English (or French) → de/es/fr/ja/ko/ru/zh/zh-Hant | Live for the 3 Raëlian-canon books |
 
 The first two layers (production + per-translation overlay) belong
@@ -155,9 +155,12 @@ promoted from overlay to central. Procedure:
 3. Affected chapters' `glossaryVersion` and (if applicable)
    `overlayGlossaryVersion` are bumped on next re-render.
 
-**Status note (2026-05-21):** no overlay file currently exists.
-The current Genesis-WoH translation uses the central glossary
-only. The overlay system becomes active when Ezekiel begins.
+**Status note (2026-06):** overlay files are active for 19 books
+— every shipped translation except Genesis-WoH (the original
+pilot, which used the central glossary only) and the LDS Edition
+track books (no source-language layer). The overlay pattern was
+first instantiated for Ezekiel and has carried forward to every
+new translation since.
 
 ## Layer 3: Distribution glossary (per book)
 
@@ -238,10 +241,10 @@ text out).
 }
 ```
 
-**Status note (2026-05-21):** the distribution glossary exists
-for the 3 Raëlian-canon books (TBWTT, ETTMTTP, LWTE) at ~1180
-lines each. It will be created for Genesis-WoH when the
-multi-language fanout pipeline becomes operational.
+**Status note (2026-06):** the distribution glossary exists for
+the 3 Raëlian-canon books (TBWTT, ETTMTTP, LWTE) at ~1180 lines
+each. The Genesis-WoH distribution glossary is created as part of
+the multi-language fanout pass.
 
 ## How the three layers interact during a translation pass
 

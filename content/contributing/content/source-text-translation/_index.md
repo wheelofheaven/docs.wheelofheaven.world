@@ -23,10 +23,11 @@ different points in the content flow.
 | **WoH Translation Program** | Source language (Hebrew, Greek, …) → English, with WoH lens applied lexically | This section |
 | **i18n localisation** | English (or French, for canon books) → 8 other site languages, preserving project terminology | [Translations](@/contributing/content/translations.md) |
 
-A book translated under the WoH Translation Program (current
-example: [Genesis](https://www.wheelofheaven.world/library/genesis-woh/))
-will subsequently be fanned out to the other site languages through
-the i18n localisation pipeline. The two are sequential, not parallel.
+A book translated under the WoH Translation Program (worked
+example: [Genesis-WoH](https://www.wheelofheaven.world/library/genesis-woh/),
+50 chapters signed off as `stable`) is subsequently fanned out to
+the other site languages through the i18n localisation pipeline.
+The two are sequential, not parallel.
 
 ## What lives here
 
@@ -57,6 +58,10 @@ the i18n localisation pipeline. The two are sequential, not parallel.
   agent must cite. Acceptable and unacceptable sources by tradition.
 - **[Roadmap](@/contributing/content/source-text-translation/roadmap.md)**
   — the prioritised text list, current state, and what is next.
+- **[Library Acquisition Program](@/contributing/content/library-acquisition.md)**
+  — the broader strategy the roadmap operates within: which texts
+  are sourced, in which tradition, on which track (Edition vs
+  Translation), and why.
 
 ## Who this section is for
 
@@ -92,15 +97,29 @@ with a `claim_type` (`direct` / `inferred` / `speculative`) so
 readers can audit exactly how far the lens went in any specific
 choice.
 
-## Current state
+## Current state (2026-06)
 
-- **Genesis** is the active translation. As of 2026-05-21, chapters
-  1–9 are drafted, awaiting end-to-end human review and sign-off.
-  Chapters 10–11 are queued. The book is published in draft form at
-  `/library/genesis-woh/` with the methodology page surfaced.
-- **Production glossary** is at v1.9.0 with 147 Hebrew entries
-  covering Genesis 1–9. Distribution: 117 `direct` / 23 `inferred`
-  / 7 `speculative`.
-- **Per-translation overlay glossaries** and the multi-language
-  fanout pipeline are designed but not yet built. They become
-  active when the second WoH Translation book (Ezekiel) begins.
+- **Books shipped or in flight: 21.** Hebrew Bible — Genesis (50 ch,
+  complete), Exodus, Isaiah (scaffold), Ezekiel, Daniel, Job. New
+  Testament — Matthew, Mark, Luke, Acts, Revelation. Qur'an
+  (selections). Pseudepigrapha — 1 Enoch, Jubilees, Shi'ur Qomah.
+  Mesopotamian — Gilgamesh XI, Adapa, Eridu Genesis, Enki and Ninmah,
+  Enki and Ninhursag, Song of the Hoe. Ugaritic — Baal Cycle (KTU
+  1.3–1.4). All drafted chapters are signed off as `stable`.
+- **Acquisition queue: 72 more books** are registered as `planned` in
+  `catalog.json` per the
+  [2026-06 Library Acquisition Program](@/contributing/content/library-acquisition.md):
+  the Atrahasis ring, the Anatolian Kumarbi cycle, the Avesta, Greek
+  (Theogony, Plato, the Hellenistic witnesses), Egyptian (Heavenly
+  Cow, Pyramid Texts), Bahá'í, Caodai, Oomoto, more pseudepigrapha,
+  Hekhalot, Gnostic/Coptic.
+- **Production glossary** is at v2.69.0 with 789 terms across six
+  source languages (Hebrew, Sumerian, Akkadian, Ugaritic, Arabic,
+  Greek). Distribution: 708 `direct` / 74 `inferred` / 7
+  `speculative`.
+- **Per-translation overlay glossaries** are active for 19 books
+  (every shipped translation except Genesis-WoH and the Mormon
+  Edition track). The mechanism is described in
+  [Glossary system](@/contributing/content/source-text-translation/glossary-system.md).
+- **Multi-language fanout** is operational and runs after a book
+  reaches `stable` — see [Translations](@/contributing/content/translations.md).

@@ -254,12 +254,14 @@ pilot (2026-05-18):
    glossary entries (the founding seed of
    `translation-glossary.json` v1.0.0). Wrote per-verse
    commentary for divergent verses. Promoted to `1.0.0-rc1`.
-6. **Reviewer pass.** (Not yet run on Genesis 1 — the pilot
-   bypassed an automated Reviewer pass and went straight to
-   human review. Future chapters will use the Reviewer agent.)
-7. **Human sign-off.** In progress as of 2026-05-21.
-8. **Multi-language fanout.** Pending — the fanout pipeline is
-   designed but not yet operational.
+6. **Reviewer pass.** The original Genesis 1 pilot bypassed the
+   automated Reviewer pass and went straight to human review;
+   every chapter since (including the rest of Genesis-WoH) has
+   used the three-agent pipeline as documented above.
+7. **Human sign-off.** Complete. Genesis-WoH ships all 50 chapters
+   as `stable`.
+8. **Multi-language fanout.** Operational; runs after a book
+   reaches `stable`.
 
 The methodology page for Genesis 1, with the parallel
 Hebrew/ASV/WoH display and per-verse notes, is at
