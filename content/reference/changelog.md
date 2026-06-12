@@ -29,6 +29,11 @@ Phase 6 then added generated local source pages at `/sources/{id}/` with
 reverse `Cited by` blocks, so each source now works as a navigation hub
 instead of only an index entry.
 
+The follow-up i18n pass kept the source record monolingual in
+`data/sources.json` but added localized page shells at
+`/{lang}/sources/{id}/`, so translated pages now route to language-aware
+source URLs while sharing the same canonical data.
+
 ## 2026-05 — Search Console / hreflang fix
 
 First Google Search Console audit of `www.wheelofheaven.world`,

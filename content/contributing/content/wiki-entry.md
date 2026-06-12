@@ -95,7 +95,9 @@ Use stable source IDs whenever the source already exists in
 `data/sources.json`. If a source has not been registered yet, keep using a
 legacy title/url record for the time being and convert it later.
 When the ID exists, the rendered reference entry links to the local
-`/sources/{id}/` page, which also shows the reverse `Cited by` list.
+source page for the current language: `/sources/{id}/` for English and
+`/{lang}/sources/{id}/` for translated shells. Those pages also show the
+reverse `Cited by` list.
 
 ## Structure
 

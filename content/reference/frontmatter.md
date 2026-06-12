@@ -133,9 +133,10 @@ Use stable source IDs whenever the cited source already exists in
 The site resolves the visible title, author/date metadata, and source URL
 from that manifest.
 Those IDs also map to the generated local source pages at
-`/sources/{id}/`, where the reverse `Cited by` list is rendered.
-The same ID is what body citations use via `cite(id="...")` on wiki pages,
-so the inline marker and the reference entry stay in sync.
+`/sources/{id}/` in English and `/{lang}/sources/{id}/` in translated
+shells, where the reverse `Cited by` list is rendered. The same ID is
+what body citations use via `cite(id="...")` on wiki pages, so the
+inline marker and the reference entry stay in sync.
 
 ```toml
 [[extra.references]]

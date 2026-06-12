@@ -80,7 +80,9 @@ Wiki citations resolve against stable source IDs from
 `data/sources.json`. Unknown IDs fail the build before deploy, so the
 rendered reference list and the inline citation markers stay aligned.
 The same IDs also drive local source detail pages at `/sources/{id}/`
-and their reverse `Cited by` blocks.
+and localized shells at `/{lang}/sources/{id}/`, with reverse `Cited by`
+blocks on every page. The source record itself remains single-sourced;
+only the page shell and URL are language-aware.
 
 ### PWA support
 

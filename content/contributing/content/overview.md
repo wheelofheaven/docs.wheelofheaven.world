@@ -83,10 +83,12 @@ Optional section introduction text.
 
 The `/sources/` page is JSON-driven — its content comes from
 `data/sources.json`, built by `scripts/build_sources.py` in the www repo.
-The build also generates per-source detail pages at
-`/sources/{id}/` from `content/sources/_generated/*.md` and a reverse
-`data/sources/cited-by.json` index for the `Cited by` blocks. Those
-generated stubs are not hand-authored.
+The build also generates per-source detail pages at `/sources/{id}/`
+for English and localized shells at `/{lang}/sources/{id}/` from
+`content/sources/_generated/*.md` and `content/{lang}/sources/_generated/*.md`.
+It also writes a reverse `data/sources/cited-by.json` index for the
+`Cited by` blocks. Those generated stubs are not hand-authored; the
+underlying source record stays single-sourced in `data/sources.json`.
 
 ## Translations
 
