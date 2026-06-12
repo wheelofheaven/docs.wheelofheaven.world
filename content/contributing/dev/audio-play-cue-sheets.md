@@ -11,11 +11,14 @@ notes into the source text. The
 the rendering side (TTS → MP3/Opus → CDN); this page covers the
 **production scaffolding** that drives it.
 
-> **Status:** designed. The cue-sheet layer is being introduced as a
-> refactor over the v4 pipeline. Current behavior (scene tags inline
-> in `chapter-N.json`) remains supported during migration; new
-> directives (SFX, pauses, per-paragraph voice tweaks) only live in
-> cue sheets.
+> **Status:** Phases 2 and 3 shipped (2026-06); Phase 1 refactor
+> pending. Paragraph kinds (`kind: title | continuation`) are live in
+> `chapter-N.json` and drive both the reader and the audio render.
+> The Audio Play Intro is live: both TBWTT and ETTMTP open with a
+> Jarnathan-voiced opener from `{slug}/audioplay/manifest.yaml`.
+> Scene tags still live inline in `chapter-N.json` (the Phase 1
+> migration to cue sheets hasn't happened); new directives (SFX,
+> pauses, per-paragraph voice tweaks) will only live in cue sheets.
 
 ## The problem
 
@@ -429,7 +432,12 @@ re-render (cached: only changed paragraphs/SFX re-bill the API)
    chapter JSON `scene` field for unconverted chapters/books.
 5. Re-render TBWTT EN — output byte-identical to the pre-refactor build.
 
-**Phase 2 — Paragraph kinds:**
+**Phase 2 — Paragraph kinds:** ✅ shipped 2026-06 (with two deltas
+from the plan below: titles keep their in-text speaker — TBWTT's are
+all Narrator-voiced with a 1500 ms `pause_ms_before_title` lead-in,
+not read by AudioplayNarrator; and continuations keep their own
+timing-sidecar entry rather than merging into the previous one —
+they just concat with zero inter-paragraph silence).
 
 1. Add `kind: body | title | continuation` to the chapter-JSON schema
    (documented in [Library Book Format](@/reference/library-book-format.md)).
@@ -454,17 +462,24 @@ re-render (cached: only changed paragraphs/SFX re-bill the API)
    with tighter spacing — see `themes/bifrost/templates/macros/library.html`.
 6. Re-render TBWTT EN.
 
-**Phase 3 — Audio Play Intro (`AudioplayNarrator`):**
+**Phase 3 — Audio Play Intro (`AudioplayNarrator`):** ✅ shipped
+2026-06 for TBWTT + ETTMTP EN.
 
-1. Cast an `AudioplayNarrator` voice per-language in `audio/voices.yaml`
-   — a neutral outside-the-frame voice that won't conflict with the
-   in-text Narrator / Raël voice.
-2. Write the intro script in `audioplay/manifest.yaml`'s `intro.text`
-   for the canonical language; translate when shipping in others.
-3. Render the intro as a special "p0" clip prepended to chapter 1's
-   timing + audio.
-4. Update the bifrost player to highlight the intro region (or not —
-   intro is unhighlighted prose).
+1. ✅ `AudioplayNarrator` cast to Jarnathan in `audio/voices.yaml`
+   (all languages; untreated passthrough in `treatments.yaml`).
+2. ✅ Intro scripts live in `{slug}/audioplay/manifest.yaml` under
+   `intro.text`, **language-keyed** (`text: { en: |, fr: | … }`) —
+   languages without an entry render no intro. Both EN scripts
+   written; translations pending with their renders.
+3. ✅ Rendered as a "p0" clip prepended to chapter 1:
+   `[pre_pause(1s), intro, post_pause(2s), p1, …]`. The first real
+   paragraph suppresses its automatic speaker-change pause so the
+   post-intro gap is exactly `post_pause_ms`. The timing sidecar
+   carries the intro as `n: 0, kind: "intro"` with word timings.
+4. The bifrost player needed no change — there is no `c1p0` DOM
+   paragraph, so the intro region simply plays unhighlighted.
+   (Optional future nicety: surface "Introduction" in the chapter
+   title slot while `kind: "intro"` is active.)
 
 **Phase 4 — First SFX:**
 
