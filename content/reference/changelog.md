@@ -25,6 +25,10 @@ A small pilot backfill seeded the new contract in
 `reference-corpus-of-the-raelian-canon.md`, and the docs here were updated
 to make the ID-based form the default guidance.
 
+Phase 6 then added generated local source pages at `/sources/{id}/` with
+reverse `Cited by` blocks, so each source now works as a navigation hub
+instead of only an index entry.
+
 ## 2026-05 — Search Console / hreflang fix
 
 First Google Search Console audit of `www.wheelofheaven.world`,

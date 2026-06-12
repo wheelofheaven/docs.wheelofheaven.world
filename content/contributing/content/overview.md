@@ -83,8 +83,10 @@ Optional section introduction text.
 
 The `/sources/` page is JSON-driven — its content comes from
 `data/sources.json`, built by `scripts/build_sources.py` in the www repo.
-`content/sources/` contains only the section `_index.md`; individual
-bibliography entries are not authored as Markdown.
+The build also generates per-source detail pages at
+`/sources/{id}/` from `content/sources/_generated/*.md` and a reverse
+`data/sources/cited-by.json` index for the `Cited by` blocks. Those
+generated stubs are not hand-authored.
 
 ## Translations
 

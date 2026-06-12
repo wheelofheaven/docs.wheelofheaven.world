@@ -94,6 +94,8 @@ share the same identifier. That means a citation written as
 Use stable source IDs whenever the source already exists in
 `data/sources.json`. If a source has not been registered yet, keep using a
 legacy title/url record for the time being and convert it later.
+When the ID exists, the rendered reference entry links to the local
+`/sources/{id}/` page, which also shows the reverse `Cited by` list.
 
 ## Structure
 

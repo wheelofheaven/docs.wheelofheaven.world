@@ -23,7 +23,7 @@ The main public-facing knowledge base website.
 | Library | `/library/` | `library-book.html` | Sacred and primary texts with paragraph-level commentary |
 | Articles | `/articles/` | `articles-page.html` | Long-form essays and explainers (idea-driven, evergreen) |
 | News | `/news/` | `news-page.html` | Newsroom dispatches (event-driven, decays) |
-| Sources | `/sources/` | `sources-section.html` | Living bibliography, JSON-driven from `data/sources.json` |
+| Sources | `/sources/` | `sources-section.html` | Living bibliography, JSON-driven from `data/sources.json`, with generated detail pages at `/sources/{id}/` |
 | Press | `/press/` | `info-page.html` | Press kit — brand assets, palette, contact |
 
 ## Configuration
@@ -79,6 +79,8 @@ version/source context that backs the text they are reading.
 Wiki citations resolve against stable source IDs from
 `data/sources.json`. Unknown IDs fail the build before deploy, so the
 rendered reference list and the inline citation markers stay aligned.
+The same IDs also drive local source detail pages at `/sources/{id}/`
+and their reverse `Cited by` blocks.
 
 ### PWA support
 
