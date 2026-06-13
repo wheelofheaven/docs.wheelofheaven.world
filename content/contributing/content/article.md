@@ -108,7 +108,9 @@ unmotivated literary devices...
 | `category` | string | One of: Hermeneutics, Comparative, Method, History, Critique |
 | `keywords` | string[] | 3–5 keywords for SEO |
 | `references` | object[] | Sources — six-source minimum. Prefer stable `data/sources.json` IDs when available; legacy title/url records remain valid. See [wiki-entry sourcing](@/contributing/content/wiki-entry.md). |
-| `image` | string | Optional header image path |
+| `image` / `header_image` | string | Optional landscape hero image path. When absent, a category-matched gradient is generated. |
+| `article_type` | string | Article variety, e.g. `"explainer"` (the long-form default). |
+| `featured` | bool | Surface the Article in featured placements on the `/articles/` index. |
 
 ## Structure
 
