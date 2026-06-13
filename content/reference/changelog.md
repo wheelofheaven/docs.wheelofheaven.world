@@ -35,10 +35,11 @@ The follow-up i18n pass kept the source record monolingual in
 source URLs while sharing the same canonical data.
 
 The timeline sequence also grew a framing preamble, a closing wheel
-section, data-backed full-viewport illustration slideshows for the landing
+section, data-backed full-viewport illustration sequences for the landing
 page using the same figure IDs as the timeline chapters, and a dedicated
 `/timeline/chronology/` overview page linked from the age-page Earth-state
-card.
+card. A follow-up replaced the timed flip-style slideshow with a
+state-driven opacity dissolve and cache-busted the theme stylesheet links.
 
 ## 2026-05 — Search Console / hreflang fix
 
