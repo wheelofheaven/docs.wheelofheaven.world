@@ -19,7 +19,7 @@ The main public-facing knowledge base website.
 | Section | Path | Template | Notes |
 |---------|------|----------|-------|
 | Wiki | `/wiki/` | `wiki-page.html` | Encyclopedia of terms, figures, motifs |
-| Timeline | `/timeline/` | `timeline-page.html` | Twelve precessional ages |
+| Timeline | `/timeline/` | `timeline-page.html` | Preamble + twelve precessional ages + outro, with a companion chronology page |
 | Library | `/library/` | `library-book.html` | Sacred and primary texts with paragraph-level commentary |
 | Articles | `/articles/` | `articles-page.html` | Long-form essays and explainers (idea-driven, evergreen) |
 | News | `/news/` | `news-page.html` | Newsroom dispatches (event-driven, decays) |
@@ -73,6 +73,14 @@ highlights, reading progress tracking, font size preferences.
 
 Library book pages surface a provenance panel so readers can inspect the
 version/source context that backs the text they are reading.
+
+### Timeline overview
+
+The `/timeline/` landing page now includes the framing preamble and the
+closing wheel chapter, with each section rendered as a three-frame reel
+instead of a single Earth image. The age-page sidebar carries the current
+Earth-state card, and that card links into the companion chronology page
+at `/timeline/chronology/`.
 
 ### Wiki references
 

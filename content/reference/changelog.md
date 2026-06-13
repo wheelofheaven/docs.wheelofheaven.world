@@ -34,6 +34,11 @@ The follow-up i18n pass kept the source record monolingual in
 `/{lang}/sources/{id}/`, so translated pages now route to language-aware
 source URLs while sharing the same canonical data.
 
+The timeline sequence also grew a framing preamble, a closing wheel
+section, a three-frame hero reel for each age, and a dedicated
+`/timeline/chronology/` overview page linked from the age-page Earth-state
+card.
+
 ## 2026-05 — Search Console / hreflang fix
 
 First Google Search Console audit of `www.wheelofheaven.world`,
