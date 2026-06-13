@@ -36,8 +36,9 @@ source URLs while sharing the same canonical data.
 
 The timeline sequence also grew a framing preamble, a closing wheel
 section, data-backed full-viewport illustration slideshows for the landing
-page, and a dedicated `/timeline/chronology/` overview page linked from the
-age-page Earth-state card.
+page using the same figure IDs as the timeline chapters, and a dedicated
+`/timeline/chronology/` overview page linked from the age-page Earth-state
+card.
 
 ## 2026-05 — Search Console / hreflang fix
 
