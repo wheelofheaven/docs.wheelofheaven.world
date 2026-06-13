@@ -78,10 +78,11 @@ version/source context that backs the text they are reading.
 
 The `/timeline/` landing page now includes the framing preamble and the
 closing wheel chapter, with each section rendered as a data-backed
-three-frame illustration reel instead of a single Earth image. Slide
-selection is controlled by `data/timeline-slides.json`, while the
-age-page sidebar carries the current Earth-state card and links into the
-companion chronology page at `/timeline/chronology/`.
+full-viewport three-frame illustration slideshow instead of a single Earth
+image. Slide selection is controlled by `data/timeline-slides.json`; the
+active slide flips and fades in place behind the section text. The age-page
+sidebar carries the current Earth-state card and links into the companion
+chronology page at `/timeline/chronology/`.
 
 ### Wiki references
 
