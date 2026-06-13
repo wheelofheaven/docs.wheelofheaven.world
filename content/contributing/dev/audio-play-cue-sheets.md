@@ -11,14 +11,15 @@ notes into the source text. The
 the rendering side (TTS → MP3/Opus → CDN); this page covers the
 **production scaffolding** that drives it.
 
-> **Status:** Phases 2 and 3 shipped (2026-06); Phase 1 refactor
-> pending. Paragraph kinds (`kind: title | continuation`) are live in
-> `chapter-N.json` and drive both the reader and the audio render.
-> The Audio Play Intro is live: both TBWTT and ETTMTP open with a
-> Jarnathan-voiced opener from `{slug}/audioplay/manifest.yaml`.
-> Scene tags still live inline in `chapter-N.json` (the Phase 1
-> migration to cue sheets hasn't happened); new directives (SFX,
-> pauses, per-paragraph voice tweaks) will only live in cue sheets.
+> **Status:** Phases 1, 2, and 3 shipped (2026-06). Scene tags live
+> in `{slug}/audioplay/cues/cN.yaml`; the chapter-JSON `scene` field
+> remains a per-paragraph fallback for any future un-migrated content
+> (verified: zero entries in the corpus today). Paragraph kinds
+> (`kind: title | continuation`) live in `chapter-N.json` and drive
+> both the reader and the audio render. The Audio Play Intro is live:
+> both TBWTT and ETTMTP open with a Jarnathan-voiced opener from
+> `{slug}/audioplay/manifest.yaml`. Future directives (SFX, pauses,
+> per-paragraph voice tweaks) extend the existing `cues/cN.yaml`.
 
 ## The problem
 
@@ -420,17 +421,24 @@ re-render (cached: only changed paragraphs/SFX re-bill the API)
 
 ## Rollout plan
 
-**Phase 1 — Refactor (no audible change):**
+**Phase 1 — Refactor (no audible change):** ✅ shipped 2026-06.
+Implementation note: `audio/sfx.yaml` deferred until Phase 4
+(introducing an empty file ahead of need would just be ceremony),
+and `audioplay/manifest.yaml` was created in Phase 3 for the intro,
+not in this phase. The migration moved both books at once via
+`scripts/migrate_scenes_to_cues.py`:
 
-1. Create `data-library/audio/sfx.yaml` (empty registry, schema doc'd).
-2. Create `data-library/the-book-which-tells-the-truth/audioplay/manifest.yaml`
-   (book defaults; no intro yet, just paving the path).
-3. Create `data-library/the-book-which-tells-the-truth/audioplay/cues/c1.yaml`
-   through `c7.yaml`, moving the v4 `scene: elohim-vessel` tags out of
-   the chapter JSONs.
-4. Update `generate_ambient.py` to read cues first, fall back to
-   chapter JSON `scene` field for unconverted chapters/books.
-5. Re-render TBWTT EN — output byte-identical to the pre-refactor build.
+- TBWTT: 172 scene tags moved into `cues/c1.yaml`–`c7.yaml`.
+- ETTMTP: 4 scene tags moved into `cues/c2.yaml`.
+- Zero `scene` fields remain in any chapter JSON.
+
+Verified bit-exact: the regenerated chapter ambient tracks are
+PCM-byte-identical to the pre-migration files (Opus container
+metadata differs by a timestamp, audio bytes match), so the assets
+repo was left untouched. The `generate_ambient.py` reader prefers
+cue-sheet entries and falls back to the chapter JSON `scene` field
+per-paragraph — so a chapter half-migrated by hand is well-defined,
+even though the migration tool moves all tags at once.
 
 **Phase 2 — Paragraph kinds:** ✅ shipped 2026-06 (with two deltas
 from the plan below: titles keep their in-text speaker — TBWTT's are
