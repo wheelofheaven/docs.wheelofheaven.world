@@ -41,15 +41,45 @@ Quoted text here.
 
 Manual `path` always wins over the resolved one.
 
+## Syntax — interlinear mode
+
+Set `interlinear=true` (with `book` + `chapter` + `verse`, plus optional
+`verse_end` for a range) to render the original-language line and its
+transliteration beneath each translated line, pulled live from the chapter
+data. The translation text comes from the data too, so the body is ignored
+in this mode — keep it as a fallback for when the data can't be resolved.
+
+{%/* raw */%}
+```markdown
+{%/* library(book="gilgamesh-woh", chapter=11, verse=14, verse_end=19, interlinear=true) */%}
+(fallback English — ignored when the data resolves)
+{%/* end */%}
+```
+{%/* endraw */%}
+
+Each verse renders as the translation followed by a word-paired original
+line: cuneiform-over-transliteration for Sumerian/Akkadian, script-over-
+transliteration for Hebrew and Greek, or a single line where the corpus has
+no per-word transliteration (e.g. Hebrew verses, which carry no romanization).
+Direction and `lang` follow the verse's own `text_lang` when present, so a
+Greek verse inside an Aramaic-catalogued book still renders left-to-right.
+Partial-confidence cuneiform gets a ◑ badge.
+
+Only books whose chapter data carries original-language fields produce an
+interlinear; a modern translation with no original line falls back to the
+plain translated quote.
+
 ## Parameters
 
-| Param      | Type    | Required          | Default | What                                                  |
-|------------|---------|-------------------|---------|-------------------------------------------------------|
-| `book`     | string  | yes (auto-mode)   | `""`    | Library book slug.                                     |
-| `chapter`  | number  | no                | —       | Chapter number; appended as `#c<chapter>p<verse>` or `#chapter-<n>`. |
-| `verse`    | number  | no                | —       | Verse number; combined with chapter for deep-link.    |
-| `path`     | string  | yes (manual-mode) | `""`    | Override path (wins over auto-resolved).              |
-| `title`    | string  | no                | `""`    | Override book title for the CTA label.                |
+| Param         | Type    | Required          | Default   | What                                                  |
+|---------------|---------|-------------------|-----------|-------------------------------------------------------|
+| `book`        | string  | yes (auto-mode)   | `""`      | Library book slug.                                     |
+| `chapter`     | number  | no                | —         | Chapter number; appended as `#c<chapter>p<verse>` or `#chapter-<n>`. |
+| `verse`       | number  | no                | —         | Verse number; combined with chapter for deep-link.    |
+| `verse_end`   | number  | no                | `verse`   | End of a verse range (interlinear mode).              |
+| `interlinear` | bool    | no                | `false`   | Render original + transliteration beneath each line, from chapter data. |
+| `path`        | string  | yes (manual-mode) | `""`      | Override path (wins over auto-resolved).              |
+| `title`       | string  | no                | `""`      | Override book title for the CTA label.                |
 
 ## Output structure
 
@@ -69,6 +99,11 @@ Manual `path` always wins over the resolved one.
 
 `.library-quote__button` is styled by [`glass-cloud-button`](../../visual-language/glass-cloud-button/)
 with a mauve→cyan cloud-duo.
+
+In interlinear mode the `__content` instead holds one `library-quote__il-verse`
+per verse, each with a `library-quote__il-en` translation line and a
+`library-quote__il-original` block of `library-quote__il-word` columns
+(`__il-script` over `__il-translit`).
 
 ## Related
 

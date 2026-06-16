@@ -108,6 +108,7 @@ unmotivated literary devices...
 | `category` | string | One of: Hermeneutics, Comparative, Method, History, Critique |
 | `keywords` | string[] | 3–5 keywords for SEO |
 | `references` | object[] | Sources — six-source minimum. Prefer stable `data/sources.json` IDs when available; legacy title/url records remain valid. See [wiki-entry sourcing](@/contributing/content/wiki-entry.md). |
+| `footnotes` | object[] | Optional explanatory endnotes; each `{ content = "…" }`, referenced inline via the `footnote` shortcode. Lettered (a, b, c…), distinct from numbered `references`. |
 | `image` / `header_image` | string | Optional landscape hero image path. When absent, a category-matched gradient is generated. |
 | `article_type` | string | Article variety, e.g. `"explainer"` (the long-form default). |
 | `featured` | bool | Surface the Article in featured placements on the `/articles/` index. |
@@ -171,6 +172,31 @@ The reference list at the bottom of the page is rendered automatically
 from the `references` array in frontmatter.
 If a source already exists in `data/sources.json`, use its stable `id` and add
 page-specific `note` or `locator` fields as needed.
+
+## Footnotes (explanatory notes)
+
+Separate from numbered citations: explanatory **footnotes** render as
+lettered endnotes (a, b, c, …) at the foot of the Article. Use them to gloss
+a technical term or add an aside without breaking the prose. Define them in
+`[extra].footnotes` and reference them inline with the `footnote` shortcode:
+
+```markdown
+The text survives only in lacunae{{/* footnote(id="2") */}}, ...
+```
+
+```toml
+[[extra.footnotes]]
+content = "Gaps in a damaged text where the tablet is broken or illegible."
+```
+
+`id` is the 1-based index into `extra.footnotes`, so place the markers in the
+same order the notes are listed. Citations (`cite`, numbered `[1]`) and
+footnotes (`footnote`, lettered `[a]`) are two independent systems — each
+round-trips to its own list at the foot of the page.
+
+For original-language quotations, the `library` shortcode's
+[interlinear mode](@/components/shortcodes/library.md) renders the source
+script and transliteration beneath each translated line.
 
 ## Linking out
 
