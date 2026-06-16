@@ -112,6 +112,18 @@ unmotivated literary devices...
 | `image` / `header_image` | string | Optional landscape hero image path. When absent, a category-matched gradient is generated. |
 | `article_type` | string | Article variety, e.g. `"explainer"` (the long-form default). |
 | `featured` | bool | Surface the Article in featured placements on the `/articles/` index. |
+| `author` | string | Byline name. Defaults to `Zara Zinsfuss` (the corpus author); override for guest pieces. |
+| `author_slug` | string | Author-profile slug for the byline link (e.g. `zara-zinsfuss` → `/author/zara-zinsfuss/`). Omit to render the name unlinked. |
+
+## Byline
+
+The article header renders a byline under the headline:
+**`by <author> · <date> · <reading time>`**, with the author name linked to
+their `/author/<slug>/` profile. It reads `author` / `author_slug` from
+`[extra]` and falls back to the corpus author (Zara Zinsfuss), so a new
+Article is auto-bylined — set the fields only to credit someone else. The
+classification chips (type, claim badge, category) stay in the eyebrow row
+*above* the title; author/date/reading-time are the provenance line *below* it.
 
 ## Structure
 
