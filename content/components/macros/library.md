@@ -26,6 +26,14 @@ need to write it manually.
 {{ library::get_book_version_title(book_data=book, lang=detected_lang) }}
 {{ library::get_book_short_version_title(book_data=book, lang=detected_lang) }}
 {{ library::lang_name(code=book.originalLang) }}
+{{ library::render_verse(
+    verse=verse,
+    chapter_n=chapter.n,
+    lang=detected_lang,
+    original_lang=book.originalLang,
+    ref_paragraph_text="",
+    portrait_registry=portrait_registry
+) }}
 ```
 
 ## Fallback chain
@@ -52,6 +60,15 @@ The library book template also reads the structured `version` object from
 panel uses `lang_name` for source-language and witness labels, and surfaces
 license, source record, base text, method, witness stack, and responsibility
 metadata without changing older book records.
+
+## Portrait registry
+
+`render_verse` accepts an optional `portrait_registry` loaded from
+`data/personality_portraits.json`. When a paragraph's `speaker` matches a
+known alias in that registry, the macro renders a compact linked avatar in
+the verse gutter. The library book sidebar separately reads the book-level
+`portraits` array from `_meta.json` to show people, speakers, and major
+figures relevant to the book.
 
 ## Why these are macros, not template helpers
 

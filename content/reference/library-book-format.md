@@ -42,12 +42,37 @@ data-library/
   "updated": "2026-01-24T08:57:31Z",
   "chapterCount": 7,
   "paragraphCount": 1029,
+  "portraits": [
+    { "id": "rael", "role": "recipient / narrator" },
+    { "id": "yahweh", "role": "principal speaker" }
+  ],
   "chapterFiles": [
     { "n": 1, "file": "chapter-1.json", "title": "La Rencontre", "paragraphs": 62 },
     { "n": 2, "file": "chapter-2.json", "title": "La Vérité", "paragraphs": 113 }
   ]
 }
 ```
+
+### Portrait metadata
+
+Books may declare a top-level `portraits` array when named people or
+figures should be surfaced in the website sidebar. Each item references
+an id from `www.wheelofheaven.world/data/personality_portraits.json` and
+adds the book-specific role label.
+
+```json
+{
+  "portraits": [
+    { "id": "rael", "role": "recipient / narrator" },
+    { "id": "yahweh", "role": "principal speaker" },
+    { "id": "elohim", "role": "civilization described" }
+  ]
+}
+```
+
+Known paragraph-level `speaker` values are also matched against the same
+registry, so Raelian books can show a compact speaker avatar beside
+verses spoken by figures such as Yahweh or Rael.
 
 ## Version provenance metadata
 
