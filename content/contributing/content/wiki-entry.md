@@ -27,7 +27,7 @@ category = "Core Concepts"
 alternative_names = ["Aluhim", "Eloah (singular)"]
 see_also = [
     { title = "Yahweh", path = "/wiki/yahweh/" },
-    { title = "Council of Eternals", path = "/wiki/council-of-eternals/" }
+    { title = "Council of Eternals", path = "/wiki/council-of-the-eternals/" }
 ]
 external_links = [
     { title = "Elohim — Wikipedia", url = "https://en.wikipedia.org/wiki/Elohim" }

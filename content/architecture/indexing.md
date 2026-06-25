@@ -252,7 +252,7 @@ Worth a small Zola investigation; left for a follow-up.
 Search Console reports 404s for paths with no corresponding file:
 `/wiki/jacob/`, `/wiki/el/`, `/wiki/hinduism/`, `/wiki/joseph/`,
 `/wiki/joseph-smith/`, `/wiki/abrahamic-covenant/`,
-`/wiki/mosaic-covenant/`, `/wiki/council-of-eternals/`,
+`/wiki/mosaic-covenant/`, `/wiki/council-of-the-eternals/`,
 `/wiki/new-testament/`, `/cosmic-chain/`.
 
 Each is an editorial decision: write the entry, redirect to a related
