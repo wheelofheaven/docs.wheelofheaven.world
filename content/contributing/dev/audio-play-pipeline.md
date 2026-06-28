@@ -13,7 +13,9 @@ per-character treatment, ambient bedding, and (planned) SFX cues take
 the production beyond a single-narrator read. See
 [Audio Play Cue Sheets](@/contributing/dev/audio-play-cue-sheets.md)
 for the production-direction layer that sits on top of this rendering
-pipeline.
+pipeline, and [Cinematic Audiobook](@/contributing/dev/cinematic-audiobook.md)
+for the visual layer (the web cinematic view + the ffmpeg video export) built
+on this audio + its word timing.
 
 The pipeline turns the per-paragraph TTS-normalized text in
 `data-library/{slug}/tts/chapter-N.{lang}.json` into per-chapter MP3
