@@ -21,6 +21,7 @@ and where it's published.* It stores **metadata only — never the MP4 masters**
 video-channels/
   platforms/accounts.yaml          # a channel per language + locale alternatives
   platforms/about.yaml             # paste-ready channel "About" text per language
+  platforms/keywords.yaml          # channel keyword sets per language
   catalog/<book>/
     _book.yaml                     # shared book metadata (links, playlists, credits)
     c<n>.<lang>.yaml               # one record per (book, chapter, language) video
@@ -71,7 +72,9 @@ the family is instantly recognizable.
 Record the real handle + channel URL in `accounts.yaml` once a channel exists
 (status `planned` → `created` → `active`). Each channel's **About** text is in
 `platforms/about.yaml` — paste-ready per language, one line per paragraph
-(`Elohim`/`Yahweh` kept in the original spelling).
+(`Elohim`/`Yahweh` kept in the original spelling). Channel **keywords** live in
+`platforms/keywords.yaml` (one localized set per language, under YouTube's
+500-character channel-keywords cap).
 
 ## Channel branding
 
