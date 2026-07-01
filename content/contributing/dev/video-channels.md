@@ -27,7 +27,8 @@ video-channels/
   schema/video-record.md           # field reference
   scripts/report.py                # "what we have / where / status" across the catalog
   brand/
-    brandkit.py                    # shared starfield + SVG rasterizer
+    background.avif                # canonical Milky Way background (site-wide)
+    brandkit.py                    # shared background compositor + SVG rasterizer
     generate_avatars.py            # 9 channel avatars (profile pictures)
     generate_banners.py            # 9 channel banners (channel art)
     avatars/<lang>.png             # 1024×1024
@@ -71,22 +72,24 @@ Record the real handle + channel URL in `accounts.yaml` once a channel exists
 
 ## Channel branding
 
-Both generators share `brand/brandkit.py` — a deterministic deep-space
-**starfield** (nebula + stars) plus the bifrost **logomark + wordmark** SVG
-rasterizer (recolored white via `resvg`), so the kit stays in lockstep with the
-site. Re-run either script if the logo or palette changes; each language gets its
-own star pattern so the per-channel files stay distinct.
+Both generators share `brand/brandkit.py`, which composites over the **canonical
+Milky Way background** used site-wide (the same `wheel-of-heaven-background`
+image behind the OG cards / essentials, vendored as `brand/background.avif`) and
+rasterizes the bifrost **logomark + wordmark** SVGs (white via `resvg`) — so the
+kit stays in lockstep with the site. Each language gets a different horizontal
+**pan** across the galaxy, so the per-channel files stay distinct. Re-run either
+script if the logo, background, or palette changes.
 
 **Avatars** (`brand/generate_avatars.py` → `brand/avatars/<lang>.png`, 1024×1024)
-— the logomark enlarged to **fill the frame** over the starfield. English is the
+— the logomark enlarged to **fill the frame** over the background. English is the
 unadorned flagship; every other channel carries a small lavender language code
 (DE/ES/FR/JA/KO/RU/ZH/TW). All content sits inside YouTube's circular crop.
 
 **Banners** (`brand/generate_banners.py` → `brand/banners/<lang>.png`, 2560×1440)
 — logomark + `WHEEL OF HEAVEN` wordmark + `www.wheelofheaven.world`, all inside
-the **1546×423 safe zone** that shows on every device, over the starfield with a
-soft edge vignette for the TV / desktop crops. Deliberately **content-agnostic**
-(no format tagline) so the channels can carry other content later.
+the **1546×423 safe zone** that shows on every device, with a soft edge vignette
+for the TV / desktop crops. Deliberately **content-agnostic** (no format
+tagline) so the channels can carry other content later.
 
 ## The catalog
 
