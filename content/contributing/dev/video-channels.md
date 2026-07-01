@@ -61,7 +61,7 @@ of truth** — this table mirrors it. Flip `status` (`planned` → `created` →
 
 | Lang | Channel name | Handle | URL | Status |
 |---|---|---|---|---|
-| en | Wheel of Heaven | `@wheelofheaven` | https://www.youtube.com/@wheelofheaven | created |
+| en | Wheel of Heaven | `@WheelofHeaven` | https://www.youtube.com/@WheelofHeaven | created |
 | de | Wheel of Heaven (Deutsch) | `@WheelOfHeavenDE` | https://www.youtube.com/@WheelOfHeavenDE | created |
 | fr | Wheel of Heaven (Français) | `@WheelOfHeavenFR` | https://www.youtube.com/@WheelOfHeavenFR | created |
 | es | Wheel of Heaven (Español) | `@WheelOfHeavenES` | https://www.youtube.com/@WheelOfHeavenES | planned |
