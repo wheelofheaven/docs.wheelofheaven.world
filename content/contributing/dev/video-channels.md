@@ -27,6 +27,7 @@ video-channels/
   schema/video-record.md           # field reference
   scripts/report.py                # "what we have / where / status" across the catalog
   brand/
+    brandkit.py                    # shared starfield + SVG rasterizer
     generate_avatars.py            # 9 channel avatars (profile pictures)
     generate_banners.py            # 9 channel banners (channel art)
     avatars/<lang>.png             # 1024×1024
@@ -70,20 +71,22 @@ Record the real handle + channel URL in `accounts.yaml` once a channel exists
 
 ## Channel branding
 
-Both generators render from the bifrost **logomark + wordmark** SVGs (recolored
-white via `resvg`) on the dark brand background, so the kit stays in lockstep
-with the site. Re-run either script if the logo or palette changes.
+Both generators share `brand/brandkit.py` — a deterministic deep-space
+**starfield** (nebula + stars) plus the bifrost **logomark + wordmark** SVG
+rasterizer (recolored white via `resvg`), so the kit stays in lockstep with the
+site. Re-run either script if the logo or palette changes; each language gets its
+own star pattern so the per-channel files stay distinct.
 
 **Avatars** (`brand/generate_avatars.py` → `brand/avatars/<lang>.png`, 1024×1024)
-— the logomark on the brand background with a soft glow. English is the
+— the logomark enlarged to **fill the frame** over the starfield. English is the
 unadorned flagship; every other channel carries a small lavender language code
 (DE/ES/FR/JA/KO/RU/ZH/TW). All content sits inside YouTube's circular crop.
 
 **Banners** (`brand/generate_banners.py` → `brand/banners/<lang>.png`, 2560×1440)
-— logomark + `WHEEL OF HEAVEN` wordmark + a localized *Cinematic Audiobooks*
-tagline + `www.wheelofheaven.world`, all inside the **1546×423 safe zone** that
-shows on every device; the wide areas fade to a clean vignette for the TV /
-desktop crops. Latin taglines use Space Grotesk; RU/CJK use Arial Unicode.
+— logomark + `WHEEL OF HEAVEN` wordmark + `www.wheelofheaven.world`, all inside
+the **1546×423 safe zone** that shows on every device, over the starfield with a
+soft edge vignette for the TV / desktop crops. Deliberately **content-agnostic**
+(no format tagline) so the channels can carry other content later.
 
 ## The catalog
 
