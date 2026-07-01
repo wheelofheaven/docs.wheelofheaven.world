@@ -52,29 +52,42 @@ not dominant, lead with locale platforms:
 | ru | YouTube | VK Video, RuTube, Dzen (YouTube throttled in RU) |
 | zh | **Bilibili** | Youku, Tencent Video (YouTube blocked in mainland CN) |
 
-### Naming convention
+### Channel registry
 
 English takes the bare brand; every other channel is `@WheelOfHeaven{CODE}` so
-the family is instantly recognizable.
+the family is instantly recognizable. **`platforms/accounts.yaml` is the source
+of truth** — this table mirrors it. Flip `status` (`planned` → `created` →
+`active`) and fill `channel_id` as each channel comes online.
 
-| Lang | Channel name | Handle |
-|---|---|---|
-| en | Wheel of Heaven | `@wheelofheaven` |
-| de | Wheel of Heaven (Deutsch) | `@WheelOfHeavenDE` |
-| es | Wheel of Heaven (Español) | `@WheelOfHeavenES` |
-| fr | Wheel of Heaven (Français) | `@WheelOfHeavenFR` |
-| ja | Wheel of Heaven (日本語) | `@WheelOfHeavenJA` |
-| ko | Wheel of Heaven (한국어) | `@WheelOfHeavenKO` |
-| ru | Wheel of Heaven (Русский) | `@WheelOfHeavenRU` |
-| zh | Wheel of Heaven (中文) | `@WheelOfHeavenZH` |
-| zh-Hant | Wheel of Heaven (繁體中文) | `@WheelOfHeavenTW` |
+| Lang | Channel name | Handle | URL | Status |
+|---|---|---|---|---|
+| en | Wheel of Heaven | `@wheelofheaven` | https://www.youtube.com/@wheelofheaven | created |
+| de | Wheel of Heaven (Deutsch) | `@WheelOfHeavenDE` | https://www.youtube.com/@WheelOfHeavenDE | created |
+| fr | Wheel of Heaven (Français) | `@WheelOfHeavenFR` | https://www.youtube.com/@WheelOfHeavenFR | created |
+| es | Wheel of Heaven (Español) | `@WheelOfHeavenES` | https://www.youtube.com/@WheelOfHeavenES | planned |
+| ja | Wheel of Heaven (日本語) | `@WheelOfHeavenJA` | https://www.youtube.com/@WheelOfHeavenJA | planned |
+| ko | Wheel of Heaven (한국어) | `@WheelOfHeavenKO` | https://www.youtube.com/@WheelOfHeavenKO | planned |
+| ru | Wheel of Heaven (Русский) | `@WheelOfHeavenRU` | https://www.youtube.com/@WheelOfHeavenRU | planned |
+| zh | Wheel of Heaven (中文) | `@WheelOfHeavenZH` | https://www.youtube.com/@WheelOfHeavenZH | planned |
+| zh-Hant | Wheel of Heaven (繁體中文) | `@WheelOfHeavenTW` | https://www.youtube.com/@WheelOfHeavenTW | planned |
 
-Record the real handle + channel URL in `accounts.yaml` once a channel exists
-(status `planned` → `created` → `active`). Each channel's **About** text is in
-`platforms/about.yaml` — paste-ready per language, one line per paragraph
-(`Elohim`/`Yahweh` kept in the original spelling). Channel **keywords** live in
-`platforms/keywords.yaml` (one localized set per language, under YouTube's
-500-character channel-keywords cap).
+Each channel's **About** text is in `platforms/about.yaml` (paste-ready per
+language, one line per paragraph; `Elohim`/`Yahweh` kept in the original
+spelling), and channel **keywords** in `platforms/keywords.yaml` (one localized
+set per language, under YouTube's 500-character cap).
+
+### Site footer link (per i18n page)
+
+The YouTube link in the reading-site footer is **per language**: each localized
+page links to that language's channel. It's driven by a `youtubeChannelUrl`
+translation key in `www.wheelofheaven.world/config.toml` (one per language
+block), consumed by `themes/bifrost/templates/partials/footer.html` (and the
+social-icon partial + contact page) via `trans(key="youtubeChannelUrl",
+lang=detected_lang)`.
+
+A language whose channel isn't `created` yet — and Hebrew (`he`), which has no
+channel (no Hebrew audio) — points at the **EN flagship** so no footer link
+404s. When a channel goes live, set its `youtubeChannelUrl` to the real URL.
 
 ## Channel branding
 
