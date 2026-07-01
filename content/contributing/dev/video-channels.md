@@ -64,12 +64,12 @@ of truth** — this table mirrors it. Flip `status` (`planned` → `created` →
 | en | Wheel of Heaven | `@WheelofHeaven` | https://www.youtube.com/@WheelofHeaven | created |
 | de | Wheel of Heaven (Deutsch) | `@WheelOfHeavenDE` | https://www.youtube.com/@WheelOfHeavenDE | created |
 | fr | Wheel of Heaven (Français) | `@WheelOfHeavenFR` | https://www.youtube.com/@WheelOfHeavenFR | created |
-| es | Wheel of Heaven (Español) | `@WheelOfHeavenES` | https://www.youtube.com/@WheelOfHeavenES | planned |
-| ja | Wheel of Heaven (日本語) | `@WheelOfHeavenJA` | https://www.youtube.com/@WheelOfHeavenJA | planned |
-| ko | Wheel of Heaven (한국어) | `@WheelOfHeavenKO` | https://www.youtube.com/@WheelOfHeavenKO | planned |
-| ru | Wheel of Heaven (Русский) | `@WheelOfHeavenRU` | https://www.youtube.com/@WheelOfHeavenRU | planned |
-| zh | Wheel of Heaven (中文) | `@WheelOfHeavenZH` | https://www.youtube.com/@WheelOfHeavenZH | planned |
-| zh-Hant | Wheel of Heaven (繁體中文) | `@WheelOfHeavenTW` | https://www.youtube.com/@WheelOfHeavenTW | planned |
+| es | Wheel of Heaven (Español) | `@WheelOfHeavenES` | https://www.youtube.com/@WheelOfHeavenES | created |
+| ja | Wheel of Heaven (日本語) | `@WheelOfHeavenJA` | https://www.youtube.com/@WheelOfHeavenJA | created |
+| ko | Wheel of Heaven (한국어) | `@WheelOfHeavenKO` | https://www.youtube.com/@WheelOfHeavenKO | created |
+| ru | Wheel of Heaven (Русский) | `@WheelOfHeavenRU` | https://www.youtube.com/@WheelOfHeavenRU | created |
+| zh | Wheel of Heaven (中文) | `@WheelOfHeavenZH` | https://www.youtube.com/@WheelOfHeavenZH | created |
+| zh-Hant | Wheel of Heaven (繁體中文) | `@WheelOfHeavenTW` | https://www.youtube.com/@WheelOfHeavenTW | created |
 
 Each channel's **About** text is in `platforms/about.yaml` (paste-ready per
 language, one line per paragraph; `Elohim`/`Yahweh` kept in the original
