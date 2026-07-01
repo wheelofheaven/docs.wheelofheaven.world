@@ -117,9 +117,24 @@ so the timeline can go live before the art is finished.
 ## The render spec — `style/<id>.json`
 
 A single token set both renderers read (the web view mirrors the values in
-SCSS). Covers output (1920×1080, H.264, CRF, fps), scene crossfade +
-Ken-Burns, caption typography + safe-area, the brand watermark, and the
-scrim/vignette.
+SCSS). Blocks:
+
+| Block | Controls |
+|---|---|
+| `output` | 1920×1080, H.264, CRF, `fps` (**60** — a slow zoom judders at 30) |
+| `scene` | crossfade, Ken-Burns zoom, and `supersample` (default **4** — see below) |
+| `caption` | typography, safe-area, speaker label, `offset_sec` nudge |
+| `intro` | brand-card seconds, title-card seconds, backdrop, `jingle` |
+| `outro` | seconds, backdrop, author, `credits[]` (roles + `{placeholders}`) |
+| `endcard` | seconds, backdrop — the "up next" teaser |
+| `thumbnail` | per-chapter YouTube thumbnail backdrop |
+| `score` | the musical bed (file, gain, intro_gain, fades) |
+| `watermark` | logomark + wordmark lockup size/padding |
+| `overlay` | vignette + bottom scrim |
+
+The **intro/outro/endcard/thumbnail/score blocks are export-only** — they shape
+the MP4, not the web view (which is a live in-page mode). All of them degrade
+gracefully: a missing block is simply skipped.
 
 ## Phase 2 — the web cinematic view
 
@@ -152,26 +167,65 @@ mise run compose          # all EN chapters → ./out/
 python3 compose_video.py --book <slug> --lang en --chapters 1 --preview 25
 ```
 
-Per chapter:
+### The video shape (export only)
 
-1. Each scene becomes a Ken-Burns `zoompan` clip.
-2. An `xfade` chain keeps the video **sync-locked** to the audio — clip
-   duration is `segment + crossfade` and the transition offset is the scene's
-   absolute `start`, then the whole thing is trimmed to the audio length. So
-   scene cuts land on `scene.start` and captions never drift.
-3. `vignette`, then the caption overlay, then the watermark overlay.
-4. Audio is voice + ambient (`amix`), encoded H.264 per the render spec with
-   `+faststart`.
+An exported chapter is more than the slideshow — it's a self-contained,
+upload-ready film:
 
-Captions and the watermark are **pre-rendered with Pillow**, not ffmpeg text
+```
+brand card (logomark + space jingle)
+  → title card (book + "CHAPTER N OF M · title", over the hero)
+    → meta-narration (the intro narrator, over the hero key art)
+      → the chapter (scene slideshow, 60fps Ken-Burns)
+        → outro credits (subtitle, author, site, subscribe CTA, AI/CC0)
+          → end card ("▶ NEXT · CHAPTER N+1 · title", over the *next*
+            chapter's thumbnail — skipped on the final chapter)
+```
+
+The intro cards are prepended and the audio is delayed behind them (via
+`adelay`), so narration starts exactly with the chapter. The outro + end card
+are appended into the same `xfade` chain; the score bed carries across the whole
+thing and fades out at the very end. Titles resolve from
+`data-library/{slug}/_meta.json` + the audio manifest, and `CHAPTER N OF M` is
+localized per language.
+
+### Per-chapter pipeline
+
+1. Each scene becomes a Ken-Burns `zoompan` clip, computed at **`supersample`×**
+   the output size (default 4×) then scaled down — so the slow zoom moves in
+   sub-pixel steps and glides instead of juddering. Very short scene slivers are
+   coalesced in `build_timeline` so nothing flashes.
+2. An `xfade` chain (intro cards → scenes → outro → end card) keeps the video
+   **sync-locked** to the audio — each scene's transition offset is its absolute
+   `start` (shifted by the intro length), trimmed to length. Scene cuts land on
+   `scene.start` and captions never drift.
+3. `vignette`, then the caption overlay, then the watermark overlay (gated to
+   the chapter body only — off during the intro/outro/end card, which carry
+   their own branding).
+4. Audio: voice + ambient + **score bed** + **brand jingle** mixed with `amix`;
+   voice/ambient delayed behind the intro, jingle under the brand card, score
+   from `t=0` with an intro-louder ramp and a tail fade. Encoded H.264 per the
+   render spec with `+faststart`.
+
+Captions and every card are **pre-rendered with Pillow**, not ffmpeg text
 filters — so no `libass`/`drawtext` is required (the project's ffmpeg is a
-minimal build). Captions become a transparent qtrle track; the watermark
-rasterizes the real bifrost **logomark + wordmark** SVGs via `resvg` (so the
-brand typeface is exact), recolored opaque with a soft drop shadow.
+minimal build). Captions become a transparent qtrle track; **speaker labels
+carry a circular character portrait** (Yahweh / Raël / Narrator, cropped from
+`images/wiki/`); the watermark and cards rasterize the real bifrost **logomark +
+wordmark** SVGs via `resvg` so the brand typeface is exact.
+
+### Thumbnails
+
+Each render also writes a **1280×720 YouTube thumbnail** (`c{N}.{lang}.thumb.jpg`)
+— the chapter's own key art (`thumb-c{N}`) + the book title + `CHAPTER N OF M` +
+logomark. The same per-chapter key art is what the *previous* chapter's end card
+teases, so "up next" always shows the real next thumbnail. Thumbnails fall back
+`thumb-c{N}` → book hero → `default.jpg`.
 
 > The output MP4 is finalized (moov atom + faststart) only at the very end of
 > the encode. A file that's mid-render is unplayable — wait for the run to
-> finish before opening it.
+> finish before opening it. A 60fps chapter render takes roughly twice as long
+> as 30fps.
 
 ## Voicing names correctly
 
@@ -215,25 +269,30 @@ know — see the [assets CDN](@/architecture/sites/assets.md) docs:
   assets repo can take a long time (or stall) on Pages. Prefer deploying opus +
   JSON and keeping heavy intermediates out of the repo.
 
-Rendered MP4s (`out/`) are build artifacts — gitignored, uploaded to YouTube
-manually.
+Rendered MP4s + thumbnails (`out/`) are build artifacts — gitignored. Where
+they're published (per-language YouTube channels + locale platforms), the
+curated titles/descriptions, and the channel branding all live in a separate
+repo: see [Video Channels & Publishing](@/contributing/dev/video-channels.md).
 
 ## File map
 
 ```
 data-cinematics/audiobook/
   build_timeline.py     # Phase 0 — derive cinematic.json
-  compose_video.py      # Phase 3 — render MP4s
+  compose_video.py      # Phase 3 — render MP4s + thumbnails
+  generate_score.py     # make the musical bed / brand jingle (ElevenLabs)
   style/<id>.json       # shared render spec
   brand/                # logomark.svg + wordmark.svg (mirror bifrost)
-  out/                  # rendered MP4s (gitignored)
+  score/                # woh-underscore.opus (bed) + brand-sting.opus (jingle)
+  out/                  # rendered MP4s + c{N}.{lang}.thumb.jpg (gitignored)
 data-library/{slug}/audioplay/
   cues/c{N}.yaml        # scene shot list
   scenes/scenes.yaml    # image-gen manifest + style bible
-  scenes/<scene>.jpg    # source stills
+  scenes/<scene>.jpg    # source stills (incl. intro-hero, thumb-c{N})
 assets.wheelofheaven.world/
   audio/{lang}/{slug}/c{N}.cinematic.json
   images/cinematic/{slug}/<scene>.jpg
+  images/wiki/<character>.webp        # portraits used in speaker labels
 themes/bifrost/
   static/js/listen-button.js        # web cinematic view controller
   sass/components/_cinematic.scss

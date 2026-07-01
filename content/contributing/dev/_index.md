@@ -24,6 +24,8 @@ pipelines are Python.
 | Splitting long library-book paragraphs across languages | [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md) |
 | Generating ElevenLabs audio plays for library books | [Audio Play Pipeline](@/contributing/dev/audio-play-pipeline.md) |
 | Scaffolding scenes / SFX / pauses for a full-featured audio play | [Audio Play Cue Sheets](@/contributing/dev/audio-play-cue-sheets.md) |
+| Rendering cinematic-audiobook videos (web view + YouTube MP4) | [Cinematic Audiobook](@/contributing/dev/cinematic-audiobook.md) |
+| Publishing videos to YouTube / video platforms + channel branding | [Video Channels & Publishing](@/contributing/dev/video-channels.md) |
 | Cloudflare Pages, DNS, headers, redirects | [CI & Deploy](@/contributing/dev/ci-deploy.md) |
 
 If you're starting cold, [Local Setup](@/contributing/dev/local-setup.md)
