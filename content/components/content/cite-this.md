@@ -44,10 +44,16 @@ everything from page metadata, so there's **no per-page editorial cost**
 
 ## Where it's wired
 
-Included near the end of the article on **wiki**, **article**, and **timeline**
-pages, just before the "Read next" block. Library books are deferred — a
-reproduced source text needs a *book-aware* citation (original author/title/year
-plus the digitization), not the page citation.
+`partials/cite-this.html` (the page widget) is included near the end of the
+article on **wiki**, **article**, and **timeline** pages, just before the "Read
+next" block.
+
+**Library** books get a book-aware sibling,
+[`partials/cite-book.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/partials/cite-book.html),
+in the book sidebar beside Licensing. It cites the *reproduced work* — author,
+title, and publication year from the catalog (`current_book_entry`) — via the
+Wheel of Heaven digital edition (`@book`, author-first; title-first when no
+author). Both share the `.cite` component.
 
 ## Live examples
 
