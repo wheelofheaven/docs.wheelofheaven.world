@@ -10,10 +10,17 @@ that offers four ready-to-copy citation formats plus a permalink. It derives
 everything from page metadata, so there's **no per-page editorial cost**
 (Decision 15, H1.3 — the citation ecosystem).
 
-**Source:**
-[`themes/bifrost/templates/partials/cite-this.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/partials/cite-this.html)
-&middot; styled by
-[`themes/bifrost/sass/components/_cite.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_cite.scss)
+**Source:** the page partial
+[`partials/cite-this.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/partials/cite-this.html)
+and the book partial
+[`partials/cite-book.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/partials/cite-book.html)
+compute citation fields and defer rendering to the shared macro
+[`macros/cite.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/macros/cite.html).
+Copy-to-clipboard is [`static/js/cite-copy.js`](https://github.com/wheelofheaven/bifrost/blob/main/static/js/cite-copy.js)
+(core bundle); styling is
+[`sass/components/_cite.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_cite.scss).
+The "Cite this page/text" label is localized via the `citeThisPage` /
+`citeThisText` translation keys.
 
 ## Formats
 
