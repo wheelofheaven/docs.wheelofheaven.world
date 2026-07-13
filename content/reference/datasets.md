@@ -1,0 +1,82 @@
++++
+title = "Datasets"
+description = "The downloadable CC0 datasets published from the corpus — the content-graph, its formats, API endpoints, and the /datasets/ landing pages."
+weight = 30
++++
+
+Wheel of Heaven publishes downloadable, CC0 datasets extracted from the live
+corpus (Decision 15, G2). Each dataset has three faces: **files** on the API,
+a **landing page** on www, and **schema.org/Dataset** markup for
+[Google Dataset Search](https://datasetsearch.research.google.com/).
+
+## Content Graph
+
+A typed relatedness graph over the English corpus — every page is a node, every
+curated *See also* link and in-text cross-reference a typed edge.
+
+### Downloads
+
+| Format | URL | For |
+|---|---|---|
+| JSON | `https://api.wheelofheaven.world/v1/graph/content-graph.json` | Self-describing — load and read `nodes`, `edges`, `stats`, `qa`. |
+| GraphML | `https://api.wheelofheaven.world/v1/graph/content-graph.graphml` | Gephi, Cytoscape, `networkx`. |
+
+### API endpoints
+
+| Endpoint | Returns |
+|---|---|
+| `/v1/graph/` | The full graph in the standard envelope (nodes, edges, stats, **qa**). |
+| `/v1/graph/{section}/{slug}/` | A single node's ego-network (out/in edges + neighbours). |
+| `/v1/schema/content-graph/` | JSON Schema for the graph. |
+
+### Format
+
+- **Nodes** — `id` (`section/slug`), `section`, `slug`, `kind`, `title`, `url`,
+  `graph_url`, `claim_type`, `category`, `degree`.
+- **Edges** — directed, typed: `see_also` (curated) and `in_body` (prose
+  cross-link). `{ source, target, type }`.
+- **qa** — `orphans`, `asymmetric_see_also`, and `dangling` links. Shipped in
+  the file; it's the project's broken-cross-link guard (the `{% wiki %}`
+  shortcode builds `/wiki/{slug}/` with no existence check, so the graph QA is
+  the only thing that catches typo'd or missing targets).
+
+### How it's generated
+
+`build_graph()` in
+[`api.wheelofheaven.world/scripts/prebuild.py`](https://github.com/wheelofheaven/api.wheelofheaven.world/blob/main/scripts/prebuild.py)
+walks the English content, builds the typed graph, and (via
+`_write_graph_datasets`) emits the JSON + GraphML into `static/v1/graph/` on
+every build. English only — for per-language relatedness, use each page's own
+*See also* block.
+
+## Landing pages
+
+Human-facing landing pages live under `/datasets/`, e.g.
+[`/datasets/content-graph/`](https://www.wheelofheaven.world/datasets/content-graph/).
+Each is a `data-content` page using the bifrost `dataset-page.html` template,
+which renders a stats grid, download cards, the body prose, and a
+**"Cite this dataset"** block (plain citation + BibTeX). The
+`partials/schema/dataset.html` partial emits the `schema.org/Dataset` JSON-LD
+(name, license, `DataDownload` distributions, keywords) that Google Dataset
+Search indexes.
+
+### Adding a dataset
+
+Create `content/datasets/{slug}.md` with `template = "dataset-page.html"` and an
+`[extra]` block:
+
+```toml
+[extra]
+license = "CC0-1.0"
+license_url = "https://creativecommons.org/publicdomain/zero/1.0/"
+keywords = ["…"]
+api_url = "…"
+schema_url = "…"
+stats = [{ label = "Nodes", value = "…" }]
+downloads = [{ label = "JSON", url = "…", format = "application/json", note = "…" }]
+citation_text = "…"
+citation_bibtex = '''@misc{…}'''
+```
+
+The page body (markdown) describes the dataset; the template and schema partial
+handle the rest.
