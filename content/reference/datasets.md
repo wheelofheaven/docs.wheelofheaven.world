@@ -117,6 +117,23 @@ Extraction gotcha: several timeline files start with a blank line before the
 `+++` frontmatter, so parse with `re.search` (not `re.match`). Landing page:
 [`/datasets/world-ages/`](https://www.wheelofheaven.world/datasets/world-ages/).
 
+## Prophets & Religions Catalogue
+
+48 religious traditions **extracted from the markdown table** in the
+[list-of-prophets-and-religions](https://www.wheelofheaven.world/wiki/list-of-prophets-and-religions/)
+wiki entry (links and bold stripped, wiki links captured).
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/prophets-and-religions.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/prophets-and-religions.json` |
+
+Columns: `tradition`, `period`, `founder`, `authenticity`, `principal_content`,
+`woh_wiki`. Note the `authenticity` column is the **corpus's** assessment of the
+founding-contact claim (Canonical → Highly unlikely), not a neutral rating — the
+landing page says so explicitly. Landing page:
+[`/datasets/prophets-and-religions/`](https://www.wheelofheaven.world/datasets/prophets-and-religions/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
