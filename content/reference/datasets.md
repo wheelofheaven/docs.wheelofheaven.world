@@ -100,6 +100,23 @@ Columns: `tradition`, `source_text`, `reference`, `champion`, `adversary`,
 source texts get a `woh_library` link (4 of 8). Landing page:
 [`/datasets/theomachy-crossrefs/`](https://www.wheelofheaven.world/datasets/theomachy-crossrefs/).
 
+## Precessional World Ages
+
+The 12 precessional World Ages on the corpus's reckoning (Capricorn → Aquarius,
+each ~2,160 years), **extracted from the `/timeline/` entries** rather than
+hand-curated — so the dataset and the site stay in step.
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/world-ages.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/world-ages.json` |
+
+Columns: `age`, `zodiac`, `symbol`, `start_year`, `end_year`, `genesis_day`
+(the corpus maps the first eight ages onto the Genesis "days"), `url`, `summary`.
+Extraction gotcha: several timeline files start with a blank line before the
+`+++` frontmatter, so parse with `re.search` (not `re.match`). Landing page:
+[`/datasets/world-ages/`](https://www.wheelofheaven.world/datasets/world-ages/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
