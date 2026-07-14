@@ -66,6 +66,24 @@ one is published). Unlike the content graph, this is **hand-curated** —
 committed static files under `api/static/v1/datasets/`, not build-generated.
 Landing page: [`/datasets/flood-myths/`](https://www.wheelofheaven.world/datasets/flood-myths/).
 
+## Divine-Council Index
+
+Eleven attestations of the divine council — the assembly of divine beings that
+governs and decides — across six traditions (Ugaritic *Baal Cycle*; Hebrew
+*Psalm* 82, *1 Kings* 22, *Job*, *Deut* 32, *Isaiah* 6; Babylonian *Enūma Eliš*
+and *Atra-ḫasīs*; the *Book of the Watchers*; the Hurrian-Hittite *Song of
+Emergence*; and the Latter-day Saint premortal council).
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/divine-council-index.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/divine-council-index.json` |
+
+Columns: `tradition`, `source_text`, `reference`, `council_term` (in the
+original), `presiding_figure`, `members`, `function`, `woh_library`.
+Hand-curated static files under `api/static/v1/datasets/`. Landing page:
+[`/datasets/divine-council-index/`](https://www.wheelofheaven.world/datasets/divine-council-index/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
