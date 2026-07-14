@@ -84,6 +84,22 @@ original), `presiding_figure`, `members`, `function`, `woh_library`.
 Hand-curated static files under `api/static/v1/datasets/`. Landing page:
 [`/datasets/divine-council-index/`](https://www.wheelofheaven.world/datasets/divine-council-index/).
 
+## Theomachy Cross-References
+
+The combat myth (*Chaoskampf*) across eight traditions — Marduk/Tiamat,
+Baal/Yam, Yahweh/Leviathan, Zeus/Typhon, Indra/Vṛtra, Storm-god/Illuyanka,
+Ra/Apophis, Michael/dragon.
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/theomachy-crossrefs.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/theomachy-crossrefs.json` |
+
+Columns: `tradition`, `source_text`, `reference`, `champion`, `adversary`,
+`chaos_form`, `weapon`, `outcome`, `woh_library`. Hand-curated; only published
+source texts get a `woh_library` link (4 of 8). Landing page:
+[`/datasets/theomachy-crossrefs/`](https://www.wheelofheaven.world/datasets/theomachy-crossrefs/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
