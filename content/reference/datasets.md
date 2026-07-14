@@ -49,6 +49,23 @@ walks the English content, builds the typed graph, and (via
 every build. English only — for per-language relatedness, use each page's own
 *See also* block.
 
+## Flood-Myth Concordance
+
+A comparative table of eight ancient flood traditions (Sumerian, *Atra-ḫasīs*,
+*Gilgamesh* XI, *Genesis*, *Qurʾān*, Deucalion, Berossus, *Śatapatha Brāhmaṇa*).
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/flood-myths.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/flood-myths.json` (self-describing: `columns` + `rows`) |
+
+Columns: `tradition`, `source_text`, `approx_date`, `survivor`,
+`flood_decreed_by`, `warned_by`, `cause`, `vessel`, `birds_released`,
+`landing_place`, `aftermath`, `woh_library` (link to the digitized text where
+one is published). Unlike the content graph, this is **hand-curated** —
+committed static files under `api/static/v1/datasets/`, not build-generated.
+Landing page: [`/datasets/flood-myths/`](https://www.wheelofheaven.world/datasets/flood-myths/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
