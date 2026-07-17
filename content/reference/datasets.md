@@ -165,3 +165,50 @@ citation_bibtex = '''@misc{…}'''
 
 The page body (markdown) describes the dataset; the template and schema partial
 handle the rest.
+
+## Mirrors & external distribution
+
+The datasets are CC0, so beyond the API + landing pages here, we mirror them on
+high-authority data platforms — for backlinks, for reach into the ML and
+data-science communities, and for a second discovery surface. Every external
+copy links back to its `/datasets/{slug}/` landing page.
+
+### HuggingFace
+
+All six datasets are published under the
+[`wheelofheaven`](https://huggingface.co/wheelofheaven) organization:
+
+| Dataset | HuggingFace |
+|---|---|
+| Content Graph | [wheelofheaven/content-graph](https://huggingface.co/datasets/wheelofheaven/content-graph) |
+| Flood-Myth Concordance | [wheelofheaven/flood-myths](https://huggingface.co/datasets/wheelofheaven/flood-myths) |
+| Divine-Council Index | [wheelofheaven/divine-council-index](https://huggingface.co/datasets/wheelofheaven/divine-council-index) |
+| Theomachy Cross-References | [wheelofheaven/theomachy-crossrefs](https://huggingface.co/datasets/wheelofheaven/theomachy-crossrefs) |
+| Precessional World Ages | [wheelofheaven/world-ages](https://huggingface.co/datasets/wheelofheaven/world-ages) |
+| Prophets & Religions Catalogue | [wheelofheaven/prophets-and-religions](https://huggingface.co/datasets/wheelofheaven/prophets-and-religions) |
+
+Each repo carries a dataset card (`README.md`) with the CC0 license, tags, the
+column list, and a link back to the landing page.
+
+### Kaggle (planned)
+
+Kaggle is the second planned mirror. It matters beyond reach: **Kaggle is itself
+a Google Dataset Search source**, so it restores the second Dataset-Search
+listing without needing a DOI.
+
+### Why not a DOI repository
+
+We evaluated Zenodo and the other DOI-minting archives. Zenodo automatically
+**de-ranks uploads from unverified individual accounts** — hiding them from its
+own search while leaving them visible to duplicate-checkers — which would defeat
+the whole discoverability goal. HuggingFace + Kaggle give high-authority
+backlinks and a real audience without that risk. If academic DOIs become
+worthwhile later, **Harvard Dataverse** or **OSF** are the individual-friendly,
+Dataset-Search-indexed options (both mint DataCite DOIs, neither de-ranks
+individuals).
+
+### Rebuilding & re-uploading
+
+Packaging is scripted — see
+[Dataset distribution](/contributing/dev/dataset-distribution/) for the
+`build_distribution.py` packager and the HuggingFace / Kaggle upload flow.
