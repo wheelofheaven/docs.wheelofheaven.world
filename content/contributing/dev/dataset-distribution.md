@@ -81,16 +81,31 @@ anyone.
 
 ## Kaggle upload
 
-Kaggle users and organizations do **not** share a namespace, so no renaming is
-needed. Choose the owner (a personal handle or a Kaggle organization you belong
-to), set `--kaggle-user` to it when packaging, then:
+The datasets are live under the personal account
+[`zarazinsfuss`](https://www.kaggle.com/zarazinsfuss). Kaggle users and
+organizations do **not** share a namespace, so no renaming was needed — but note
+Kaggle has **suspended organization creation for regular users**, so there is no
+`wheelofheaven` Kaggle org; the personal account is the owner (this is the Kaggle
+norm and costs nothing in discoverability). Set `--kaggle-user zarazinsfuss` when
+packaging, then:
 
 ```
-pip install kaggle           # needs ~/.kaggle/kaggle.json + a phone-verified account
+pip install kaggle           # needs a phone-verified account + API credential (see below)
 for s in content-graph flood-myths divine-council-index theomachy-crossrefs world-ages prophets-and-religions; do
-  kaggle datasets create -p scripts/dist/kaggle/$s
+  kaggle datasets create -p scripts/dist/kaggle/$s --public
 done
 ```
+
+Three gotchas:
+
+- **`--public` is required.** `kaggle datasets create` defaults to *private*.
+- **Credential.** The CLI authenticates from `~/.kaggle/kaggle.json` (classic
+  username+key) *or* the newer `~/.kaggle/access_token` — the Kaggle CLI (≥2.2)
+  reads either. A phone-verified account is required to publish.
+- **Tags.** Kaggle uses a **controlled tag vocabulary**; free-text keywords in
+  `dataset-metadata.json` are silently rejected on upload ("not valid tags"), so
+  the datasets currently publish untagged. Mapping to valid Kaggle tag slugs and
+  re-versioning is an optional polish.
 
 ## Updating a mirror
 

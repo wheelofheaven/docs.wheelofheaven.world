@@ -171,7 +171,8 @@ handle the rest.
 The datasets are CC0, so beyond the API + landing pages here, we mirror them on
 high-authority data platforms — for backlinks, for reach into the ML and
 data-science communities, and for a second discovery surface. Every external
-copy links back to its `/datasets/{slug}/` landing page.
+copy links back to its `/datasets/{slug}/` landing page, and every landing page
+links out to its mirrors (an **Also available on** section).
 
 ### HuggingFace
 
@@ -190,11 +191,28 @@ All six datasets are published under the
 Each repo carries a dataset card (`README.md`) with the CC0 license, tags, the
 column list, and a link back to the landing page.
 
-### Kaggle (planned)
+### Kaggle
 
-Kaggle is the second planned mirror. It matters beyond reach: **Kaggle is itself
-a Google Dataset Search source**, so it restores the second Dataset-Search
-listing without needing a DOI.
+All six are also published under
+[`zarazinsfuss`](https://www.kaggle.com/zarazinsfuss) on Kaggle. Kaggle matters
+beyond reach — **Kaggle is itself a Google Dataset Search source**, so it
+restores the second Dataset-Search listing without a DOI.
+
+| Dataset | Kaggle |
+|---|---|
+| Content Graph | [zarazinsfuss/content-graph](https://www.kaggle.com/datasets/zarazinsfuss/content-graph) |
+| Flood-Myth Concordance | [zarazinsfuss/flood-myths](https://www.kaggle.com/datasets/zarazinsfuss/flood-myths) |
+| Divine-Council Index | [zarazinsfuss/divine-council-index](https://www.kaggle.com/datasets/zarazinsfuss/divine-council-index) |
+| Theomachy Cross-References | [zarazinsfuss/theomachy-crossrefs](https://www.kaggle.com/datasets/zarazinsfuss/theomachy-crossrefs) |
+| Precessional World Ages | [zarazinsfuss/world-ages](https://www.kaggle.com/datasets/zarazinsfuss/world-ages) |
+| Prophets & Religions Catalogue | [zarazinsfuss/prophets-and-religions](https://www.kaggle.com/datasets/zarazinsfuss/prophets-and-religions) |
+
+These live under the **personal account**, not an org: Kaggle has suspended
+organization creation for regular users, so there is no `wheelofheaven` Kaggle
+org (unlike HuggingFace). It's cosmetic — ownership by a person is the Kaggle
+norm and changes nothing about discoverability. One gotcha: Kaggle uses a
+**controlled tag vocabulary**, so our free-text keywords are dropped on upload
+and the Kaggle copies currently publish untagged.
 
 ### Why not a DOI repository
 
