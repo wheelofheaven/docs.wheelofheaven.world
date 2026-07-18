@@ -231,31 +231,38 @@ Packaging is scripted — see
 [Dataset distribution](/contributing/dev/dataset-distribution/) for the
 `build_distribution.py` packager and the HuggingFace / Kaggle upload flow.
 
-## Translation datasets (HuggingFace)
+## Translation datasets (HuggingFace + Kaggle)
 
 Separately from the extracted content datasets above, the CC0 books of the
-**Wheel of Heaven Translation Program** are published as HuggingFace datasets —
-verse-aligned parallel corpora (source script ↔ WoH English) with
-transliteration, manuscript-witness attribution, per-verse commentary, and a
-translation glossary. **14 books** are live under the
-[`wheelofheaven`](https://huggingface.co/wheelofheaven) org:
+**Wheel of Heaven Translation Program** are published as verse-aligned parallel
+corpora (source script ↔ WoH English) with transliteration, manuscript-witness
+attribution, per-verse commentary, and a translation glossary. Where an aligned
+public-domain edition exists (10 of the 14 books), each row also carries a
+**reference translation** (`reference_english` — the ASV 1901, the World English
+Bible, or a period edition such as R. H. Charles's 1917 *Enoch*) joined
+verse-by-verse, so the Wheel of Heaven rendering can be measured against a
+neutral control. The dataset is honestly mixed-license: the Wheel of Heaven layer
+is CC0-1.0, the reference column is public domain. **14 books** are live on both
+the [`wheelofheaven`](https://huggingface.co/wheelofheaven) HuggingFace org and
+[`zarazinsfuss`](https://www.kaggle.com/zarazinsfuss) on Kaggle (same slug on
+both platforms):
 
-| Book | Verses | Review status | HuggingFace |
-|---|---|---|---|
-| Genesis | 1,533 | reviewed per chapter | [genesis-woh](https://huggingface.co/datasets/wheelofheaven/genesis-woh) |
-| Book of Enoch | 403 | signed off | [book-of-enoch-woh](https://huggingface.co/datasets/wheelofheaven/book-of-enoch-woh) |
-| Jubilees | 373 | signed off | [jubilees-woh](https://huggingface.co/datasets/wheelofheaven/jubilees-woh) |
-| Daniel | 357 | signed off | [daniel-woh](https://huggingface.co/datasets/wheelofheaven/daniel-woh) |
-| Matthew | 287 | pending verification | [matthew-woh](https://huggingface.co/datasets/wheelofheaven/matthew-woh) |
-| Exodus | 175 | reviewed per chapter | [exodus-woh](https://huggingface.co/datasets/wheelofheaven/exodus-woh) |
-| Job | 151 | reviewed per chapter | [job-woh](https://huggingface.co/datasets/wheelofheaven/job-woh) |
-| Acts | 146 | pending verification | [acts-woh](https://huggingface.co/datasets/wheelofheaven/acts-woh) |
-| Ezekiel | 78 | reviewed per chapter | [ezekiel-woh](https://huggingface.co/datasets/wheelofheaven/ezekiel-woh) |
-| Shiur Qomah | 67 | pending verification | [shiur-qomah-woh](https://huggingface.co/datasets/wheelofheaven/shiur-qomah-woh) |
-| Revelation | 48 | pending verification | [revelation-woh](https://huggingface.co/datasets/wheelofheaven/revelation-woh) |
-| Luke | 38 | pending verification | [luke-woh](https://huggingface.co/datasets/wheelofheaven/luke-woh) |
-| Mark | 20 | pending verification | [mark-woh](https://huggingface.co/datasets/wheelofheaven/mark-woh) |
-| Qur'an | 16 | pending verification | [quran-woh](https://huggingface.co/datasets/wheelofheaven/quran-woh) |
+| Book | Verses | Review status | HuggingFace | Kaggle |
+|---|---|---|---|---|
+| Genesis | 1,533 | reviewed per chapter | [genesis-woh](https://huggingface.co/datasets/wheelofheaven/genesis-woh) | [genesis-woh](https://www.kaggle.com/datasets/zarazinsfuss/genesis-woh) |
+| Book of Enoch | 403 | signed off | [book-of-enoch-woh](https://huggingface.co/datasets/wheelofheaven/book-of-enoch-woh) | [book-of-enoch-woh](https://www.kaggle.com/datasets/zarazinsfuss/book-of-enoch-woh) |
+| Jubilees | 373 | signed off | [jubilees-woh](https://huggingface.co/datasets/wheelofheaven/jubilees-woh) | [jubilees-woh](https://www.kaggle.com/datasets/zarazinsfuss/jubilees-woh) |
+| Daniel | 357 | signed off | [daniel-woh](https://huggingface.co/datasets/wheelofheaven/daniel-woh) | [daniel-woh](https://www.kaggle.com/datasets/zarazinsfuss/daniel-woh) |
+| Matthew | 287 | pending verification | [matthew-woh](https://huggingface.co/datasets/wheelofheaven/matthew-woh) | [matthew-woh](https://www.kaggle.com/datasets/zarazinsfuss/matthew-woh) |
+| Exodus | 175 | reviewed per chapter | [exodus-woh](https://huggingface.co/datasets/wheelofheaven/exodus-woh) | [exodus-woh](https://www.kaggle.com/datasets/zarazinsfuss/exodus-woh) |
+| Job | 151 | reviewed per chapter | [job-woh](https://huggingface.co/datasets/wheelofheaven/job-woh) | [job-woh](https://www.kaggle.com/datasets/zarazinsfuss/job-woh) |
+| Acts | 146 | pending verification | [acts-woh](https://huggingface.co/datasets/wheelofheaven/acts-woh) | [acts-woh](https://www.kaggle.com/datasets/zarazinsfuss/acts-woh) |
+| Ezekiel | 78 | reviewed per chapter | [ezekiel-woh](https://huggingface.co/datasets/wheelofheaven/ezekiel-woh) | [ezekiel-woh](https://www.kaggle.com/datasets/zarazinsfuss/ezekiel-woh) |
+| Shiur Qomah | 67 | pending verification | [shiur-qomah-woh](https://huggingface.co/datasets/wheelofheaven/shiur-qomah-woh) | [shiur-qomah-woh](https://www.kaggle.com/datasets/zarazinsfuss/shiur-qomah-woh) |
+| Revelation | 48 | pending verification | [revelation-woh](https://huggingface.co/datasets/wheelofheaven/revelation-woh) | [revelation-woh](https://www.kaggle.com/datasets/zarazinsfuss/revelation-woh) |
+| Luke | 38 | pending verification | [luke-woh](https://huggingface.co/datasets/wheelofheaven/luke-woh) | [luke-woh](https://www.kaggle.com/datasets/zarazinsfuss/luke-woh) |
+| Mark | 20 | pending verification | [mark-woh](https://huggingface.co/datasets/wheelofheaven/mark-woh) | [mark-woh](https://www.kaggle.com/datasets/zarazinsfuss/mark-woh) |
+| Qur'an | 16 | pending verification | [quran-woh](https://huggingface.co/datasets/wheelofheaven/quran-woh) | [quran-woh](https://www.kaggle.com/datasets/zarazinsfuss/quran-woh) |
 
 Each card carries an honest **review-status** line — `signed off`,
 `reviewed per chapter`, `pending verification`, or `draft` — so the packager

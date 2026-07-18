@@ -126,13 +126,28 @@ data-library repo root). Per book it emits a verse-aligned parallel corpus:
 
 - **`<slug>.jsonl`** — one row per verse: `ref`, `chapter`, `verse`, `original`
   (source script), `original_lang`, `transliteration`, `english` (WoH
-  translation), `commentary`, `glossary_refs`, `witness_primary`,
+  translation), `reference_english` (an aligned public-domain reference
+  translation — empty where none exists), `reference_version`,
+  `reference_license`, `commentary`, `glossary_refs`, `witness_primary`,
   `witness_secondary` — joined from `chapter-*.json` (translation side) and
   `source-*.json` (source apparatus) by `refId`.
 - **`glossary.json`** — the per-book translation glossary (`$schema` stripped;
   the term container is `terms` or `entries` depending on the book).
 - **`README.md`** — the dataset card (methodology, source provenance, sign-off
   status; internal batch codenames like "Ship A/B" are scrubbed).
+
+**Reference translation.** Each `-woh` book has an aligned public-domain sibling
+in `data-library` (e.g. `genesis` beside `genesis-woh`), and `load_reference()`
+joins it into `reference_english` on `(chapter, verse)` — so a row shows the
+Wheel of Heaven rendering against a neutral control (`elohim` as a plural,
+`taninim` as dragons, `ruach` as breath rather than Spirit). 10 of the 14 books
+get one: ASV 1901 for the biblical set, the World English Bible for Daniel, and
+R. H. Charles's 1917 edition for *Enoch* (whose versification diverges — only
+~24% aligns). Jubilees, Shiur Qomah, and the Qurʾān ship reference-less (no
+aligned public-domain English edition) with an honest card note. The join refuses
+any reference whose licence isn't public-domain/CC0, so the corpus stays honestly
+**mixed-license**: the Wheel of Heaven layer (translation, commentary, glossary)
+is CC0-1.0, the reference column is public domain.
 
 **Selection gates.** `discover_books()` ships a `-woh` book only if it (1) is
 **CC0** (`versionLicense == "CC0-1.0"` — refuses anything else), (2) is **not in
@@ -149,9 +164,27 @@ way:
 hf upload wheelofheaven/<slug> scripts/dist-hf/<slug> --repo-type=dataset
 ```
 
-**Reciprocal link.** Each `-woh` book's `/library/<slug>/` reader page links back
-to its dataset via an `[extra] hf_dataset` field (rendered by
-`library-book.html` as an "Available as a CC0 dataset on Hugging Face" link after
-the lede — the reader template does *not* render the page's markdown body, so the
-link must be a frontmatter field, not body text). See
+**Kaggle mirror.** `--kaggle-owner <owner>` also emits `dist-kaggle/<slug>/` — the
+same `.jsonl` + `glossary.json` plus a Kaggle `dataset-metadata.json` — a second
+Google-Dataset-Search surface. The 14 books are live under
+[`zarazinsfuss`](https://www.kaggle.com/zarazinsfuss); there is **no
+`wheelofheaven` Kaggle org** (Kaggle suspended self-serve org creation for
+regular users, so unlike HuggingFace this stays on the personal account):
+
+```
+python scripts/build_translation_datasets.py --kaggle-owner zarazinsfuss
+kaggle datasets create  -p scripts/dist-kaggle/<slug> --public   # first publish
+kaggle datasets version -p scripts/dist-kaggle/<slug> -m "notes" # later updates
+```
+
+Two Kaggle gotchas: titles must be 6–50 chars and subtitles 20–80 (the packager
+auto-fits both), and Kaggle caps category-tags — passing more than a few *valid*
+tags trips "exceeded the max category limit" (which still creates the dataset,
+minus tags), so the keyword set is pinned to `nlp`, `translation`, `text`.
+
+**Reciprocal links.** Each `-woh` book's `/library/<slug>/` reader page links back
+to its datasets via `[extra] hf_dataset` and `[extra] kaggle_dataset` fields
+(rendered by `library-book.html` as "Available as a CC0 dataset on Hugging Face ·
+Kaggle →" after the lede — the reader template does *not* render the page's
+markdown body, so the links must be frontmatter fields, not body text). See
 [frontmatter → Library book](/reference/frontmatter/).

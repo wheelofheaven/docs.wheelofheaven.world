@@ -127,7 +127,8 @@ etc.):
 
 | Field | Type | Notes |
 |---|---|---|
-| `hf_dataset` | string | URL of the book's CC0 parallel-corpus dataset on Hugging Face. When set, `library-book.html` renders an **"Available as a CC0 dataset on Hugging Face"** link after the lede — the reciprocal of the dataset card's link back to the book. Used by the `-woh` translation books; see [Dataset distribution](/contributing/dev/dataset-distribution/). |
+| `hf_dataset` | string | URL of the book's CC0 parallel-corpus dataset on Hugging Face. When `hf_dataset` and/or `kaggle_dataset` is set, `library-book.html` renders an **"Available as a CC0 dataset on Hugging Face · Kaggle →"** link after the lede (each platform shown only if its field is present) — the reciprocal of the dataset card's link back to the book. Used by the `-woh` translation books; see [Dataset distribution](/contributing/dev/dataset-distribution/). |
+| `kaggle_dataset` | string | URL of the book's CC0 dataset on Kaggle (`zarazinsfuss/<slug>`). Renders alongside `hf_dataset` (see above). |
 
 ### Article — `[extra]` additions
 
