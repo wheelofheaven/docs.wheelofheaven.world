@@ -143,3 +143,10 @@ Upload the same way:
 ```
 hf upload wheelofheaven/<slug> scripts/dist-hf/<slug> --repo-type=dataset
 ```
+
+**Reciprocal link.** Each `-woh` book's `/library/<slug>/` reader page links back
+to its dataset via an `[extra] hf_dataset` field (rendered by
+`library-book.html` as an "Available as a CC0 dataset on Hugging Face" link after
+the lede — the reader template does *not* render the page's markdown body, so the
+link must be a frontmatter field, not body text). See
+[frontmatter → Library book](/reference/frontmatter/).

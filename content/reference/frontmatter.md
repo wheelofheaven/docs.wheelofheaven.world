@@ -111,8 +111,7 @@ The available taxonomies are configured in `config.toml` (currently
 
 ### Library book — `[extra]` additions
 
-For the section `_index.md` only (individual books come from
-`data-library` JSON, not markdown).
+For the section `_index.md`:
 
 | Field | Type | Notes |
 |---|---|---|
@@ -120,6 +119,15 @@ For the section `_index.md` only (individual books come from
 | `original_title` | string | Original-language title |
 | `publication_year` | string | Year published |
 | `isbn` | string | ISBN if available |
+
+For an **individual book page** (`content/library/<slug>.md`) — the chapter and
+verse text is loaded from `data-library` JSON, but the page's frontmatter still
+carries its metadata (`title`, `description`, `claim_type`, `translation_status`,
+etc.):
+
+| Field | Type | Notes |
+|---|---|---|
+| `hf_dataset` | string | URL of the book's CC0 parallel-corpus dataset on Hugging Face. When set, `library-book.html` renders an **"Available as a CC0 dataset on Hugging Face"** link after the lede — the reciprocal of the dataset card's link back to the book. Used by the `-woh` translation books; see [Dataset distribution](/contributing/dev/dataset-distribution/). |
 
 ### Article — `[extra]` additions
 
