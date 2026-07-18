@@ -134,11 +134,16 @@ data-library repo root). Per book it emits a verse-aligned parallel corpus:
 - **`README.md`** — the dataset card (methodology, source provenance, sign-off
   status; internal batch codenames like "Ship A/B" are scrubbed).
 
-**License gate:** the packager ships only books with `versionLicense ==
-"CC0-1.0"` and refuses anything else. The Raëlian canon is © International
-Raëlian Movement (not CC0) and is excluded by design. Live: `daniel-woh`,
-`jubilees-woh`, `book-of-enoch-woh`, `genesis-woh` (2,666 aligned verses).
-Upload the same way:
+**Selection gates.** `discover_books()` ships a `-woh` book only if it (1) is
+**CC0** (`versionLicense == "CC0-1.0"` — refuses anything else), (2) is **not in
+`HELD`** (three living-tradition scriptures parked for a rights review), and (3)
+**has translated verses** (the packager skips stubs and source-only books — 13
+`-woh` books have no translation yet). The Raëlian canon is © International
+Raëlian Movement (not CC0) and excluded by the license gate. Each card gets an
+honest **review-status** line (`signed off` / `reviewed per chapter` /
+`pending verification` / `draft`) via `review_status()` — never claiming a
+sign-off a book lacks. **14 books live** (3,693 aligned verses). Upload the same
+way:
 
 ```
 hf upload wheelofheaven/<slug> scripts/dist-hf/<slug> --repo-type=dataset

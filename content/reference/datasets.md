@@ -237,18 +237,38 @@ Separately from the extracted content datasets above, the CC0 books of the
 **Wheel of Heaven Translation Program** are published as HuggingFace datasets —
 verse-aligned parallel corpora (source script ↔ WoH English) with
 transliteration, manuscript-witness attribution, per-verse commentary, and a
-translation glossary.
+translation glossary. **14 books** are live under the
+[`wheelofheaven`](https://huggingface.co/wheelofheaven) org:
 
-| Book | Verses | Glossary | HuggingFace |
+| Book | Verses | Review status | HuggingFace |
 |---|---|---|---|
-| Daniel | 357 | 10 | [wheelofheaven/daniel-woh](https://huggingface.co/datasets/wheelofheaven/daniel-woh) |
-| Jubilees | 373 | 7 | [wheelofheaven/jubilees-woh](https://huggingface.co/datasets/wheelofheaven/jubilees-woh) |
-| Book of Enoch | 403 | 12 | [wheelofheaven/book-of-enoch-woh](https://huggingface.co/datasets/wheelofheaven/book-of-enoch-woh) |
-| Genesis | 1,533 | 194 | [wheelofheaven/genesis-woh](https://huggingface.co/datasets/wheelofheaven/genesis-woh) |
+| Genesis | 1,533 | reviewed per chapter | [genesis-woh](https://huggingface.co/datasets/wheelofheaven/genesis-woh) |
+| Book of Enoch | 403 | signed off | [book-of-enoch-woh](https://huggingface.co/datasets/wheelofheaven/book-of-enoch-woh) |
+| Jubilees | 373 | signed off | [jubilees-woh](https://huggingface.co/datasets/wheelofheaven/jubilees-woh) |
+| Daniel | 357 | signed off | [daniel-woh](https://huggingface.co/datasets/wheelofheaven/daniel-woh) |
+| Matthew | 287 | pending verification | [matthew-woh](https://huggingface.co/datasets/wheelofheaven/matthew-woh) |
+| Exodus | 175 | reviewed per chapter | [exodus-woh](https://huggingface.co/datasets/wheelofheaven/exodus-woh) |
+| Job | 151 | reviewed per chapter | [job-woh](https://huggingface.co/datasets/wheelofheaven/job-woh) |
+| Acts | 146 | pending verification | [acts-woh](https://huggingface.co/datasets/wheelofheaven/acts-woh) |
+| Ezekiel | 78 | reviewed per chapter | [ezekiel-woh](https://huggingface.co/datasets/wheelofheaven/ezekiel-woh) |
+| Shiur Qomah | 67 | pending verification | [shiur-qomah-woh](https://huggingface.co/datasets/wheelofheaven/shiur-qomah-woh) |
+| Revelation | 48 | pending verification | [revelation-woh](https://huggingface.co/datasets/wheelofheaven/revelation-woh) |
+| Luke | 38 | pending verification | [luke-woh](https://huggingface.co/datasets/wheelofheaven/luke-woh) |
+| Mark | 20 | pending verification | [mark-woh](https://huggingface.co/datasets/wheelofheaven/mark-woh) |
+| Qur'an | 16 | pending verification | [quran-woh](https://huggingface.co/datasets/wheelofheaven/quran-woh) |
 
-Only **CC0** books are published. The Raëlian canon
-(`the-book-which-tells-the-truth`, `extraterrestrials-took-me-to-their-planet`)
-is **excluded** — it is copyrighted (© International Raëlian Movement), not CC0,
-so it cannot ship as an open dataset. Packaged by
+Each card carries an honest **review-status** line — `signed off`,
+`reviewed per chapter`, `pending verification`, or `draft` — so the packager
+never claims a sign-off a book doesn't have.
+
+**Selection.** A `-woh` book ships only if it is (1) **CC0** (`versionLicense`),
+(2) **not HELD**, and (3) **has translated verses**. The packager skips stubs and
+source-only books (13 `-woh` books have no translation yet — the tier list is by
+*license*, not *content*, so always check for verses). **HELD** excludes three
+living-tradition scriptures pending a rights review (`hidden-words-woh` Bahá'í,
+`oomoto-shinyu-woh` Oomoto, `thanh-ngon-hiep-tuyen-woh` Caodai). The Raëlian
+canon (`the-book-which-tells-the-truth`,
+`extraterrestrials-took-me-to-their-planet`) is © International Raëlian Movement
+(not CC0) and excluded outright. Packaged by
 `data-library/scripts/build_translation_datasets.py`; see
 [Dataset distribution](/contributing/dev/dataset-distribution/).
