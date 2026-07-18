@@ -33,3 +33,8 @@ each under `partials/social/`.
 socials row after GitHub, and its `--huggingface:hover` rule tints the mark
 Hugging Face yellow (`#ffd21e`) on hover. A matching "Hugging Face" text link
 lives in the Social Media column.
+
+**Which icons get a colour.** Only platforms with a real brand colour carry a
+hover tint — Telegram (blue), YouTube (red), Open Collective (blue), Hugging Face
+(yellow). **X and GitHub stay monochrome**: they're black-and-white brands, so a
+brand-colour hover would be arbitrary; they keep only the background + lift.
