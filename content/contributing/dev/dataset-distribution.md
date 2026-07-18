@@ -116,3 +116,30 @@ When a source dataset changes (a regenerated graph, an edited CSV):
    revision to the existing repo.
 3. **Kaggle** — `kaggle datasets version -p scripts/dist/kaggle/<slug> -m "notes"`
    (use `version`, not `create`, once the dataset exists).
+
+## Translation datasets
+
+The CC0 books of the Wheel of Heaven Translation Program (`data-library/*-woh`)
+are published as HuggingFace datasets by a **separate** packager,
+`data-library/scripts/build_translation_datasets.py` (stdlib only, run from the
+data-library repo root). Per book it emits a verse-aligned parallel corpus:
+
+- **`<slug>.jsonl`** — one row per verse: `ref`, `chapter`, `verse`, `original`
+  (source script), `original_lang`, `transliteration`, `english` (WoH
+  translation), `commentary`, `glossary_refs`, `witness_primary`,
+  `witness_secondary` — joined from `chapter-*.json` (translation side) and
+  `source-*.json` (source apparatus) by `refId`.
+- **`glossary.json`** — the per-book translation glossary (`$schema` stripped;
+  the term container is `terms` or `entries` depending on the book).
+- **`README.md`** — the dataset card (methodology, source provenance, sign-off
+  status; internal batch codenames like "Ship A/B" are scrubbed).
+
+**License gate:** the packager ships only books with `versionLicense ==
+"CC0-1.0"` and refuses anything else. The Raëlian canon is © International
+Raëlian Movement (not CC0) and is excluded by design. Live: `daniel-woh`,
+`jubilees-woh`, `book-of-enoch-woh`, `genesis-woh` (2,666 aligned verses).
+Upload the same way:
+
+```
+hf upload wheelofheaven/<slug> scripts/dist-hf/<slug> --repo-type=dataset
+```

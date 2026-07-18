@@ -230,3 +230,25 @@ individuals).
 Packaging is scripted — see
 [Dataset distribution](/contributing/dev/dataset-distribution/) for the
 `build_distribution.py` packager and the HuggingFace / Kaggle upload flow.
+
+## Translation datasets (HuggingFace)
+
+Separately from the extracted content datasets above, the CC0 books of the
+**Wheel of Heaven Translation Program** are published as HuggingFace datasets —
+verse-aligned parallel corpora (source script ↔ WoH English) with
+transliteration, manuscript-witness attribution, per-verse commentary, and a
+translation glossary.
+
+| Book | Verses | Glossary | HuggingFace |
+|---|---|---|---|
+| Daniel | 357 | 10 | [wheelofheaven/daniel-woh](https://huggingface.co/datasets/wheelofheaven/daniel-woh) |
+| Jubilees | 373 | 7 | [wheelofheaven/jubilees-woh](https://huggingface.co/datasets/wheelofheaven/jubilees-woh) |
+| Book of Enoch | 403 | 12 | [wheelofheaven/book-of-enoch-woh](https://huggingface.co/datasets/wheelofheaven/book-of-enoch-woh) |
+| Genesis | 1,533 | 194 | [wheelofheaven/genesis-woh](https://huggingface.co/datasets/wheelofheaven/genesis-woh) |
+
+Only **CC0** books are published. The Raëlian canon
+(`the-book-which-tells-the-truth`, `extraterrestrials-took-me-to-their-planet`)
+is **excluded** — it is copyrighted (© International Raëlian Movement), not CC0,
+so it cannot ship as an open dataset. Packaged by
+`data-library/scripts/build_translation_datasets.py`; see
+[Dataset distribution](/contributing/dev/dataset-distribution/).
