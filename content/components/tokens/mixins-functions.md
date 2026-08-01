@@ -22,6 +22,7 @@ the heavy lifting happens in component-level mixins like
 | `focus-ring-highlight($color)`     | Focus ring + background hover highlight, for subtle elements. |
 | `center-absolute`                  | Absolute-positioned dead-centre (`top/left 50%` + `translate(-50%, -50%)`). |
 | `fluid-type($min, $max)`           | `font-size: clamp(…)` for responsive type.                    |
+| `mobile-table-scroll($breakpoint)` | Below `$breakpoint` (default 768px), makes a prose `table` scroll horizontally inside its own container instead of clipping at the viewport edge. Applied to the wiki, dispatch, and shared-content table styles. |
 | `respond($breakpoint)`             | Media-query shortcut: `sm` / `md` / `lg`.                     |
 
 ```scss
