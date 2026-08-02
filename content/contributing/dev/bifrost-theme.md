@@ -166,3 +166,28 @@ $spacing-md: 1rem;
 $spacing-lg: 1.5rem;
 $border-radius-md: 0.5rem;
 ```
+
+### Glassmorphism invariants
+
+Every chrome surface (navbar, search modal, dropdowns, tooltips, FABs,
+reader popovers) shares one glass recipe: `background-color:
+var(--color-navbar-bg)` (~10% alpha per theme) plus `backdrop-filter:
+blur(...)`. Two rules keep it rendering identically on every engine:
+
+1. **No transformed ancestors above a glass surface.** WebKit (iOS and
+   macOS Safari) silently refuses to render `backdrop-filter` on any
+   element that has a transformed ancestor — including identity
+   transforms like `translateY(0)` and transforms that only exist
+   mid-animation. Center overlays with `left: 0; right: 0;
+   margin-inline: auto` or a JS-measured `left`, never
+   `translateX(-50%)`; animate position with `top`, and use fade-only
+   entrances for surfaces whose blur lives on a child or `::before`.
+   A transform on the blurred element *itself* is fine (the FABs rely
+   on this).
+
+2. **Fallback lives in the token, not the component.** Engines with no
+   `backdrop-filter` support at all get a near-opaque surface via a
+   single `@supports not (...)` override of `--color-navbar-bg` in
+   `sass/themes/_init.scss` — the same mechanism the
+   `prefers-reduced-transparency` override uses. Never hardcode a
+   per-component opaque fallback.
