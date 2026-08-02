@@ -90,6 +90,22 @@ The available taxonomies are configured in `config.toml` (currently
 | `noindex` | bool | No | Set `true` to exclude from search indexes. |
 | `schema_type` | string | No | Override the JSON-LD `@type` (e.g. `"ScholarlyArticle"`). |
 
+### Core claim binding (pilot)
+
+Opt-in fields that bind a page to a claim record in the
+[research core](@/architecture/research-core.md) at an exact version
+(RFC 0002 pilot). Page-type-agnostic; currently used only on `wiki/elohim.md`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `core_claim_ids` | string[] | Core claim IDs this page renders, e.g. `["woh-claim-0001"]`. |
+| `core_versions` | table | Maps each declared ID to the claim version the page was written against, e.g. `{ woh-claim-0001 = "0.1.0" }`. Every ID in `core_claim_ids` needs an entry here. |
+
+Both are inert at render time. When the `core` repo is checked out beside
+`data-content`, its validator flags a page whose declared version no longer
+matches the controlling claim record (the page renders a stale claim). Not
+backfilled across framework pages yet.
+
 ### Wiki — `[extra]` additions
 
 | Field | Type | Notes |

@@ -1,6 +1,6 @@
 +++
 title = "Architecture"
-description = "How the ~19-repo Wheel of Heaven organization fits together — sites, submodules, pipelines, and hosting."
+description = "How the ~20-repo Wheel of Heaven organization fits together — sites, submodules, pipelines, the research core, and hosting."
 sort_by = "weight"
 weight = 30
 template = "section.html"
@@ -21,6 +21,10 @@ this section drills into specific corners.
 - **[Sites](@/architecture/sites/_index.md)** — the three production
   Cloudflare Pages projects (www, api, assets) plus this docs site,
   with per-site config, build commands, and feature notes.
+- **[Research Core](@/architecture/research-core.md)** — the `core`
+  repository: how the framework's claims, evidence, and source
+  interpretation are recorded and versioned, the five orthogonal claim
+  axes, and the page-to-claim publication-integration contract.
 - **[Hosting and Caching](@/architecture/hosting-and-caching.md)** —
   what gets cached where, with TTLs by asset type, how cache
   invalidation works on deploy, and how to debug a stale-content

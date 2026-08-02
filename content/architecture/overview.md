@@ -157,6 +157,7 @@ That's been fine so far.
 | api | Machine-readable JSON endpoints |
 | assets | Image CDN with format optimization |
 | bifrost | Templates, styles, JavaScript |
+| core | Research corpus — framework claims, evidence, source notes, decisions ([details](@/architecture/research-core.md)) |
 | data-content | Markdown content (1,330+ files) |
 | data-library | Book data (catalog + chapters) |
 | data-images | Image processing pipeline |
