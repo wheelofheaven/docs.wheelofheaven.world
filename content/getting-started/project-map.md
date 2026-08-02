@@ -4,7 +4,7 @@ description = "What each Wheel of Heaven repository does, and how they connect �
 weight = 20
 +++
 
-The Wheel of Heaven knowledge base spans ~19 repositories across one
+The Wheel of Heaven knowledge base spans ~20 repositories across one
 GitHub organization. Most contributors only touch two or three. This
 page shows the whole org at a glance so you can find the one you
 actually need.
@@ -36,6 +36,19 @@ Both www and api read from the same content + theme submodules:
 
 So a single content change in `data-content` is picked up by both the
 reading site and the API on the next submodule-pointer bump.
+
+## The research core (the meaning)
+
+| Repo | What it is |
+|---|---|
+| `core` | The durable research corpus — framework claim records, evidence maps, source notes, methodology, RFCs, and ADRs |
+
+`core` is not a submodule and ships nothing to the sites. It is the
+authoritative record of *what the framework claims and how it reasons*,
+kept separate from the prose that presents those claims in `data-content`.
+Public pages may point back to a core claim at an exact version
+(`core_claim_ids` / `core_versions`), so a claim can change without silently
+redefining the pages that render it.
 
 ## Pipelines (the processing layers)
 
@@ -76,12 +89,15 @@ flowchart TB
     api["api"]
     docs["docs"]
 
+    core["core<br/><i>claims + evidence</i>"]
+
     dc -.-> www
     dl -.-> www
     bf -.-> www
     dc -.-> api
     dl -.-> api
     bf -.-> docs
+    core -. "claim IDs" .- dc
 
     di["data-images"]
     dcin["data-cinematics"]
@@ -107,6 +123,7 @@ flowchart TB
 | Site-level config, build chain, CI | `www.wheelofheaven.io` | [CI & Deploy](@/contributing/dev/ci-deploy.md) |
 | API endpoints | `api.wheelofheaven.io` | [Architecture → Sites → api](@/architecture/sites/api.md) |
 | Edit *these docs* | `docs.wheelofheaven.world` | (you're reading them) |
+| Edit a framework claim, evidence map, or RFC | `core` | [Repository Inventory → core](@/reference/repository-inventory.md) |
 
 If you're not sure which one you need, start with
 [Local Setup](@/contributing/dev/local-setup.md) — it walks through

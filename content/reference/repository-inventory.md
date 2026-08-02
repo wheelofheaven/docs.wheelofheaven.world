@@ -90,6 +90,39 @@ bifrost/
 
 **Stats:** 9 shortcodes, 28 templates, 12 JS modules.
 
+### core
+
+The durable research corpus and conceptual specification. Authoritative for
+what the framework claims and how those claims are reasoned — framework claim
+records, evidence maps, source notes, methodology, RFCs, and decisions — kept
+deliberately separate from the reading site, the source texts, and the
+bibliography. Public pages may bind to a core claim at an exact version
+(`core_claim_ids` / `core_versions` in `[extra]`); the validator flags a page
+that drifts from its controlling record. Markdown- and JSON-first, no build
+step beyond `python3 scripts/validate.py`.
+
+```
+core/
+├── docs/
+│   ├── foundations/        # scope, epistemic principles, architecture
+│   ├── framework/          # human-readable claim specifications
+│   ├── evidence/           # passage-level evidence maps
+│   ├── methodology/        # claim model, evidence status, comparison, versioning
+│   └── research/           # agenda + open research questions
+├── model/
+│   ├── catalog.json        # claim index
+│   ├── claims/             # machine-readable claim records
+│   └── schemas/            # JSON Schemas
+├── source-notes/           # source access + interpretation, keyed to Wheel source IDs
+├── rfcs/                   # proposals
+├── decisions/              # ADRs
+└── scripts/validate.py     # cross-file + registry + publication-integration checks
+```
+
+**Status:** `0.1.0` foundation and pilot — three draft framework claims
+(Elohim-civilization hypothesis, Anunnaki–Elohim identity, precessional
+world-age chronology).
+
 ## Data repositories
 
 ### data-content
@@ -229,6 +262,7 @@ site).
 | api | <https://github.com/wheelofheaven/api.wheelofheaven.io> |
 | assets | <https://github.com/wheelofheaven/assets.wheelofheaven.io> |
 | bifrost | <https://github.com/wheelofheaven/bifrost> |
+| core | <https://github.com/wheelofheaven/core> |
 | data-content | <https://github.com/wheelofheaven/data-content> |
 | data-library | <https://github.com/wheelofheaven/data-library> |
 | data-images | <https://github.com/wheelofheaven/data-images> |
