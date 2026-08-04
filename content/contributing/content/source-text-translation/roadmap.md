@@ -1,6 +1,6 @@
 +++
 title = "Roadmap"
-description = "What the Wheel of Heaven Translation Program is translating, in what order, and why. Current production state and the 2026-06 acquisition queue."
+description = "What the Wheel of Heaven Translation Program is translating, in what order, and why. Current production state (2026-08) and the acquisition queue."
 weight = 80
 +++
 
@@ -24,28 +24,36 @@ This is the *roadmap* — the ordering and the next picks. The
 lives at
 [Library Acquisition Program](@/contributing/content/library-acquisition.md).
 
-## Production state (2026-06)
+## Production state (2026-08)
 
-**21 books shipped or in flight.** Every drafted chapter is signed
+**28 books shipped or in flight.** Every drafted chapter is signed
 off as `stable`. Distribution by tradition:
 
 | Tradition | Books | Notes |
 |---|---|---|
-| Hebrew Bible | 6 | Genesis (50 ch, complete), Exodus (selections), Ezekiel, Daniel, Job, Isaiah (scaffold) |
+| Hebrew Bible | 6 | Genesis (50 ch, complete), Exodus (selections), Ezekiel, Daniel, Job, Isaiah (initial scope `{6, 24–27, 53}` complete) |
 | New Testament | 5 | Matthew, Mark, Luke, Acts, Revelation (selections) |
 | Qur'an | 1 | Suras 21, 54, 56 (the canon-engaged passages) |
-| Mesopotamian | 6 | Gilgamesh XI, Adapa, Eridu Genesis (= flood-story-woh), Enki and Ninmah, Enki and Ninhursag, Song of the Hoe |
+| Mesopotamian | 8 | Gilgamesh XI, Adapa, Eridu Genesis (= flood-story-woh), Enki and Ninmah, Enki and Ninhursag, Song of the Hoe, Atrahasis I–III, Sumerian King List |
 | Ugaritic | 1 | Baal Cycle KTU 1.3–1.4 |
 | Pseudepigrapha | 2 | 1 Enoch (Watchers 1–36 + Astronomical Book 72–82), Jubilees 1–12 |
 | Hekhalot | 1 | Shi'ur Qomah ch. 1 |
+| Greek (classical) | 1 | Hesiod's Theogony — **complete composition**, all 1022 lines + the 929a–t variant passage, translated in four sequential blocks (2026-08) |
+| Bahá'í | 1 | Hidden Words (Arabic + Persian parts) |
+| Caodai | 1 | Thánh Ngôn Hiệp Tuyển vol. 1 (selections) |
+| Oomoto | 1 | Oomoto Shin'yu (first fude) |
 
-**Production glossary.** v2.69.0, 789 terms, six source languages
+**Production glossary.** v2.73.0, 791 terms, six source languages
 (Hebrew, Sumerian, Akkadian, Ugaritic, Arabic, Greek). Distribution:
-708 `direct` / 74 `inferred` / 7 `speculative`. The
+710 `direct` / 74 `inferred` / 7 `speculative`. The
 `speculative` count being deliberately small — at fewer than one
-percent of entries — is itself a discipline statement.
+percent of entries — is itself a discipline statement. Notably, the
+entire 1042-line Theogony shipped without adding a single term to the
+central glossary: all Greek-side decisions live in the book's overlay
+(42 entries, 0 speculative), with cross-corpus convergences recorded
+as labeled comparative apparatus rather than fused refIds.
 
-**Per-translation overlay glossaries.** Active for 19 books (every
+**Per-translation overlay glossaries.** Active for 26 books (every
 shipped translation except Genesis-WoH and the Mormon Edition track).
 The mechanism is described in
 [Glossary system](@/contributing/content/source-text-translation/glossary-system.md).
@@ -53,7 +61,7 @@ The mechanism is described in
 **Multi-language fanout.** Operational; runs after a book reaches
 `stable`. See [Translations](@/contributing/content/translations.md).
 
-## Next picks (2026-06)
+## Next picks (2026-08)
 
 After Genesis-WoH closed out (the original "Phase 0") and the
 pipeline proved it generalises across Hebrew, Greek, Akkadian,
@@ -61,23 +69,25 @@ Sumerian, Arabic, Ge'ez, and Ugaritic, the phase-gated language of
 earlier roadmaps no longer fits production reality. The active model
 is **named-pick + verified queue**, not numbered phases.
 
+**Shipped since the 2026-06 picks:** both prior top picks closed out —
+Isaiah's initial scope `{6, 24–27, 53}` and Atrahasis I–III — plus
+the Sumerian King List (completing the Mesopotamian pilot pair) and
+Hesiod's **Theogony, the program's first classical-Greek book, now a
+complete composition** (1022 lines + the 929a–t variant passage,
+translated and signed off in four sequential blocks, 2026-08).
+
 ### Top two picks
 
-1. **Isaiah 6** — opens `isaiah-woh`, the only scaffolded-but-empty
-   book on disk. Throne-vision lens leverage (*seraphim*, *kavod*,
-   the trishagion, coal ritual); deep philological backing (Wildberger
-   BKAT, Williamson ICC); same source language as Genesis-WoH so no
-   new-language risk. Initial scope: `{6, 24–27, 53}`.
-2. **Atrahasis Tablet I** — opens `atrahasis-woh`. The most
-   WoH-resonant ANE text (creation of humans as workforce →
-   overpopulation → flood) and the keystone of the Mesopotamian
-   flood/creation cluster (Gilgamesh XI ✓, Eridu Genesis ✓, Adapa ✓,
-   Enki and Ninmah ✓ are all shipped). **Moat argument:** no usable
-   public-domain English translation of Atrahasis exists; the WoH
-   text would be the only freely-licensed modern English Atrahasis
-   on the web. Source layer is eBL L.1.1 (CC BY-NC-SA, working base
-   only — the licensing inheritance is documented on the resulting
-   book).
+1. **Gospel of Thomas** — opens the Coptic pilot. Source layer is
+   already acquired (`gospel-of-thomas-woh`, CC BY via Coptic
+   Scriptorium); logion structure keeps chapters small and the
+   sign-off cadence fast; heavy canon engagement (logia 18, 19, 50,
+   84–85 on origins, images, and the "place of light").
+2. **Vidēvdād Fargard 2** — opens the Avestan pilot
+   (`vendidad-woh`, Geldner PD source already staged). Yima's vara —
+   the strongest engineered-survival narrative outside the flood
+   cluster, and the bridge into the Persian material the comparative
+   corpus keeps citing.
 
 ### The 2026-06 acquisition queue
 
@@ -94,8 +104,8 @@ The pilot wave by tradition:
 | Tradition | Pilot text | Why first |
 |---|---|---|
 | Mormon (Edition) | Book of Abraham + Book of Moses | English originals; PD pre-1930 editions; Kolob and "worlds without number" — directly lens-resonant |
-| Mesopotamian (build-out) | Etana + Sumerian King List | Ascent-flight + antediluvian king-list; tiny corpus; both moat texts |
-| Greek | Theogony | Anchors the theomachy-convergence argument (pairs with CTH 344); classical Greek adjacent to proven NT Greek |
+| Mesopotamian (build-out) | ~~Sumerian King List~~ **shipped 2026-07**; Etana next | Ascent-flight + antediluvian king-list; tiny corpus; both moat texts |
+| Greek | ~~Theogony~~ **shipped 2026-08 (complete composition)** | Anchors the theomachy-convergence argument (pairs with CTH 344); classical Greek adjacent to proven NT Greek |
 | Anatolian | Song of Emergence (CTH 344) | Succession-in-heaven myth; the bridge between Enuma Elish and Hesiod |
 | Persian/Zoroastrian | Vidēvdād Fargard 2 | Yima's vara — the strongest engineered-survival narrative outside the flood cluster; Geldner (PD) source |
 | Coptic | Gospel of Thomas | Coptic-language pilot; CC BY source via Coptic Scriptorium |
