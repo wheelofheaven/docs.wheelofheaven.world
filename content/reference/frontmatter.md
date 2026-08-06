@@ -89,6 +89,7 @@ The available taxonomies are configured in `config.toml` (currently
 | `author` | string | No | When the page is by-lined to a person rather than the org. |
 | `noindex` | bool | No | Set `true` to exclude from search indexes. |
 | `schema_type` | string | No | Override the JSON-LD `@type` (e.g. `"ScholarlyArticle"`). |
+| `same_as` | string[] | No | Full URLs identifying the same concept in external authorities (Wikidata first, then Wikipedia, then others). Rendered as `sameAs` in the page's JSON-LD (`DefinedTerm` and `Event` schemas). Only set when the referent is genuinely identical — framework-specific concepts (Council of Eternals, paradism, …) deliberately carry none, because `sameAs` asserts identity, not similarity. |
 
 ### Core claim binding (pilot)
 
