@@ -34,6 +34,17 @@ claude mcp add --transport http wheel-of-heaven https://mcp.wheelofheaven.world/
 URL; the server is stateless and requires no headers beyond the MCP
 defaults.
 
+**Local stdio (npm)** — for clients that prefer a local process:
+
+```bash
+npx -y @wheelofheaven/mcp
+```
+
+The server is also listed in the
+[official MCP registry](https://registry.modelcontextprotocol.io/v0/servers?search=wheelofheaven)
+as `world.wheelofheaven.mcp/corpus`, so registry-aware clients can
+discover it without any of the above.
+
 ## Design: two layers, declared stance
 
 The tool surface enforces the corpus's editorial split
