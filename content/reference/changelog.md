@@ -8,6 +8,92 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-08 — Editorial pass: wiki decontamination
+
+A May 2026 generation incident had salted otherwise-real English wiki
+entries with telegraphic filler prose. The incident left a reliable
+lexical marker — "substantive" / "substantively" used as padding — and
+the campaign used it as the audit signal: read every flagged passage in
+context, rewrite sentences that carry real information awkwardly, delete
+pure padding, and never touch citations, shortcode calls, reference
+blocks, or `[extra.references]` tables.
+
+The campaign ran in tiers across the ~140-entry English wiki corpus and
+closed on 2026-08-06: Phase 5 repaired the final ten heavy entries, and
+a same-day corpus-wide tail sweep cleared 86 residual occurrences across
+38 lighter files. The corpus now sits at a documented floor of eight
+legitimate occurrences across seven entries (method-vs-substance
+contrasts, grammatical uses, one frontmatter field label); any
+occurrence beyond the documented list is suspect by definition.
+
+Entries fundamentally rewritten under the campaign carry
+`editorial_pass = "2026-08"`. The repairs also drove a frontmatter
+hygiene pattern — oversized `description` fields split into a
+question-answering 150–160-character `description` plus a full-text
+`summary`, a one-sentence `tldr`, and `keywords` — and a report-first
+policy for factual errors found along the way (motif-index code glosses,
+list-count slips, citation form), fixed in follow-up commits after
+editorial sign-off.
+
+Method and floor list:
+[Wiki Decontamination](@/contributing/content/decontamination.md).
+Campaign record: `.claude/plans/wiki-decontamination.md` in the
+`www.wheelofheaven.world` repo.
+
+## 2026-08 — Authority identifiers and structured-data hardening
+
+Wiki entries now declare `same_as` external authority identifiers —
+Wikidata and Wikipedia across 94 entries, with Britannica, VIAF,
+Pleiades, and SEP enrichment on 63 of them, plus the Age of Aquarius
+timeline entry. Bifrost emits the values as `sameAs` in the DefinedTerm
+and Event JSON-LD, anchoring entries to the global knowledge graph. The
+same pass caught and fixed a site-wide gap: the theme had never emitted
+`<meta name="description">`. Field reference:
+[Frontmatter](@/reference/frontmatter.md).
+
+## 2026-08 — MCP server
+
+The corpus is now queryable by AI assistants over the Model Context
+Protocol: an MCP server with an npx install path and a public registry
+listing, backed by a domain-verification key served at
+`/.well-known/mcp-registry-auth` on the main site. `llms.txt` gained the
+API-access section, and dataset landing pages were aligned with
+retrieval-benchmark query language. Reference:
+[MCP Server](@/reference/mcp.md).
+
+## 2026-08 — Library readers: Theogony and the Sumerian King List
+
+Hesiod's *Theogony* (complete composition, 1,042 lines, stable/1.3.0)
+and the *Sumerian King List* were published to the `/library/` reader —
+the translation program's latest completions to reach production.
+Program state:
+[Translation Roadmap](@/contributing/content/source-text-translation/roadmap.md).
+
+## 2026-08 — Research corpus repository
+
+`wheelofheaven/core` was established as the public research corpus: a
+durable claim model across five orthogonal axes, pilot claims with
+passage-level evidence maps, and an RFC/ADR process — RFC 0002 pilots
+page↔claim binding against the `wiki/elohim` entry. Architecture notes:
+[Research Core](@/architecture/research-core.md).
+
+## 2026-08 — Rendering fixes: uniform glass and the mobile navbar
+
+Two WebKit-facing Bifrost fixes: backdrop-filter glass stopped rendering
+under *transformed ancestors* (transforms removed from the navbar,
+search-modal, glossary, and dropdown chains, with a token-level
+`@supports` fallback), and the mobile navbar's scroll-hide — broken by
+an inline `style.top` handoff from the notification stack — was restored
+via a `--navbar-dock-top` CSS variable with class-rule-only positioning
+as the standing invariant. Details:
+[Bifrost Theme](@/contributing/dev/bifrost-theme.md).
+
+## 2026-08 — Macrobiology joins the wiki
+
+The Macrobiology Explainer was converted into a `/wiki/` DefinedTerm —
+sibling to astrobiology and fractal cosmology — with the article removed
+and redirected, and cross-links landed across the corpus.
+
 ## 2026-06 — Provenance panel and source-ID citation rollout
 
 Two linked releases landed on the reading site.

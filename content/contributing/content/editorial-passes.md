@@ -31,6 +31,7 @@ reflect the *current* framing and which are pre-reframe holdovers.
 | Code | What changed |
 |---|---|
 | `2026-05` | First major pass under the *modern, working-hypothesis, human-civilization* framing. Drops "democratization" / "knowledge base" / "lore" register; tightens claim discipline; uses "Elohim were a small advanced human civilization" rather than "extraterrestrial." Also included a library-book editorial sub-pass that split 35 long paragraphs across TBWTT, ETTMTTP, and LWTE into 83 pieces — see [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md). |
+| `2026-08` | Decontamination pass. Repaired the May 2026 generation incident's filler prose across the English wiki corpus — marker-guided de-slop with a preserve-citations rule, oversized descriptions split into `summary` / `tldr` / `keywords`, factual fixes reported first and applied in follow-up commits. Entries fundamentally rewritten in the campaign carry this stamp. See [Wiki Decontamination](@/contributing/content/decontamination.md). |
 
 Future passes will be added here as they happen.
 
@@ -78,7 +79,8 @@ value is rendered as a small colored pill near the page title.
 
 | Value | Meaning | Badge color |
 |---|---|---|
-| `direct` | The claim is explicit in a primary source, or a direct description of project/methodology, or scientifically established | cyan |
+| `direct` | The claim is explicit in a primary source AND uncontroversial mainstream — a textual fact, a scientific fact, or a direct description of project/methodology | cyan |
+| `framework` | A foundational premise of the Wheel of Heaven framework — explicit in the Raëlian canon but not endorsed by mainstream scholarship | mauve |
 | `inferred` | The claim is a reasonable reading of a source, not literally stated but consistent with it | yellow |
 | `speculative` | The claim is interpretive synthesis going beyond what any single source states | lavender |
 
@@ -86,12 +88,17 @@ value is rendered as a small colored pill near the page title.
 
 1. **Read the main claim** of the page — the thing the page is actually
    asserting.
-2. **Is this claim literally in a source?**
+2. **Is this claim literally in a source AND mainstream-uncontroversial?**
    If yes → `direct`.
-3. **Is it a reasonable reading** that a scholar might arrive at
+3. **Is it explicit in the Raëlian canon but not endorsed by mainstream
+   scholarship?** If yes → `framework`. This is the right slot for the
+   project's foundational premises — don't bury them under `direct`
+   (which implies mainstream agreement) or `speculative` (which implies
+   the claim isn't in any single source).
+4. **Is it a reasonable reading** that a scholar might arrive at
    without a leap?
    If yes → `inferred`.
-4. **Otherwise:** `speculative`. Be honest about this — `speculative`
+5. **Otherwise:** `speculative`. Be honest about this — `speculative`
    isn't a weakness, it's a label of intellectual transparency.
 
 ### Examples
@@ -104,6 +111,12 @@ value is rendered as a small colored pill near the page title.
   (astronomical fact)
 - A page describing the project's own method
 
+`framework`:
+
+- The Elohim as an extraterrestrial civilization
+- The embassy as the Third Temple
+- The precessional-age cosmology as governing structure
+
 `inferred`:
 
 - A wiki entry that draws together multiple sources to characterize a
@@ -115,8 +128,8 @@ value is rendered as a small colored pill near the page title.
 
 `speculative`:
 
-- The Elohim-as-ET-civilization reading
-- Genesis-as-engineering-log reframing
+- Cross-cultural theomachy convergence
+- The Doubled Signature principle (extends *Hamlet's Mill*)
 - Speculative cosmology beyond what mainstream physics has measured
 
 ### Set it in `[extra]`
