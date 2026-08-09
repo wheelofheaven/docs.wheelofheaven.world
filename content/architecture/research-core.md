@@ -113,13 +113,12 @@ different draft claims:
 All three are `draft` and `scoped`/`contested`. They document existing
 positions; they do not newly validate them.
 
-## Publication integration (pilot)
+## Publication integration (RFC 0002)
 
 Stage 5 of the roadmap requires that public outputs identify the exact core
 version they render, so drift is visible before publication. The mechanism is
-an **opt-in frontmatter contract** (proposed in RFC 0002): a `data-content`
-page declares, in `[extra]`, which core claim(s) it renders and at what
-version.
+an **opt-in frontmatter contract** (RFC 0002): a `data-content` page declares,
+in `[extra]`, which core claim(s) it renders and at what version.
 
 ```toml
 [extra]
@@ -127,12 +126,28 @@ core_claim_ids = ["woh-claim-0001"]
 core_versions = { woh-claim-0001 = "0.1.0" }
 ```
 
-When the sibling repositories are checked out together, the core validator
-reads these declarations and reports a **disagreement** when a page's declared
-version no longer matches the controlling claim record — the page renders a
-stale claim. The fields are inert at render time; no template consumes them
-yet. The pilot binds a single page (`wiki/elohim.md`); the other framework
-pages are intentionally *not* backfilled until the contract is accepted.
+The binding is **reciprocal**: each claim record's `public_derivatives` list
+names the pages that render it, and the declaring page's frontmatter names the
+claim. When the sibling repositories are checked out together, the core
+validator reads both sides and reports a **disagreement** when a page's
+declared version no longer matches the controlling claim record — the page
+renders a stale claim — or a warning when a page declares a claim it is not
+listed under. The fields are inert at render time; no template consumes them
+yet.
+
+As of 2026-08 the contract is **fully rolled out** beyond the original
+`wiki/elohim` pilot. Every page that renders one of the three claims is bound
+and reciprocated:
+
+| Claim | Bound pages |
+|---|---:|
+| `woh-claim-0001` — Elohim-civilization hypothesis | 7 |
+| `woh-claim-0002` — Anunnaki–Elohim identity | 2 |
+| `woh-claim-0003` — Precessional world-age chronology | 20 |
+
+The validator reports `publication_integration=checked` with zero errors. As
+the claim model grows, this reciprocation (record `public_derivatives` +
+page frontmatter) is the routine per-claim follow-on.
 
 See the field reference under
 [Frontmatter → Core claim binding](@/reference/frontmatter.md).

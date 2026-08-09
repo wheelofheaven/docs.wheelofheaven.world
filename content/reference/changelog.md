@@ -8,6 +8,76 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-08 — Model-C Eden chronology
+
+The corpus's antediluvian chronology was reconciled to a single canonical
+ruler. A flagged-issues review surfaced that entries disagreed on the
+precessional age boundaries and on when the Eden episode occurred. The
+resolution ("Model C"): one age lattice (Age of Leo = 11,010–8,850 BCE,
+anchored at the 1945 Aquarius threshold), a two-stage reading of the human
+creation — the first Adamite *species* at the opening of Leo (~11,375 BCE),
+Genesis's Adam and Eve as founding individuals at the Leo–Cancer boundary
+(~8,850 BCE) — and the antediluvian patriarchs living out the Age of Cancer.
+The decision propagated across ~28 wiki, timeline, and library entries in
+English and the nine translated locales; the Younger Dryas was corrected
+from "late Leo / early Cancer" to early-mid Leo, and the recurring duration
+labels ("~25,000 years", "one Great Year") were disentangled from the
+synthesis date. Every dated claim across the corpus is now internally
+consistent.
+
+## 2026-08 — Core claim binding rolled out (RFC 0002)
+
+The publication-integration contract moved from the single `wiki/elohim`
+pilot to a full rollout. Every page that renders one of the three
+research-core claims now declares `core_claim_ids` / `core_versions` in its
+frontmatter, reciprocated by the claim record's `public_derivatives` list:
+the Elohim-civilization hypothesis (7 pages), the Anunnaki–Elohim identity
+(2), and the precessional world-age chronology (20). The core validator
+confirms consistency (`publication_integration=checked`, zero errors). See
+[Research core](@/architecture/research-core.md) and
+[Frontmatter → Core claim binding](@/reference/frontmatter.md).
+
+## 2026-08 — Retrieval benchmark
+
+The project adopted a quarterly measurement of *information penetration* —
+the share of relevant questions for which Wheel of Heaven appears in an AI
+answer's retrieval or citation chain, the KPI of the shift from pageviews
+to pathways. A 50-question set across seven categories (canon-internal,
+comparative mythology, precession, primary texts, authors, structured data,
+project-direct) was authored, and the 2026-Q3 baseline recorded 4/50 (8%)
+via web search — all in the brand-direct category, with a single `.world`
+URL surfacing corpus-wide. The baseline confirmed that brand equity still
+rests on the GitHub org and the legacy `.io` domain rather than `.world`,
+and that several intellectual lanes (machine-readable comparative datasets,
+divine-council indexes) are wide open. See
+[Retrieval benchmark](@/reference/retrieval-benchmark.md).
+
+## 2026-08 — External identifiers extended to the library
+
+The `same_as` external-ID program extended from the wiki to the digitized
+library. The Bifrost Book schema now emits `sameAs`, and 114 of 124 texts
+carry Wikidata + Wikipedia + Britannica/VIAF identifiers — the Bible books,
+the four Gospels, the Quran, Gilgamesh, Enûma Eliš, Theogony, 1 Enoch, and
+the distinct Book-of-Mormon books among them. Raël's own books and a few
+texts without a distinct Wikidata entity stay bare, since `sameAs` asserts
+identity, not resemblance. The wiki pass also closed seven first-pass
+omissions, bringing wiki coverage to 101/146. External-ID alignment now
+spans wiki, timeline, and library.
+
+## 2026-08 — Content-pipeline recovery and metadata plumbing
+
+Several infrastructure defects surfaced during the benchmark work and were
+fixed. The static JSON API had silently failed to deploy since 2026-07-17 —
+content had begun using a Bifrost-only shortcode the API repo lacked; six
+shortcode stubs restored green builds. The API's page generator was leaking
+draft entries into its indexes (advertising URLs that then 404), closed by
+a draft filter. On the main site, Bifrost had never emitted
+`<meta name="description">` at all, and the Open Graph generator keyed
+images by filename stem rather than page slug, so slug-overridden pages
+served 404 OG cards — both fixed, which also explained several "invisible"
+pages the benchmark flagged. The legacy `wheelofheaven.io` GitHub Pages
+source was neutralized to a `noindex` redirect to `.world`.
+
 ## 2026-08 — Editorial pass: wiki decontamination
 
 A May 2026 generation incident had salted otherwise-real English wiki
