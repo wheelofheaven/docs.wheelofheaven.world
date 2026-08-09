@@ -131,6 +131,41 @@ assets CDN.
 | `timeline.js` | Timeline interactions |
 | `reading-list.js` | Reading list feature |
 
+## JavaScript bundling & cache-busting
+
+The site does **not** serve the raw `static/js/*.js` sources — it serves
+**committed esbuild bundles** under `static/js/dist/*.bundle.js`. Editing a
+source module is not enough on its own: regenerate and commit the bundle.
+
+**When you change any `static/js/*.js`:**
+
+1. Edit the source module.
+2. `mise run bundle` (or `cd themes/bifrost && npm run bundle`) — runs
+   `scripts/bundle.js` (esbuild) and rewrites `static/js/dist/*.bundle.js`.
+3. **Commit the regenerated `dist/*.bundle.js` artifact** alongside the source.
+   `mise run build` also bundles first, but a plain `zola build` serves the
+   committed bundle — so it must be up to date in git.
+
+Entry points are declared in `themes/bifrost/scripts/bundle.js`:
+
+| Bundle | Loaded | Contains |
+|---|---|---|
+| `core.bundle.js` | every page, `?h=<contenthash>` | navbar, search-loader, reading-list, notification-stack, pwa, toc-scroll-spy, cite-copy, … |
+| `search.bundle.js` | lazy, on first search interaction, `?v=N` | `vendor/fuse.min.js`, `search.js` |
+| `library.bundle.js` | library pages | library-storage, library-reader, … |
+
+**Cache-busting is not uniform — this is the trap.** `core.bundle.js` is
+referenced with a **content-hash** `?h=…`, so any change auto-busts it. But
+`search.bundle.js` is lazy-loaded by `search-loader.js` with a **manual `?v=N`
+tag** (not a content hash) under a 7-day CDN cache — so changing `search.js`
+alone will **not** reach returning visitors. You must **bump `?v=N` in
+`search-loader.js`**. Because `search-loader.js` lives in `core.bundle.js`,
+bumping it changes core's content-hash, which busts core's own cache → the fresh
+core then requests the new `search.bundle.js?v=N+1`.
+
+Verify a deploy end-to-end along the chain the browser follows:
+`index.html → core.bundle.js?h=… → search.bundle.js?v=…`.
+
 ## Configuration options
 
 ```toml

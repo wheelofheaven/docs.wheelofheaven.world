@@ -51,8 +51,10 @@ every build. English only — for per-language relatedness, use each page's own
 
 ## Flood-Myth Concordance
 
-A comparative table of eight ancient flood traditions (Sumerian, *Atra-ḫasīs*,
-*Gilgamesh* XI, *Genesis*, *Qurʾān*, Deucalion, Berossus, *Śatapatha Brāhmaṇa*).
+A comparative table of eleven ancient flood traditions (Sumerian, *Atra-ḫasīs*,
+*Gilgamesh* XI, *Genesis*, *Qurʾān*, Deucalion, Berossus, *Śatapatha Brāhmaṇa*,
+the Aztec *Leyenda de los Soles*, the Andean Viracocha chronicles, and the Norse
+*Prose Edda*). Version 1.1.
 
 | Format | URL |
 |---|---|
@@ -68,11 +70,13 @@ Landing page: [`/datasets/flood-myths/`](https://www.wheelofheaven.world/dataset
 
 ## Divine-Council Index
 
-Eleven attestations of the divine council — the assembly of divine beings that
-governs and decides — across six traditions (Ugaritic *Baal Cycle*; Hebrew
+Seventeen attestations of the divine council — the assembly of divine beings that
+governs and decides — across twelve traditions (Ugaritic *Baal Cycle*; Hebrew
 *Psalm* 82, *1 Kings* 22, *Job*, *Deut* 32, *Isaiah* 6; Babylonian *Enūma Eliš*
-and *Atra-ḫasīs*; the *Book of the Watchers*; the Hurrian-Hittite *Song of
-Emergence*; and the Latter-day Saint premortal council).
+and *Atra-ḫasīs*; Sumerian *Enlil and Ninlil*; the *Book of the Watchers*; the
+Hurrian-Hittite *Song of Emergence*; Greek *Iliad*; Roman *Metamorphoses*;
+Egyptian *Contendings of Horus and Seth*; Norse *Völuspá*; Hindu *Mahābhārata*;
+and the Latter-day Saint premortal council). Version 1.1.
 
 | Format | URL |
 |---|---|

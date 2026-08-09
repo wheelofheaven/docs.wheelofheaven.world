@@ -8,6 +8,20 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-08 — Comparative-mythology datasets v1.1
+
+The two curated comparative datasets were expanded and versioned. The
+**Flood-Myth Concordance** grew from eight to eleven traditions — adding the
+Aztec *Leyenda de los Soles* (Tata and Nena), the Andean Viracocha chronicles,
+and the Norse *Prose Edda* (Bergelmir). The **Divine-Council Index** grew from
+eleven to seventeen attestations across twelve traditions — adding the Sumerian
+(*Enlil and Ninlil*), Greek (*Iliad*), Roman (*Metamorphoses*), Egyptian
+(*Contendings of Horus and Seth*), Norse (*Völuspá*), and Hindu (*Mahābhārata*)
+councils. Each new row was researched to full column depth against a named
+primary source. Both bumped to **version 1.1** and re-published across all four
+distribution surfaces: the API, the `/datasets/` landing pages, and the Hugging
+Face and Kaggle mirrors.
+
 ## 2026-08 — Model-C Eden chronology
 
 The corpus's antediluvian chronology was reconciled to a single canonical
