@@ -199,8 +199,27 @@ delivery.
 
 ### data-sources (private)
 
-Original PDF/EPUB source material used by the ingest pipeline to produce
-structured book JSON for data-library.
+Serves two distinct functions with different legal profiles.
+
+**Pipeline inputs** — original PDF/EPUB source material used by the ingest
+pipeline to produce structured book JSON for data-library. Restricted to
+material the project may lawfully publish.
+
+**Research holdings** (`holdings/`) — a registry of the copies the project
+holds or has consulted: purchased books, downloaded scans, borrowed volumes,
+archive scans read in place. One JSON record per copy, keyed to the same Wheel
+source ID used by the bibliography and by core. Records the *identity* of a
+copy — edition, pagination basis, checksum, and a per-locator verification log
+— not its contents. **Payloads are not committed by default**: in-copyright
+works use `storage: local_only`, so the bytes stay on the founder's disk while
+the metadata and verification history are versioned.
+
+The registry exists to make core's `access` levels honest and improvable.
+Holding a copy licenses consultation, verification, and short quotation with
+locators — not republication or redistribution; digitization into data-library
+remains restricted to publishable material. `scripts/wantlist.py` derives an
+acquisition list from core, separating "already held, go read it" from "not
+held, acquire to unblock". Proposed in core RFC 0005 (draft).
 
 ### data-bibliography (legacy)
 

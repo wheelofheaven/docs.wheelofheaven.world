@@ -91,7 +91,8 @@ Supporting layers:
 - **Source notes** (`source-notes/`) — keyed to existing Wheel source IDs,
   each declaring an **access level** that bounds what it may assert:
   `full_text`, `project_digitization`, `excerpt`, `abstract`,
-  `metadata_only`, `secondary_citation`.
+  `metadata_only`, `secondary_citation`. See
+  [Access levels and holdings](#access-levels-and-holdings) below.
 - **RFCs** (`rfcs/`) and **ADRs** (`decisions/`) — major changes begin as an
   RFC; an ADR is added only after a decision is made.
 
@@ -213,6 +214,30 @@ their brief's binding and are never bound directly.
 The class is accepted (ADR 0003). Its pilot notes — `elohim-individual` and
 `typhoeus-combat` — and the validator extension are implementation steps still
 to come, so the binding is normative-only for now.
+
+## Access levels and holdings
+
+The access level on a source reference is not bookkeeping — it is the ceiling
+on what a claim may assert from that source. And it is where the research
+programme is currently bottlenecked: across the four claims, **10 of 18 source
+references sit at `metadata_only`**, meaning they are load-bearing and have
+never actually been opened.
+
+An evidence map cannot honestly move from `scoped` to `reviewed` while its
+scholarly context is uninspected. The one source that *was* properly
+consulted — Black & Green, upgraded `metadata_only` → `excerpt` — turned out to
+**constrain** the claim depending on it rather than support it, by documenting
+that the Anunnaki referent shifts across periods and so offers no fixed roster
+to identify. That is the argument for inspection in one example: it changes
+conclusions, and leaving it undone hides that it hasn't happened.
+
+Core RFC 0005 (draft) proposes a **holdings registry** in the private
+`data-sources` repo to close this: one record per copy the project holds or has
+consulted, keyed to the same source IDs, recording edition, pagination basis,
+and a per-locator verification log — with payloads deliberately *not* committed
+for in-copyright works. A derived wantlist ranks what to read next and what to
+acquire next by which claims it would unblock. See
+[Repository Inventory → data-sources](@/reference/repository-inventory.md).
 
 ## Governance record
 
