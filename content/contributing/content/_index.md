@@ -38,6 +38,10 @@ with a "when to write this" decision table.
 - **[Content Overview](@/contributing/content/overview.md)** —
   directory layout, file-naming conventions, how sections work, how
   translations mirror English.
+- **[Grounded Production](@/contributing/content/grounded-production.md)** —
+  the derivation contract. New entries ground their load-bearing claims
+  in the research core *before* the prose is written, and declare the
+  binding when they publish.
 - **[Editorial Passes](@/contributing/content/editorial-passes.md)** —
   what the `claim_type` and `editorial_pass` fields mean. Required on
   every new entry.

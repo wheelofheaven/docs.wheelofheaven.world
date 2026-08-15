@@ -8,6 +8,38 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-08 — The artifact derivation contract
+
+Production was inverted: new artifacts now derive their load-bearing claims
+from records in the [research core](@/architecture/research-core.md) *before*
+the prose is written, rather than having the insight invented at writing time.
+The project had been running on two constitutions that did not talk to each
+other — publication rules governing *how things are said*, the core governing
+*what may be claimed* — with exactly one page in the entire corpus bound to a
+claim record.
+
+**RFC 0003** (accepted as ADR 0002) added a Ground stage to every production
+pipeline: resolve the topic against the claim catalog, read the matching
+records in full, and draft missing ones as `draft` claims — pausing for
+founder review before any prose is written on top of them. The finished
+artifact declares what it renders. Accepting it also closed **RFC 0002** by
+adoption, lifting that contract's single-page pilot restriction. **RFC 0004**
+(ADR 0003) extended the same discipline to images and scenery through
+*depiction notes*, which separate what sources visually report from project
+interpolation, free art direction, and hard negative constraints — because
+unlike prose, an image cannot hedge.
+
+The contract was validated backwards before being adopted forwards: the
+Explainer *The World Behind the Odyssey* had its central reading extracted
+into `woh-claim-0004`, which surfaced an unrecorded dependency, a public label
+with no controlling record, and falsifiability terms that had lived only in
+one article's closing section. Adoption ratchets — new artifacts and
+fundamental rewrites bind; the existing corpus is grandfathered. Founder gates
+are unchanged: agents draft records, only the founder promotes them, so review
+moves from "is this article's argument sound" to "is this claim record sound,"
+once, for every artifact and language that later cites it. Editorial guide:
+[Grounded Production](@/contributing/content/grounded-production.md).
+
 ## 2026-08 — Comparative-mythology datasets v1.1
 
 The two curated comparative datasets were expanded and versioned. The

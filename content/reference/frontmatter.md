@@ -91,21 +91,43 @@ The available taxonomies are configured in `config.toml` (currently
 | `schema_type` | string | No | Override the JSON-LD `@type` (e.g. `"ScholarlyArticle"`). |
 | `same_as` | string[] | No | Full URLs identifying the same concept in external authorities (Wikidata first, then Wikipedia, then others). Rendered as `sameAs` in the page's JSON-LD (`DefinedTerm`, `Event`, and `Book` schemas — so wiki entries, timeline ages, and library texts can all carry external identifiers). Only set when the referent is genuinely identical — framework-specific concepts (Council of Eternals, paradism, …) deliberately carry none, because `sameAs` asserts identity, not similarity. |
 
-### Core claim binding (pilot)
+### Core claim binding
 
-Opt-in fields that bind a page to a claim record in the
-[research core](@/architecture/research-core.md) at an exact version
-(RFC 0002 pilot). Page-type-agnostic; currently used only on `wiki/elohim.md`.
+Fields that bind a page to a claim record in the
+[research core](@/architecture/research-core.md) at an exact version.
+Page-type-agnostic.
 
-| Field | Type | Notes |
-|---|---|---|
-| `core_claim_ids` | string[] | Core claim IDs this page renders, e.g. `["woh-claim-0001"]`. |
-| `core_versions` | table | Maps each declared ID to the claim version the page was written against, e.g. `{ woh-claim-0001 = "0.1.0" }`. Every ID in `core_claim_ids` needs an entry here. |
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `core_claim_ids` | string[] | On new pages | Core claim IDs this page renders, e.g. `["woh-claim-0001"]`. |
+| `core_versions` | table | With the above | Maps each declared ID to the claim version the page was written against, e.g. `{ woh-claim-0001 = "0.1.0" }`. Every ID in `core_claim_ids` needs an entry here. |
 
 Both are inert at render time. When the `core` repo is checked out beside
 `data-content`, its validator flags a page whose declared version no longer
-matches the controlling claim record (the page renders a stale claim). Not
-backfilled across framework pages yet.
+matches the controlling claim record (the page renders a stale claim), and
+warns when a page declares a claim that does not list it in
+`public_derivatives`.
+
+Since the derivation contract was accepted (RFC 0003 / ADR 0002, 2026-08-15)
+these fields are **required on new pages and fundamental rewrites**, which
+must ground their load-bearing assertions in claim records before the prose is
+written — see
+[Grounded Production](@/contributing/content/grounded-production.md). Existing
+pages are grandfathered; translations inherit their source page's binding;
+Dispatches may bind but need not.
+
+### Depiction binding (briefs)
+
+The visual counterpart, for illustration briefs and audio-play scene specs
+rather than content pages (RFC 0004 / ADR 0003). Accepted; validator support
+is still an implementation step, so the binding is normative-only for now.
+
+| Field | Type | Notes |
+|---|---|---|
+| `core_depiction_ids` | string[] | Depiction notes this brief renders, e.g. `["elohim-individual"]`. |
+| `core_depiction_versions` | table | Maps each declared ID to the note version the brief was written against. |
+
+Rendered assets inherit their brief's binding and are never bound directly.
 
 ### Wiki — `[extra]` additions
 

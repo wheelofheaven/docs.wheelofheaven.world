@@ -96,10 +96,13 @@ The durable research corpus and conceptual specification. Authoritative for
 what the framework claims and how those claims are reasoned — framework claim
 records, evidence maps, source notes, methodology, RFCs, and decisions — kept
 deliberately separate from the reading site, the source texts, and the
-bibliography. Public pages may bind to a core claim at an exact version
+bibliography. Public pages bind to a core claim at an exact version
 (`core_claim_ids` / `core_versions` in `[extra]`); the validator flags a page
-that drifts from its controlling record. Markdown- and JSON-first, no build
-step beyond `python3 scripts/validate.py`.
+that drifts from its controlling record. Since the derivation contract was
+accepted, new artifacts ground their load-bearing claims here *before* the
+prose is written — see
+[Grounded Production](@/contributing/content/grounded-production.md).
+Markdown- and JSON-first, no build step beyond `python3 scripts/validate.py`.
 
 ```
 core/
@@ -114,14 +117,17 @@ core/
 │   ├── claims/             # machine-readable claim records
 │   └── schemas/            # JSON Schemas
 ├── source-notes/           # source access + interpretation, keyed to Wheel source IDs
+├── depictions/             # visual/scenic canon per entity or scene (accepted, pending pilot)
 ├── rfcs/                   # proposals
 ├── decisions/              # ADRs
 └── scripts/validate.py     # cross-file + registry + publication-integration checks
 ```
 
-**Status:** `0.1.0` foundation and pilot — three draft framework claims
+**Status:** `0.1.0` foundation and pilot — four draft framework claims
 (Elohim-civilization hypothesis, Anunnaki–Elohim identity, precessional
-world-age chronology).
+world-age chronology, Greek theomachy as conflict memory). Governance: RFCs
+0001–0004 all accepted; the derivation contract (RFC 0003 / ADR 0002) and
+depiction notes (RFC 0004 / ADR 0003) were adopted 2026-08-15.
 
 ## Data repositories
 

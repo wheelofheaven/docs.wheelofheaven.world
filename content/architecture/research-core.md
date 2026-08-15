@@ -99,26 +99,33 @@ Claim IDs are stable and never reused for a different proposition. Splits and
 merges retain a mapping; supersession keeps forward/backward links and the
 earlier representation.
 
-## The pilot claims (0.1.0)
+## The claims (0.1.0)
 
-The current release is a foundation and pilot with three deliberately
-different draft claims:
+The current release is a foundation and pilot with four deliberately different
+draft claims:
 
 | ID | Claim | Kind | Relation | Why it's a pilot |
 |---|---|---|---|---|
 | `woh-claim-0001` | Elohim-civilization hypothesis | `hypothesis` | `foundational` | The load-bearing premise; tests compound-claim decomposition |
 | `woh-claim-0002` | Anunnaki–Elohim identity | `interpretation` | `comparative` | Tests the comparative method and referential-identity discipline |
 | `woh-claim-0003` | Precessional world-age chronology | `model` | `foundational` | Tests a five-layer claim: observed precession, the contested ancient-knowledge thesis, an equal-twelve model, a convention anchor, and derived event placement |
+| `woh-claim-0004` | Greek theomachy as Council–Serpentine conflict memory | `interpretation` | `comparative` | The reverse pilot for the derivation contract — extracted *from* a published article rather than written before one |
 
-All three are `draft` and `scoped`/`contested`. They document existing
+All four are `draft` and `scoped`/`contested`. They document existing
 positions; they do not newly validate them.
 
-## Publication integration (RFC 0002)
+Claim 0004 is also the worked example of what a record adds over prose: it
+carries the falsifiability terms that previously lived only in one article's
+closing section, and it records — as an explicit gap with a revision trigger —
+that its own foundation, the Council–Serpentine conflict account, is still
+corpus prose rather than a claim record.
+
+## Publication integration (RFC 0002, accepted)
 
 Stage 5 of the roadmap requires that public outputs identify the exact core
 version they render, so drift is visible before publication. The mechanism is
-an **opt-in frontmatter contract** (RFC 0002): a `data-content` page declares,
-in `[extra]`, which core claim(s) it renders and at what version.
+a **frontmatter contract** (RFC 0002): a `data-content` page declares, in
+`[extra]`, which core claim(s) it renders and at what version.
 
 ```toml
 [extra]
@@ -149,8 +156,76 @@ The validator reports `publication_integration=checked` with zero errors. As
 the claim model grows, this reciprocation (record `public_derivatives` +
 page frontmatter) is the routine per-claim follow-on.
 
+RFC 0002 was **closed by adoption** on 2026-08-15: RFC 0003 incorporates the
+contract unchanged and lifts its single-page pilot restriction, so accepting
+the derivation contract accepted this one with it (ADR 0002).
+
 See the field reference under
 [Frontmatter → Core claim binding](@/reference/frontmatter.md).
+
+## The derivation contract (RFC 0003, accepted)
+
+RFC 0002 made the binding an *integrity check* — it catches a page that has
+drifted from its record. RFC 0003 turns it into a **production contract**: new
+artifacts begin from claim records rather than ending at them.
+
+A "Ground" stage sits at the front of every production pipeline. The topic is
+resolved against the catalog; existing records are read in full; missing
+records are drafted as `draft` claims — and the pipeline **pauses for founder
+review before prose is written on top of them**. The finished artifact then
+declares what it renders.
+
+The contract binds new artifacts and fundamental rewrites; the existing corpus
+is grandfathered, translations inherit their source page's binding, and
+Dispatches may bind but need not. It changes no template, badge, URL, or
+schema, and the core stays inert at render time.
+
+The founder gates are unchanged and are the point: agents draft records,
+only the founder promotes them. Review moves from "is this article's argument
+sound" to "is this claim record sound" — once, reusable across every artifact
+and language that later cites it.
+
+The editorial-facing guide, with the stage-by-stage walkthrough and the role
+charters, is at
+[Grounded Production](@/contributing/content/grounded-production.md).
+
+## Depiction notes (RFC 0004, accepted)
+
+Text artifacts bind to claim records. Visual and scenic ones — hero images,
+illustrations, gallery renders, audio-play staging — had no core-side
+grounding at all: every image quietly made claims, and unlike prose, **an
+image cannot hedge**.
+
+`depictions/{slug}.md` is the fourth core document class, one file per
+depicted entity, place, or recurring scene, with a fixed four-layer body:
+
+| Layer | Records |
+|---|---|
+| **Reported** | What a named source explicitly says about appearance, setting, sound, or staging — with locators. Contested particulars are listed per source, never harmonised. |
+| **Interpolated** | Bounded project inference where sources are silent, each with its rationale and revision trigger. |
+| **Free** | Dimensions explicitly released to art direction, so "free" is a recorded decision rather than an absence. |
+| **Must not show** | Hard negative constraints — particulars that would contradict a reported layer or a bound claim. |
+
+Briefs bind notes the way pages bind claims
+(`core_depiction_ids` + `core_depiction_versions`); rendered assets inherit
+their brief's binding and are never bound directly.
+
+The class is accepted (ADR 0003). Its pilot notes — `elohim-individual` and
+`typhoeus-combat` — and the validator extension are implementation steps still
+to come, so the binding is normative-only for now.
+
+## Governance record
+
+| RFC | Status | Question | ADR |
+|---|---|---|---|
+| 0001 | Accepted | Establish a durable research core | 0001 |
+| 0002 | Accepted | Let a page declare which core claims and versions it renders | 0002 (by adoption) |
+| 0003 | Accepted | Require new artifacts to derive load-bearing assertions from records | 0002 |
+| 0004 | Accepted | Add depiction notes for visual and scenic artifacts | 0003 |
+
+Acceptance records a project decision, not empirical truth. Accepting RFC 0003
+adopted the *process*; it did not promote any claim — all four claim records
+remain `draft` and advance only on their own review.
 
 ## Validation
 
