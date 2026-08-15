@@ -231,7 +231,7 @@ that the Anunnaki referent shifts across periods and so offers no fixed roster
 to identify. That is the argument for inspection in one example: it changes
 conclusions, and leaving it undone hides that it hasn't happened.
 
-Core RFC 0005 (draft) proposes a **holdings registry** in the private
+Core RFC 0005 (accepted, ADR 0004) adds a **holdings registry** in the private
 `data-sources` repo to close this: one record per copy the project holds or has
 consulted, keyed to the same source IDs, recording edition, pagination basis,
 and a per-locator verification log — with payloads deliberately *not* committed
@@ -247,6 +247,7 @@ acquire next by which claims it would unblock. See
 | 0002 | Accepted | Let a page declare which core claims and versions it renders | 0002 (by adoption) |
 | 0003 | Accepted | Require new artifacts to derive load-bearing assertions from records | 0002 |
 | 0004 | Accepted | Add depiction notes for visual and scenic artifacts | 0003 |
+| 0005 | Accepted | Register the source copies the project holds, with an ingest pipeline that indexes without reproducing | 0004 |
 
 Acceptance records a project decision, not empirical truth. Accepting RFC 0003
 adopted the *process*; it did not promote any claim — all four claim records

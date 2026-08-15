@@ -219,7 +219,7 @@ Holding a copy licenses consultation, verification, and short quotation with
 locators — not republication or redistribution; digitization into data-library
 remains restricted to publishable material. `scripts/wantlist.py` derives an
 acquisition list from core, separating "already held, go read it" from "not
-held, acquire to unblock". Proposed in core RFC 0005 (draft).
+held, acquire to unblock". Core RFC 0005, accepted as ADR 0004.
 
 ### data-bibliography (legacy)
 
