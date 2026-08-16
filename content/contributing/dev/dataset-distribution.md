@@ -71,6 +71,13 @@ done
 
 `hf upload` auto-creates the dataset repo on first push.
 
+**Collections.** The org page is organized by two HF collections —
+*Comparative Mythology & Classification* (the 9 comparative/classification
+datasets) and *Parallel Scripture Corpora* (the 20 translation books) —
+created via `huggingface_hub.create_collection` / `add_collection_item`
+(note: collection descriptions max **150 chars**). Add every new dataset to
+its collection as part of the publish checklist.
+
 **Dataset-viewer gotcha.** With both a `.csv` and a `.json` in the repo the
 viewer may pick the JSON builder — and the API's JSON files are single
 objects (a `columns` + `rows` envelope) that pyarrow cannot parse, which
@@ -153,11 +160,13 @@ data-library repo root). Per book it emits a verse-aligned parallel corpus:
 in `data-library` (e.g. `genesis` beside `genesis-woh`), and `load_reference()`
 joins it into `reference_english` on `(chapter, verse)` — so a row shows the
 Wheel of Heaven rendering against a neutral control (`elohim` as a plural,
-`taninim` as dragons, `ruach` as breath rather than Spirit). 10 of the 14 books
+`taninim` as dragons, `ruach` as breath rather than Spirit). 11 of the 20 books
 get one: ASV 1901 for the biblical set, the World English Bible for Daniel, and
 R. H. Charles's 1917 edition for *Enoch* (whose versification diverges — only
-~24% aligns). Jubilees, Shiur Qomah, and the Qurʾān ship reference-less (no
-aligned public-domain English edition) with an honest card note. The join refuses
+~24% aligns). Jubilees, Shiur Qomah, the Qurʾān, and the non-biblical corpus
+(Theogony, the Sumerian poems, the King List) ship reference-less — no aligned
+public-domain English edition, or (Isaiah) one whose licence can't be
+verified — with an honest card note. The join refuses
 any reference whose licence isn't public-domain/CC0, so the corpus stays honestly
 **mixed-license**: the Wheel of Heaven layer (translation, commentary, glossary)
 is CC0-1.0, the reference column is public domain.
@@ -165,12 +174,13 @@ is CC0-1.0, the reference column is public domain.
 **Selection gates.** `discover_books()` ships a `-woh` book only if it (1) is
 **CC0** (`versionLicense == "CC0-1.0"` — refuses anything else), (2) is **not in
 `HELD`** (three living-tradition scriptures parked for a rights review), and (3)
-**has translated verses** (the packager skips stubs and source-only books — 13
-`-woh` books have no translation yet). The Raëlian canon is © International
+**has translated verses** (the packager skips stubs and source-only books; line-based
+poem schemas — `lines[]` instead of `paragraphs[]`, e.g. Theogony — are
+supported). The Raëlian canon is © International
 Raëlian Movement (not CC0) and excluded by the license gate. Each card gets an
 honest **review-status** line (`signed off` / `reviewed per chapter` /
 `pending verification` / `draft`) via `review_status()` — never claiming a
-sign-off a book lacks. **14 books live** (3,693 aligned verses). Upload the same
+sign-off a book lacks. **20 books live** (5,771 aligned verses). Upload the same
 way:
 
 ```
@@ -179,7 +189,7 @@ hf upload wheelofheaven/<slug> scripts/dist-hf/<slug> --repo-type=dataset
 
 **Kaggle mirror.** `--kaggle-owner <owner>` also emits `dist-kaggle/<slug>/` — the
 same `.jsonl` + `glossary.json` plus a Kaggle `dataset-metadata.json` — a second
-Google-Dataset-Search surface. The 14 books are live under
+Google-Dataset-Search surface. The 20 books are live under
 [`zarazinsfuss`](https://www.kaggle.com/zarazinsfuss); there is **no
 `wheelofheaven` Kaggle org** (Kaggle suspended self-serve org creation for
 regular users, so unlike HuggingFace this stays on the personal account):

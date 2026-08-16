@@ -316,12 +316,12 @@ Separately from the extracted content datasets above, the CC0 books of the
 **Wheel of Heaven Translation Program** are published as verse-aligned parallel
 corpora (source script ↔ WoH English) with transliteration, manuscript-witness
 attribution, per-verse commentary, and a translation glossary. Where an aligned
-public-domain edition exists (10 of the 14 books), each row also carries a
+public-domain edition exists (11 of the 20 books), each row also carries a
 **reference translation** (`reference_english` — the ASV 1901, the World English
 Bible, or a period edition such as R. H. Charles's 1917 *Enoch*) joined
 verse-by-verse, so the Wheel of Heaven rendering can be measured against a
 neutral control. The dataset is honestly mixed-license: the Wheel of Heaven layer
-is CC0-1.0, the reference column is public domain. **14 books** are live on both
+is CC0-1.0, the reference column is public domain. **20 books** are live on both
 the [`wheelofheaven`](https://huggingface.co/wheelofheaven) HuggingFace org and
 [`zarazinsfuss`](https://www.kaggle.com/zarazinsfuss) on Kaggle (same slug on
 both platforms):
