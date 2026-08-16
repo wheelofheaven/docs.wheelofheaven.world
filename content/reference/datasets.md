@@ -207,6 +207,29 @@ Columns: `khm_no`, `part` (KHM \| KL), `title_de`, `title_en`, `atu_type`,
 ATU system). Landing page:
 [`/datasets/grimm-khm-index/`](https://www.wheelofheaven.world/datasets/grimm-khm-index/).
 
+## Antediluvian Chronologies
+
+The long-lived generations around the Flood in one table — **38 figures
+across 4 lists**: the SKL WB-444 antediluvian kings (241,200 years,
+verified line-by-line against `sumerian-king-list-woh`), Berossos' ten kings
+(120 sars = 432,000 years), and the Genesis 5/11 patriarchs with
+**MT / SP / LXX** figures in parallel columns (MT verified verse-by-verse
+against `genesis-woh`; the LXX-only second Kainan and the Methuselah
+flood-overlap variant carried with notes; `fathering + remaining = total`
+identities asserted at build time).
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/antediluvian-chronologies.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/antediluvian-chronologies.json` |
+
+Columns: `list`, `epoch`, `position`, `figure`, `alt_names`, `city`,
+`reign_sars`, `reign_years`, `age_at_fathering_{mt,sp,lxx}`,
+`remaining_years_{mt,sp,lxx}`, `total_years_{mt,sp,lxx}`, `reference`,
+`note`, `woh_library`. Unstated numbers are null, never reconstructed.
+Landing page:
+[`/datasets/antediluvian-chronologies/`](https://www.wheelofheaven.world/datasets/antediluvian-chronologies/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
@@ -263,6 +286,7 @@ All six datasets are published under the
 | Myth Index | [wheelofheaven/myth-index](https://huggingface.co/datasets/wheelofheaven/myth-index) |
 | Aarne 1910 Tale-Type Index | [wheelofheaven/aarne-1910-tale-types](https://huggingface.co/datasets/wheelofheaven/aarne-1910-tale-types) |
 | Grimm KHM Tale-Type Crosswalk | [wheelofheaven/grimm-khm-index](https://huggingface.co/datasets/wheelofheaven/grimm-khm-index) |
+| Antediluvian Chronologies | [wheelofheaven/antediluvian-chronologies](https://huggingface.co/datasets/wheelofheaven/antediluvian-chronologies) |
 
 Each repo carries a dataset card (`README.md`) with the CC0 license, tags, the
 column list, and a link back to the landing page.
@@ -285,6 +309,7 @@ restores the second Dataset-Search listing without a DOI.
 | Myth Index | [zarazinsfuss/myth-index](https://www.kaggle.com/datasets/zarazinsfuss/myth-index) |
 | Aarne 1910 Tale-Type Index | [zarazinsfuss/aarne-1910-tale-types](https://www.kaggle.com/datasets/zarazinsfuss/aarne-1910-tale-types) |
 | Grimm KHM Tale-Type Crosswalk | [zarazinsfuss/grimm-khm-index](https://www.kaggle.com/datasets/zarazinsfuss/grimm-khm-index) |
+| Antediluvian Chronologies | [zarazinsfuss/antediluvian-chronologies](https://www.kaggle.com/datasets/zarazinsfuss/antediluvian-chronologies) |
 
 These live under the **personal account**, not an org: Kaggle has suspended
 organization creation for regular users, so there is no `wheelofheaven` Kaggle
