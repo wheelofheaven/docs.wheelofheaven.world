@@ -185,6 +185,28 @@ users: this is the **1910 numbering** — most numbers survive into ATU 2004,
 but later editions added, merged, and renumbered some types. Landing page:
 [`/datasets/aarne-1910-tale-types/`](https://www.wheelofheaven.world/datasets/aarne-1910-tale-types/).
 
+## Grimm KHM Tale-Type Crosswalk
+
+All **211 tales** of the Grimms' *Kinder- und Hausmärchen* in the canonical
+1857 numbering (KHM 1–200 + 151a, and the 10 children's legends as KL 1–10)
+with German/English titles, **ATU tale-type numbers** (per Ashliman's
+standard concordance — type mappings as facts), an `aarne_1910_types` column
+**inverted from the aarne-1910-tale-types dataset's own `grimm_no`
+citations** (153 provenance-clean joins from the 1910 text itself),
+first-edition data (1812/15–1857) and 1857 Wikisource links parsed from the
+German Wikisource edition tables.
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/grimm-khm-index.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/grimm-khm-index.json` |
+
+Columns: `khm_no`, `part` (KHM \| KL), `title_de`, `title_en`, `atu_type`,
+`atu_episode_types`, `type_note`, `aarne_1910_types`, `first_edition`,
+`wikisource_de`. 13 tales are honestly `atu_type`-blank (unclassified in the
+ATU system). Landing page:
+[`/datasets/grimm-khm-index/`](https://www.wheelofheaven.world/datasets/grimm-khm-index/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
@@ -240,6 +262,7 @@ All six datasets are published under the
 | Prophets & Religions Catalogue | [wheelofheaven/prophets-and-religions](https://huggingface.co/datasets/wheelofheaven/prophets-and-religions) |
 | Myth Index | [wheelofheaven/myth-index](https://huggingface.co/datasets/wheelofheaven/myth-index) |
 | Aarne 1910 Tale-Type Index | [wheelofheaven/aarne-1910-tale-types](https://huggingface.co/datasets/wheelofheaven/aarne-1910-tale-types) |
+| Grimm KHM Tale-Type Crosswalk | [wheelofheaven/grimm-khm-index](https://huggingface.co/datasets/wheelofheaven/grimm-khm-index) |
 
 Each repo carries a dataset card (`README.md`) with the CC0 license, tags, the
 column list, and a link back to the landing page.
@@ -261,6 +284,7 @@ restores the second Dataset-Search listing without a DOI.
 | Prophets & Religions Catalogue | [zarazinsfuss/prophets-and-religions](https://www.kaggle.com/datasets/zarazinsfuss/prophets-and-religions) |
 | Myth Index | [zarazinsfuss/myth-index](https://www.kaggle.com/datasets/zarazinsfuss/myth-index) |
 | Aarne 1910 Tale-Type Index | [zarazinsfuss/aarne-1910-tale-types](https://www.kaggle.com/datasets/zarazinsfuss/aarne-1910-tale-types) |
+| Grimm KHM Tale-Type Crosswalk | [zarazinsfuss/grimm-khm-index](https://www.kaggle.com/datasets/zarazinsfuss/grimm-khm-index) |
 
 These live under the **personal account**, not an org: Kaggle has suspended
 organization creation for regular users, so there is no `wheelofheaven` Kaggle
