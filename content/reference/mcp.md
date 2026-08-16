@@ -92,6 +92,29 @@ curated narrative documents at `woh://context/{overview, hypothesis,
 terminology, timeline, sources, method}` and the API's manifest at
 `woh://llms.txt`.
 
+## Discovery
+
+An agent that has not been handed the endpoint can find it. The server
+card is served from three places — all generated from the repository's
+`server.json`, so they cannot drift:
+
+| URL | Notes |
+|---|---|
+| `https://mcp.wheelofheaven.world/.well-known/mcp/server-card.json` | Canonical |
+| `https://mcp.wheelofheaven.world/.well-known/mcp.json` | Same document, alternate convention |
+| `https://www.wheelofheaven.world/.well-known/mcp/server-card.json` | Copy on the apex site, where scanners look |
+
+The nine tools are described independently at
+[`/.well-known/agent-skills/index.json`](https://www.wheelofheaven.world/.well-known/agent-skills/index.json),
+and both documents are referenced from the site's
+[API catalog](https://www.wheelofheaven.world/.well-known/api-catalog).
+Every other path on the MCP host returns `404` — including
+`/.well-known/oauth-*`, deliberately, so that RFC 9728 discovery misses
+cleanly and clients fall back to anonymous access rather than attempting
+a token exchange against a server that has no auth.
+
+Full detail: [Agent discovery and crawler policy](@/ai-ingestion/agent-discovery.md).
+
 ## Architecture notes
 
 - Cloudflare Worker (Durable Object per session, Streamable HTTP), one

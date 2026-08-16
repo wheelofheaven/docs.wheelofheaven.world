@@ -29,6 +29,7 @@ rate limits, no licensing friction.
 |---|---|
 | Get an LLM caught up on the project in one paste | [Quickstart](@/ai-ingestion/quickstart.md) |
 | Understand the `llms.txt` and `llms-full.txt` manifests | [llms.txt and llms-full.txt](@/ai-ingestion/llms-txt.md) |
+| Discover the machine surfaces automatically, or read the crawler policy | [Agent discovery and crawler policy](@/ai-ingestion/agent-discovery.md) |
 | Hit the JSON API from agent code | [API endpoints for AI agents](@/ai-ingestion/api-for-ai.md) |
 | Use the curated `/v1/context/*` narrative endpoints | [Curated context endpoints](@/ai-ingestion/context-endpoints.md) |
 | Pull primary texts and bibliographic records | [Library and sources](@/ai-ingestion/library-and-sources.md) |
