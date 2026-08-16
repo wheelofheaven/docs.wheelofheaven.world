@@ -49,9 +49,27 @@ Required on every content page.
 
 ## `event-type`
 
-Newsroom dispatch event type.
+Newsroom dispatch event type. The taxonomy was slimmed in the 2026-05
+editorial pass — **`announcement` is the only value accepted on new
+content.**
 
-`announcement`, `discovery`, `anniversary`, `cultural-moment`, `obituary`.
+| Value | Status |
+|---|---|
+| `announcement` | Active. Every live dispatch uses this. |
+| `discovery` | Deprecated 2026-05 → `announcement` |
+| `anniversary` | Deprecated 2026-05 → `announcement` |
+| `cultural-moment` | Deprecated 2026-05 → `announcement` |
+| `obituary` | Deprecated 2026-05 → `announcement` |
+
+The retired values are still published rather than deleted, so a consumer
+holding historical data can resolve them. They carry `deprecated: true`,
+`deprecated_since`, and `replacement` keys in the enum response; a value
+with no `deprecated` key is active.
+
+This is the enum convention for retirement generally: **deprecate, don't
+delete.** Removing a published value silently breaks any consumer that
+hardcoded it, and an enum is a compatibility surface — additions are
+safe, removals are not.
 
 ## `relation-to-wheel`
 
