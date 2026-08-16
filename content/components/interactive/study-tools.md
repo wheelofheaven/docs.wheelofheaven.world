@@ -33,4 +33,4 @@ visible on touch where there's no hover.
 
 ## Related
 
-- [Reader controls → reading list](../reader-controls/) — the panel that surfaces saved bookmarks across sessions.
+- [Reader controls → Continue panel](../reader-controls/) — the panel that surfaces these notes and bookmarks across sessions, from anywhere on the site.

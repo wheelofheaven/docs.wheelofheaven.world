@@ -1,14 +1,14 @@
 +++
 title = "Reader controls"
-description = "Mobile floating action button (`reader-fab`), bookmark list (`reading-list`), and scroll progress bar (`reading-progress`)."
+description = "Mobile floating action button (`reader-fab`), the Continue panel and its nav badge, and the scroll progress bar (`reading-progress`)."
 template = "page.html"
 weight = 20
 +++
 
-Three Bifrost components compose the reader's control surface on long
+These Bifrost components compose the reader's control surface on long
 content pages. They're documented together because they share a single
-mental model: tools that help a reader navigate a long page on a small
-screen.
+mental model: tools that help a reader navigate long content — and find
+their way back into it — on a small screen.
 
 ## `.reader-fab`
 
@@ -25,22 +25,67 @@ elsewhere it shows the generic set (theme + back-to-top). Visibility is
 gated to pages with reading context — landing, overview, and index pages
 get neither the FAB nor a back-to-top.
 
-## `.bookmark-btn` / reading list
+## `.bookmark-btn` / Continue panel
 
-Inline bookmark button and the reading-list panel that holds saved
-entries.
+Inline bookmark button and the slide-in panel that gathers everything a
+reader can pick back up: books they're part-way through, notes they've
+taken, and pages they saved for later.
 
 **Source:**
 [`themes/bifrost/sass/components/_reading-list.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_reading-list.scss)
 
-| Class                | What                                                            |
-|----------------------|-----------------------------------------------------------------|
-| `.bookmark-btn`      | Inline button that toggles whether the current entry is saved.  |
-| `.reading-list`      | The panel that lists saved entries; opened from the FAB or navbar. |
-| `.reading-list__item`| One saved entry — links to the page, shows the title and section. |
+| Class                                | What                                                              |
+|--------------------------------------|-------------------------------------------------------------------|
+| `.bookmark-btn`                      | Inline button that toggles whether the current entry is saved.    |
+| `.reading-list-panel`                | The panel itself; opened by any `[data-toggle-reading-list]` or `Shift+B`. |
+| `.reading-list-panel__group`         | One titled group — continue reading, recent notes, saved for later. |
+| `.reading-list-panel__group-title`   | The group heading.                                                 |
+| `.reading-list-panel__item`          | One entry — links to the page or verse, shows title and context.   |
 
-Bookmark state is stored in `localStorage`; the panel renders the list
-client-side on open.
+The panel is built client-side from `localStorage`. Two scripts share it:
+`reading-list.js` owns the panel and the saved-for-later group, and
+`continue-reading.js` renders the in-progress and notes groups into the
+`[data-continue-mount]` slot. They stay in step through a
+`woh:reading-list-changed` document event, so bundle order matters —
+`continue-reading.js` must load after `reading-list.js`.
+
+`continue-reading.js` reads the library's storage keys
+(`woh_library_progress`, `_history`, `_notes`) directly rather than
+through `LibraryStorage`, which only ships in `library.bundle.js` and is
+absent everywhere outside `/library/<book>/`. In-progress books expire
+after 90 days so the count doesn't grow forever. Book slugs are shared
+across locales, so deep links are rebuilt with the current locale prefix.
+
+## `.nav-badge`
+
+Small encircled count pinned to the corner of a nav control. Rendered on
+the burger toggle, where it shows how many open reading items exist
+(in-progress books plus saved pages), capped at `9+` and hidden at zero.
+
+**Source:**
+[`themes/bifrost/sass/components/_nav-badge.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_nav-badge.scss)
+
+| Class                 | What                                              |
+|-----------------------|---------------------------------------------------|
+| `.nav-badge`          | The badge; hidden until JS adds the modifier.     |
+| `.nav-badge--visible` | Shown — set by `continue-reading.js` when count > 0. |
+
+Two constraints are load-bearing:
+
+- **No transform.** The badge sits inside the navbar's `backdrop-filter`
+  subtree, and WebKit drops the glass effect for any element with a
+  transformed ancestor. Position with `top` / `right` only.
+- **Critical-CSS gate.** The badge ships in the global chrome but is
+  styled in `main.css`, so it needs an entry in the
+  `html:not(.css-loaded)` block of `critical.scss` — without it the
+  markup flashes as a stray "0" beside the burger icon before `main.css`
+  arrives.
+
+RTL flips the badge to the leading corner via `sass/layout/_rtl.scss`.
+
+The distinction from the bookmark-adjacent badge
+(`.reading-list-toggle__badge`) is deliberate: that one still counts only
+saved pages, because it sits next to bookmark-specific labels.
 
 ## `.reading-progress`
 
@@ -58,8 +103,12 @@ the primary). Faint glow via `box-shadow`. Hidden by default; JS adds
 ## Live examples
 
 - **Reader FAB** — open any wiki / article / library page on a phone-width viewport.
-- **Reading list** — bookmark a few entries via the inline `.bookmark-btn`,
-  then open the panel from the FAB.
+- **Continue panel** — read a few paragraphs into any
+  [library book](https://www.wheelofheaven.world/library/), bookmark an
+  entry via the inline `.bookmark-btn`, then open the panel from the FAB
+  or the navbar bookmark button.
+- **Nav badge** — once either of the above exists, the count appears on
+  the burger toggle at phone width.
 - **Reading progress** — visible on any long-form page, e.g.
   [/articles/](https://www.wheelofheaven.world/articles/) (top edge, scroll-driven).
 
