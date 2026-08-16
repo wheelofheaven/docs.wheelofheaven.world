@@ -64,12 +64,22 @@ uses the `hf` CLI (the modern replacement for the deprecated `huggingface-cli`):
 ```
 pip install -U huggingface_hub
 hf auth login                      # paste a WRITE-scope token
-for s in content-graph flood-myths divine-council-index theomachy-crossrefs world-ages prophets-and-religions; do
+for s in content-graph flood-myths divine-council-index theomachy-crossrefs world-ages prophets-and-religions myth-index aarne-1910-tale-types; do
   hf upload wheelofheaven/$s scripts/dist/huggingface/$s --repo-type=dataset
 done
 ```
 
-`hf upload` auto-creates the dataset repo on first push. Verify via the public
+`hf upload` auto-creates the dataset repo on first push.
+
+**Dataset-viewer gotcha.** With both a `.csv` and a `.json` in the repo the
+viewer may pick the JSON builder — and the API's JSON files are single
+objects (a `columns` + `rows` envelope) that pyarrow cannot parse, which
+kills the viewer (`is-valid` all false, `SplitsNotFoundError`). The packager
+therefore emits a `configs:` block in every card pinning the viewer to the
+CSV (`data_files: <slug>.csv`); content-graph, which has no tabular file, is
+the exception. Diagnose with
+`https://datasets-server.huggingface.co/is-valid?dataset=wheelofheaven/<slug>`
+and `/splits?dataset=…`. Verify via the public
 API: `https://huggingface.co/api/datasets?author=wheelofheaven`.
 
 **Namespace note.** HuggingFace users and organizations share one namespace, so
@@ -91,7 +101,7 @@ packaging, then:
 
 ```
 pip install kaggle           # needs a phone-verified account + API credential (see below)
-for s in content-graph flood-myths divine-council-index theomachy-crossrefs world-ages prophets-and-religions; do
+for s in content-graph flood-myths divine-council-index theomachy-crossrefs world-ages prophets-and-religions myth-index aarne-1910-tale-types; do
   kaggle datasets create -p scripts/dist/kaggle/$s --public
 done
 ```
@@ -103,9 +113,12 @@ Three gotchas:
   username+key) *or* the newer `~/.kaggle/access_token` — the Kaggle CLI (≥2.2)
   reads either. A phone-verified account is required to publish.
 - **Tags.** Kaggle uses a **controlled tag vocabulary**; free-text keywords in
-  `dataset-metadata.json` are silently rejected on upload ("not valid tags"), so
-  the datasets currently publish untagged. Mapping to valid Kaggle tag slugs and
-  re-versioning is an optional polish.
+  `dataset-metadata.json` are rejected on upload ("not valid tags") — the
+  dataset is still created, minus the invalid tags. Verified-valid slugs for
+  this corpus: **`text`** and **`history`** (for the comparative datasets;
+  the translation books use `nlp, translation, text`). `culture`, `religion`,
+  `literature`, `digital-humanities` are all invalid. The comparative datasets
+  are published with `text, history` (usability ~0.59).
 
 ## Updating a mirror
 
