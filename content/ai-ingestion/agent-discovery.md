@@ -260,6 +260,11 @@ for p in /robots.txt /llms.txt /.well-known/api-catalog \
 done
 ```
 
+**Keep the `# Auth.md` heading.** Cloudflare's scanner checks the H1, not
+just the file — it reports "auth.md exists but is missing the expected
+Auth.md heading" if the document is titled anything else. Retitling that
+line to something more natural silently un-ticks the check.
+
 All seven should return `200`. `/.well-known/api-catalog` should report
 `application/linkset+json`, and both `auth.md` paths should report
 `text/markdown` — these come from `static/_headers`, since neither path
