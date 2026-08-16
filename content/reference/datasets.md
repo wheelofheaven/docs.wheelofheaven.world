@@ -329,6 +329,11 @@ both platforms):
 | Book | Verses | Review status | HuggingFace | Kaggle |
 |---|---|---|---|---|
 | Theogony | 1,042 | reviewed per chapter | [theogony-woh](https://huggingface.co/datasets/wheelofheaven/theogony-woh) | [theogony-woh](https://www.kaggle.com/datasets/zarazinsfuss/theogony-woh) |
+| Sumerian King List | 435 | reviewed per chapter | [sumerian-king-list-woh](https://huggingface.co/datasets/wheelofheaven/sumerian-king-list-woh) | [sumerian-king-list-woh](https://www.kaggle.com/datasets/zarazinsfuss/sumerian-king-list-woh) |
+| Enki and Ninḫursaĝa | 256 | reviewed per chapter | [enki-and-ninhursag-woh](https://huggingface.co/datasets/wheelofheaven/enki-and-ninhursag-woh) | [enki-and-ninhursag-woh](https://www.kaggle.com/datasets/zarazinsfuss/enki-and-ninhursag-woh) |
+| Enki and Ninmaḫ | 141 | reviewed per chapter | [enki-and-ninmah-woh](https://huggingface.co/datasets/wheelofheaven/enki-and-ninmah-woh) | [enki-and-ninmah-woh](https://www.kaggle.com/datasets/zarazinsfuss/enki-and-ninmah-woh) |
+| Song of the Hoe | 110 | reviewed per chapter | [song-of-the-hoe-woh](https://huggingface.co/datasets/wheelofheaven/song-of-the-hoe-woh) | [song-of-the-hoe-woh](https://www.kaggle.com/datasets/zarazinsfuss/song-of-the-hoe-woh) |
+| Isaiah (partial) | 94 | reviewed per chapter | [isaiah-woh](https://huggingface.co/datasets/wheelofheaven/isaiah-woh) | [isaiah-woh](https://www.kaggle.com/datasets/zarazinsfuss/isaiah-woh) |
 | Genesis | 1,533 | reviewed per chapter | [genesis-woh](https://huggingface.co/datasets/wheelofheaven/genesis-woh) | [genesis-woh](https://www.kaggle.com/datasets/zarazinsfuss/genesis-woh) |
 | Book of Enoch | 403 | signed off | [book-of-enoch-woh](https://huggingface.co/datasets/wheelofheaven/book-of-enoch-woh) | [book-of-enoch-woh](https://www.kaggle.com/datasets/zarazinsfuss/book-of-enoch-woh) |
 | Jubilees | 373 | signed off | [jubilees-woh](https://huggingface.co/datasets/wheelofheaven/jubilees-woh) | [jubilees-woh](https://www.kaggle.com/datasets/zarazinsfuss/jubilees-woh) |
