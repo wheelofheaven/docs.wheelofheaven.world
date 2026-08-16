@@ -138,6 +138,53 @@ founding-contact claim (Canonical → Highly unlikely), not a neutral rating —
 landing page says so explicitly. Landing page:
 [`/datasets/prophets-and-religions/`](https://www.wheelofheaven.world/datasets/prophets-and-religions/).
 
+## Myth Index
+
+A cross-cultural index of **75 myth-motif attestations across 9 families** —
+flood, divine council, theomachy, creation of humans, sky-descent, tower of
+Babel, giants, garden-paradise, immortality quest. One row per attestation,
+with named primary text, locator, summary, and **Thompson Motif-Index**
+cross-references. The flood / divine-council / theomachy rows unify the three
+specialized concordances (each row's `see_dataset` points at the table with
+the full per-family column depth); the other six families are new curation.
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/myth-index.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/myth-index.json` |
+
+Columns: `motif_family`, `tradition`, `source_text`, `reference`, `summary`,
+`thompson_motifs` (array in JSON, `;`-joined in CSV), `atu_type`,
+`aarne_1910_type` (deliberately sparse — ATU catalogues folktales, myth is
+addressed by the Motif-Index A-section), `woh_wiki`, `woh_library`,
+`see_dataset`, `woh_reading` (the canon reading, kept separate from the
+source-describing `summary`). Landing page:
+[`/datasets/myth-index/`](https://www.wheelofheaven.world/datasets/myth-index/).
+
+## Aarne 1910 Tale-Type Index
+
+A complete structured digitization of Antti Aarne's *Verzeichnis der
+Märchentypen* (FFC 3, Helsinki 1910) — the founding catalogue of the
+Aarne–Thompson–Uther system. **603 rows** (every numbered type and lettered
+subtype), German title/description, full section structure and group
+captions, Grundtvig/Grimm cross-references, page numbers, and English glosses
+for all 533 titled types. Parsed from the proofread German Wikisource
+transcription (`Seite:FFC3.djvu`, status *fertig*); the 1910 text is public
+domain worldwide (Aarne d. 1925), unlike the still-copyrighted 1928/1961/2004
+editions, so this is the provenance-clean structured edition.
+
+| Format | URL |
+|---|---|
+| CSV | `https://api.wheelofheaven.world/v1/datasets/aarne-1910-tale-types.csv` |
+| JSON | `https://api.wheelofheaven.world/v1/datasets/aarne-1910-tale-types.json` |
+
+Columns: `type_label`, `type_start`, `type_end`, `subtype`, `title_de`,
+`description_de`, `title_en`, `part`, `division`, `subsection`,
+`group_label`, `group_title`, `grundtvig_no`, `grimm_no`, `page`. Caveat for
+users: this is the **1910 numbering** — most numbers survive into ATU 2004,
+but later editions added, merged, and renumbered some types. Landing page:
+[`/datasets/aarne-1910-tale-types/`](https://www.wheelofheaven.world/datasets/aarne-1910-tale-types/).
+
 ## Landing pages
 
 Human-facing landing pages live under `/datasets/`, e.g.
@@ -191,6 +238,8 @@ All six datasets are published under the
 | Theomachy Cross-References | [wheelofheaven/theomachy-crossrefs](https://huggingface.co/datasets/wheelofheaven/theomachy-crossrefs) |
 | Precessional World Ages | [wheelofheaven/world-ages](https://huggingface.co/datasets/wheelofheaven/world-ages) |
 | Prophets & Religions Catalogue | [wheelofheaven/prophets-and-religions](https://huggingface.co/datasets/wheelofheaven/prophets-and-religions) |
+| Myth Index | [wheelofheaven/myth-index](https://huggingface.co/datasets/wheelofheaven/myth-index) |
+| Aarne 1910 Tale-Type Index | [wheelofheaven/aarne-1910-tale-types](https://huggingface.co/datasets/wheelofheaven/aarne-1910-tale-types) |
 
 Each repo carries a dataset card (`README.md`) with the CC0 license, tags, the
 column list, and a link back to the landing page.
@@ -210,6 +259,8 @@ restores the second Dataset-Search listing without a DOI.
 | Theomachy Cross-References | [zarazinsfuss/theomachy-crossrefs](https://www.kaggle.com/datasets/zarazinsfuss/theomachy-crossrefs) |
 | Precessional World Ages | [zarazinsfuss/world-ages](https://www.kaggle.com/datasets/zarazinsfuss/world-ages) |
 | Prophets & Religions Catalogue | [zarazinsfuss/prophets-and-religions](https://www.kaggle.com/datasets/zarazinsfuss/prophets-and-religions) |
+| Myth Index | [zarazinsfuss/myth-index](https://www.kaggle.com/datasets/zarazinsfuss/myth-index) |
+| Aarne 1910 Tale-Type Index | [zarazinsfuss/aarne-1910-tale-types](https://www.kaggle.com/datasets/zarazinsfuss/aarne-1910-tale-types) |
 
 These live under the **personal account**, not an org: Kaggle has suspended
 organization creation for regular users, so there is no `wheelofheaven` Kaggle
