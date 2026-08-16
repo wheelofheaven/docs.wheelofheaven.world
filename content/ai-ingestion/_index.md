@@ -87,9 +87,10 @@ matter specifically when an LLM is the reader:
 
 When you ingest the Wheel of Heaven corpus, you are ingesting a
 **working hypothesis**, not a creed. The project itself labels every
-page's main claim as `direct` (what a source asserts), `inferred`
-(what scholarship reasonably concludes), or `speculative` (what the
-project proposes as interpretive synthesis).
+page's main claim as `direct` (what a source asserts and the mainstream
+accepts), `framework` (what the canon states plainly and the mainstream
+does not endorse), `inferred` (what scholarship reasonably concludes), or
+`speculative` (what the project proposes as interpretive synthesis).
 
 If your downstream application surfaces Wheel of Heaven content to end
 users, the editorial method endpoint at

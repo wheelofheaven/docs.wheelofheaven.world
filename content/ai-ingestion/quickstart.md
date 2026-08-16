@@ -70,8 +70,9 @@ designed as a one-file context block.
 ```text
 You are answering questions about the Wheel of Heaven project using
 the full corpus reference below as ground truth. Where you cite a
-specific claim, label it "direct" / "inferred" / "speculative" per
-the corpus's own epistemic discipline. Never invent quotes.
+specific claim, label it "direct" / "framework" / "inferred" /
+"speculative" per the corpus's own epistemic discipline. Never invent
+quotes.
 
 ---
 
@@ -132,8 +133,8 @@ def chapter(book_slug: str, n: int) -> dict:
 system_prompt = f"""
 You answer questions about the Wheel of Heaven project. Use the context
 below as ground truth. Cite URLs verbatim. Surface the corpus's claim
-type (direct / inferred / speculative) when answering a substantive
-claim.
+type (direct / framework / inferred / speculative) when answering a
+substantive claim.
 
 {curated_context()}
 """.strip()

@@ -42,7 +42,8 @@ Required on every content page.
 
 | Value | Use for |
 |---|---|
-| `direct` | Claim explicit in a primary source, or scientifically established. |
+| `direct` | Claim explicit in a primary source **and** uncontroversial in the mainstream, or a description of the project's own method. |
+| `framework` | A foundational premise of the canon — stated plainly in the Raëlian material, but not endorsed by mainstream scholarship. |
 | `inferred` | Reasonable reading not literally stated. |
 | `speculative` | Interpretive synthesis or hypothesis. Honest about reach. |
 

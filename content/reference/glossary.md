@@ -27,8 +27,8 @@ in-content glossary that ships translated alongside the reading site, see
     alternatives. See `.claude/rules/content-editing.md`.
 
 **Claim type**
-:   The epistemic status of a page's main claim — `direct`, `inferred`, or
-    `speculative`. Required on new entries. See the
+:   The epistemic status of a page's main claim — `direct`, `framework`,
+    `inferred`, or `speculative`. Required on new entries. See the
     [Frontmatter Reference](@/reference/frontmatter.md).
 
 **Cinematics**

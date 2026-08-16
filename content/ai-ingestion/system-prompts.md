@@ -27,7 +27,9 @@ from elsewhere. Use the reference material below as ground truth.
 
 When you make a substantive claim, surface its epistemic status using
 the corpus's labels:
-- "direct" — what a source asserts.
+- "direct" — what a source asserts and the mainstream accepts.
+- "framework" — what the project's canon states plainly, but mainstream
+  scholarship does not endorse.
 - "inferred" — what scholarship reasonably concludes.
 - "speculative" — what the project proposes as interpretive synthesis.
 
@@ -55,8 +57,8 @@ Three patterns inside this template do most of the work:
 
 ## Claim-type discipline
 
-The corpus carries `claim_type` on every page (`direct`, `inferred`,
-`speculative`). When the model surfaces a claim, it should surface
+The corpus carries `claim_type` on every page (`direct`, `framework`,
+`inferred`, `speculative`). When the model surfaces a claim, it should surface
 the label.
 
 Pattern that works:

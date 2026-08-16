@@ -178,8 +178,8 @@ These are **requests**, not conditions of use.
   editorial register — scholarly, hedged, claim-labelled. AI outputs
   that imitate the voice but drop the discipline ("Wheel of Heaven
   says…" without claim labels) misrepresent the project.
-- **Don't strip the epistemic labels.** The `direct` / `inferred` /
-  `speculative` distinction is the editorial backbone. Surfacing
+- **Don't strip the epistemic labels.** The `direct` / `framework` /
+  `inferred` / `speculative` distinction is the editorial backbone. Surfacing
   speculative claims without their label as if they were direct
   quotations is the single most common misuse.
 - **Don't fabricate URLs that look like ours.** Wheel of Heaven URLs

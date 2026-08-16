@@ -128,7 +128,7 @@ it imposes.
 
 Covers:
 
-- **Claim types** (direct / inferred / speculative) and their
+- **Claim types** (direct / framework / inferred / speculative) and their
   per-page labelling.
 - **The six-source rule** in editorial terms.
 - **Editorial passes** — the `YYYY-MM` date code system for tracking

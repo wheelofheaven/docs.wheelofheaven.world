@@ -317,8 +317,8 @@ Relevant entries from the corpus:
 ---
 
 Answer the question using only the entries above. Cite the reading URL
-for any specific claim. Surface the claim type (direct / inferred /
-speculative) when relevant.
+for any specific claim. Surface the claim type (direct / framework /
+inferred / speculative) when relevant.
 """
     return call_llm(prompt)
 ```
