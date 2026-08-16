@@ -8,6 +8,35 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-08 — The claim catalog: distilled, bound, accepted
+
+The corpus's entire claim layer was extracted into the
+[research core](@/architecture/research-core.md): ten distillation batches
+(2026-08-15/16) took the catalog from its four founding pilots to **69
+records**, each with a controlling specification and a scoped evidence map,
+each batch pausing at a founder gate before its derivative pages were bound.
+The sweep ran until it was dry — episodes (the Flood, Babel, Eden, Sodom, the
+merkavah), doctrine, method (the neo-euhemerist reading, the literalist
+convergence, the translation program's accuracy-first commitment), postures
+(UAP reception, monument attribution, precursor discrimination), provenance
+(the canon's Dhorme quotation layer), and the project's own instruments (the
+comparative datasets as tabulated registrations).
+
+**ADR 0005** accepted claims 0005–0053 and **ADR 0006** claims 0054–0069;
+the pilots 0001–0004 remain `draft` pending their own review. Acceptance is
+lifecycle, not truth: no version, public label, or evidence status changed
+with promotion, and the `scoped`/`contested` grades stand. The rulings also
+ratified two catalog-wide disciplines — the *consonance* family (no counting
+rows as evidence, no feasibility-as-occurrence, no monument or geology
+enlisted as chronology support) and the *no-enlistment* rule (scientists,
+translators, journalists, and declined precursor authors are registered at
+their own grades and enlisted for nothing).
+
+On the publication side, roughly 190 pages across wiki, articles, timeline,
+newsroom, datasets, and library now declare their bindings; pages with no
+claim to carry deliberately stay unbound. The founder pause now prices only
+genuinely new claims.
+
 ## 2026-08 — The artifact derivation contract
 
 Production was inverted: new artifacts now derive their load-bearing claims

@@ -100,10 +100,12 @@ Claim IDs are stable and never reused for a different proposition. Splits and
 merges retain a mapping; supersession keeps forward/backward links and the
 earlier representation.
 
-## The claims (0.1.0)
+## The claims
 
-The current release is a foundation and pilot with four deliberately different
-draft claims:
+The catalog holds **69 records**: the four founding pilots below plus 65
+records distilled from the published corpus in ten batches (2026-08-15/16)
+and accepted by ADR 0005 and ADR 0006. The pilots — four deliberately
+different claim shapes — remain `draft` pending their own review:
 
 | ID | Claim | Kind | Relation | Why it's a pilot |
 |---|---|---|---|---|
@@ -112,14 +114,17 @@ draft claims:
 | `woh-claim-0003` | Precessional world-age chronology | `model` | `foundational` | Tests a five-layer claim: observed precession, the contested ancient-knowledge thesis, an equal-twelve model, a convention anchor, and derived event placement |
 | `woh-claim-0004` | Greek theomachy as Council–Serpentine conflict memory | `interpretation` | `comparative` | The reverse pilot for the derivation contract — extracted *from* a published article rather than written before one |
 
-All four are `draft` and `scoped`/`contested`. They document existing
-positions; they do not newly validate them.
+Acceptance changed no evidence status: every record in the catalog documents
+an existing position at its own `scoped`/`contested` grade; none is newly
+validated by promotion.
 
 Claim 0004 is also the worked example of what a record adds over prose: it
 carries the falsifiability terms that previously lived only in one article's
-closing section, and it records — as an explicit gap with a revision trigger —
-that its own foundation, the Council–Serpentine conflict account, is still
-corpus prose rather than a claim record.
+closing section. The gap it originally recorded — that its own foundation,
+the Council–Serpentine conflict account, existed only as corpus prose — was
+closed when that account was minted as `woh-claim-0008`; the resulting
+dependency change is why 0004 sits at version 0.2.0 while the other pilots
+remain at 0.1.0.
 
 ## Publication integration (RFC 0002, accepted)
 
@@ -143,19 +148,15 @@ renders a stale claim — or a warning when a page declares a claim it is not
 listed under. The fields are inert at render time; no template consumes them
 yet.
 
-As of 2026-08 the contract is **fully rolled out** beyond the original
-`wiki/elohim` pilot. Every page that renders one of the three claims is bound
-and reciprocated:
-
-| Claim | Bound pages |
-|---|---:|
-| `woh-claim-0001` — Elohim-civilization hypothesis | 7 |
-| `woh-claim-0002` — Anunnaki–Elohim identity | 2 |
-| `woh-claim-0003` — Precessional world-age chronology | 20 |
-
-The validator reports `publication_integration=checked` with zero errors. As
-the claim model grows, this reciprocation (record `public_derivatives` +
-page frontmatter) is the routine per-claim follow-on.
+As of 2026-08 the contract is **fully rolled out**: after the catalog's
+distillation and backfill, every claim-bearing page in the corpus declares
+its binding — roughly 190 pages across wiki, articles, timeline, newsroom,
+datasets, and library are named in the records' `public_derivatives` (a
+handful are drafted artifacts that bind on publication). Pages that carry no
+claim — direct reference, list, and biographical entries — deliberately stay
+unbound. The validator reports `publication_integration=checked` with zero
+errors; the reciprocation (record `public_derivatives` + page frontmatter)
+remains the routine per-claim follow-on as the catalog grows.
 
 RFC 0002 was **closed by adoption** on 2026-08-15: RFC 0003 incorporates the
 contract unchanged and lifts its single-page pilot restriction, so accepting
@@ -219,9 +220,9 @@ to come, so the binding is normative-only for now.
 
 The access level on a source reference is not bookkeeping — it is the ceiling
 on what a claim may assert from that source. And it is where the research
-programme is currently bottlenecked: across the four claims, **10 of 18 source
-references sit at `metadata_only`**, meaning they are load-bearing and have
-never actually been opened.
+programme is currently bottlenecked: across the catalog's 69 records, **99 of
+235 source references sit at `metadata_only`**, meaning they are load-bearing
+and have never actually been opened.
 
 An evidence map cannot honestly move from `scoped` to `reviewed` while its
 scholarly context is uninspected. The one source that *was* properly
@@ -250,8 +251,11 @@ acquire next by which claims it would unblock. See
 | 0005 | Accepted | Register the source copies the project holds, with an ingest pipeline that indexes without reproducing | 0004 |
 
 Acceptance records a project decision, not empirical truth. Accepting RFC 0003
-adopted the *process*; it did not promote any claim — all four claim records
-remain `draft` and advance only on their own review.
+adopted the *process*; claim promotion came by its own rulings — **ADR 0005**
+(claims 0005–0053) and **ADR 0006** (claims 0054–0069) — leaving the catalog
+at 69 records, 65 `accepted`, with the founding pilots 0001–0004 still
+`draft` pending their own review. Promotion changed no version, public label,
+or evidence status: lifecycle is not truth.
 
 ## Validation
 

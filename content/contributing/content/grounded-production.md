@@ -14,7 +14,12 @@ record, not the place where the insight is first invented.
 
 This is the **artifact derivation contract**, proposed in core RFC 0003 and
 accepted on 2026-08-15 as ADR 0002. It binds new artifacts and fundamental
-rewrites. The existing corpus is grandfathered.
+rewrites. The existing corpus was grandfathered at adoption — and has since
+been backfilled: ten distillation batches (2026-08-15/16) extracted the
+corpus's claim layer into a 69-record catalog (accepted by core ADR 0005 and
+ADR 0006), and every claim-bearing page now declares its binding.
+Grandfathering remains relevant only for pages that carry no claim (direct
+reference, list, and biographical entries).
 
 ## Why the contract exists
 
@@ -190,13 +195,15 @@ gates exactly. The contract is satisfiable entirely by hand.
 |---|---|
 | New artifact | **Yes** |
 | Fundamental rewrite (the `editorial_pass` threshold) | **Yes** |
-| Existing corpus, untouched | No — grandfathered |
+| Existing corpus, untouched | No — grandfathered (in practice backfilled 2026-08; only claim-free reference, list, and biographical pages remain unbound) |
 | Translation of a bound page | Inherits the source page's binding |
 | Newsroom Dispatch | Optional (the mandatory `canon_links` already anchors it) |
 | Typo fix, reference addition, mechanical edit | No |
 
-Backfill of grandfathered pages is editor's call and incremental. The pattern
-is the reverse pilot below: extract the record from the artifact, then bind.
+The backfill of grandfathered pages completed in 2026-08: ten distillation
+batches applied the reverse-pilot pattern below at corpus scale — extract the
+record from the artifact, then bind — leaving unbound only pages with no
+claim to carry.
 
 ## Worked example: the reverse pilot
 
