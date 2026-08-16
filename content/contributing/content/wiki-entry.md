@@ -76,7 +76,7 @@ Mesopotamian texts describe similar collective creator-figures...
 
 | Field | Type | Notes |
 |---|---|---|
-| `claim_type` | `"direct"` \| `"inferred"` \| `"speculative"` | Required on new entries. See [Editorial Passes](@/contributing/content/editorial-passes.md) and below. |
+| `claim_type` | `"direct"` \| `"framework"` \| `"inferred"` \| `"speculative"` | Required on new entries. See [Editorial Passes](@/contributing/content/editorial-passes.md) and below. |
 | `editorial_pass` | `"YYYY-MM"` | Date code of the editorial campaign that last fundamentally rewrote this entry |
 | `category` | string | One of the established categories (Core Concepts, Texts, Figures, etc.) |
 | `alternative_names` | string[] | Other names this entry is known by — searched and surfaced |
@@ -188,6 +188,7 @@ Every entry declares its epistemic status in `[extra]`:
 | Value | Meaning | Example |
 |---|---|---|
 | `direct` | Explicit in a primary source, or describing project/method, or scientifically established | "The precession of the equinoxes is observable since Hipparchus" |
+| `framework` | A foundational premise of the canon — stated plainly in the Raëlian material, but not endorsed by mainstream scholarship | "The Elohim are an extraterrestrial civilization" |
 | `inferred` | A reasonable reading of a source, not literally stated | "The Sumerian Anunnaki and the biblical Nephilim describe overlapping figures" |
 | `speculative` | Interpretive synthesis going beyond any single source | "Genesis as engineering log" |
 

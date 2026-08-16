@@ -72,7 +72,7 @@ Frontmatter fields the renderer reads (all optional unless noted):
 |---|---|
 | `title` _(required)_ | The big headline on the card |
 | `description` / `extra.summary` | The body paragraph under the title |
-| `extra.claim_type` | Color of the claim pill (`direct`, `inferred`, `speculative`) |
+| `extra.claim_type` | Color of the claim pill (`direct` cyan, `framework` mauve, `inferred` yellow, `speculative` lavender) |
 | `extra.category` | Category chip on certain templates |
 | `extra.author`, `extra.publication_year`, `extra.original_title` | Library book metadata |
 | `extra.event_date`, `extra.symbol`, `extra.zodiac_sign`, `extra.date_range` | Timeline/news metadata |

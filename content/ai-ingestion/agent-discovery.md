@@ -159,7 +159,6 @@ the rest. Not implementing a standard is a position, not a gap:
 | **OAuth Protected Resource / OAuth Discovery** (RFC 9728, RFC 8414) | There are no protected resources. Publishing authorization-server metadata for a CC0 static site would advertise a login that does not exist. The MCP host returns a clean `404` on these paths precisely so clients fall back to anonymous access instead of attempting a token exchange. |
 | **Web Bot Auth** | Signs the requests of bots *you* operate against *other* people's sites. The project runs no crawlers. |
 | **A2A Agent Card** | Describes an agent other agents can delegate tasks to. The project publishes a corpus; it does not act on anyone's behalf. |
-| **WebMCP** | Exposes tools to an agent running inside the reader's browser. Plausible eventually — an in-page corpus search is a real use case — but it means shipping JavaScript for a draft specification onto a static reading site. Not yet. |
 | **DNS-AID** | DNS-level advertisement of AI resources. Cheap, and early enough that the record format is still moving. Revisit when it settles. |
 | **All five commerce protocols** (ACP, AP2, MPP, UCP, x402) | Nothing is for sale and nothing is paywalled. These will never apply. |
 
@@ -168,6 +167,62 @@ discoverability and content, most of protocol discovery, and zero on
 commerce. That is the correct shape for a public-domain knowledge
 project, and chasing the remaining checkboxes would mean publishing
 documents that describe a site this is not.
+
+### WebMCP — prepared, not enabled
+
+[WebMCP](https://blog.cloudflare.com/webmcp/) is a browser API
+(`navigator.modelContext.registerTool()`) that lets a page hand an agent
+a list of callable tools with typed parameters, instead of the agent
+screenshotting the page and guessing where to click. It is the in-browser
+counterpart to the [MCP server](@/reference/mcp.md): tools run in the
+page's own JS context, with whatever session the reader already has.
+
+This page previously listed WebMCP as declined, on the grounds that it
+would mean shipping JavaScript for a draft specification onto a static
+reading site. **That reasoning no longer holds.** Cloudflare injects the
+bridge at the edge via HTMLRewriter, composing selected *tool packs* into
+one tool list — so it is a zone toggle, not a build-time dependency. The
+cost side of the trade collapsed, which is reason enough to reopen a
+decision.
+
+What still argues for caution is the maturity, not the cost. WebMCP is a
+W3C **Community Group Draft Report** — explicitly *not* a W3C Standard
+and not on the Standards Track — implemented in Chrome and in origin
+trial. The real audience today is small.
+
+Two packs are offered, and only one is a fit:
+
+- **Site MCP server** — proxies the nine existing server-side tools to
+  the in-browser agent. This is the fit: a reader browsing the corpus in
+  an agentic browser could search entries, pull primary-source passages,
+  and query the content graph without their agent knowing the MCP
+  endpoint exists. The expensive part is already built.
+- **Content Credentials (C2PA)** — reads provenance metadata from images.
+  **Leave off.** Project images are rendered by the project's own
+  pipelines and carry no C2PA manifests, so this would advertise
+  provenance-reading over images that have no provenance to read.
+  (Actually *signing* the generated renders would suit a project built on
+  epistemic labelling — but that is a pipeline project, not a toggle.)
+
+**The CSP prerequisite.** The site's Content-Security-Policy would have
+silently blocked the bridge: the MCP host was not in `connect-src`, so
+a browser-side fetch from a `www` page would be refused by the site's own
+policy regardless of how permissive the MCP server is. (Its CORS is
+already `*`, with `mcp-session-id` exposed — CORS was never the problem.)
+`connect-src` in `static/_headers` now reads:
+
+```
+connect-src 'self' https://assets.wheelofheaven.world https://mcp.wheelofheaven.world
+```
+
+`script-src` is still `'self' 'unsafe-inline'`, and it is not yet known
+whether Cloudflare serves the injected `bridge.js` from a same-origin
+path or an external one. If the toggle is enabled and the bridge fails to
+load, that is the first place to look — but the policy has deliberately
+*not* been loosened on a guess.
+
+So: the CSP is ready, the toggle is not thrown. Enabling it is a
+dashboard action under AI Crawl Control, and reversible.
 
 ### On readiness scores generally
 

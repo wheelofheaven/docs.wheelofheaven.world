@@ -53,9 +53,11 @@ matter specifically when an LLM is the reader:
    program, and editorial method as plain prose — designed for paste
    into a system prompt with no transformation.
 4. **Every claim labelled by epistemic status.** Pages carry
-   `claim_type = "direct" | "inferred" | "speculative"`, so an
-   ingesting model can be told to surface that label alongside any
-   answer it gives.
+   `claim_type = "direct" | "framework" | "inferred" | "speculative"`,
+   so an ingesting model can be told to surface that label alongside any
+   answer it gives. `framework` is the load-bearing one for an ingesting
+   model: it marks a claim the project's canon states plainly but
+   mainstream scholarship does not endorse.
 5. **A controlled vocabulary for terminology.** The
    [terminology endpoint](https://api.wheelofheaven.world/v1/context/terminology/)
    includes a do-not-use table — the project cares which words the

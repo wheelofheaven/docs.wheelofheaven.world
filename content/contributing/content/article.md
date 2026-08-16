@@ -102,7 +102,7 @@ unmotivated literary devices...
 
 | Field | Type | Notes |
 |---|---|---|
-| `claim_type` | `"direct"` \| `"inferred"` \| `"speculative"` | Required. See [Editorial Passes](@/contributing/content/editorial-passes.md). |
+| `claim_type` | `"direct"` \| `"framework"` \| `"inferred"` \| `"speculative"` | Required. See [Editorial Passes](@/contributing/content/editorial-passes.md). |
 | `editorial_pass` | `"YYYY-MM"` | Date code of the editorial campaign |
 | `summary` | string | 2–4 sentence TL;DR, displayed prominently and used by AI extraction |
 | `category` | string | One of: Hermeneutics, Comparative, Method, History, Critique |

@@ -153,7 +153,7 @@ Attach these fields to every chunk regardless of source surface:
 | `kind` | `wiki` / `timeline` / `article` / `news` / `library` / `tradition-hub` / `source` |
 | `slug` | Canonical identifier |
 | `lang` | For multilingual filtering |
-| `claim_type` | Lets the model surface `direct` / `inferred` / `speculative` per claim |
+| `claim_type` | Lets the model surface `direct` / `framework` / `inferred` / `speculative` per claim |
 | `editorial_pass` | Lets you de-prioritise pre-current-pass content |
 | `reading_url` | The human-readable deep link the AI surfaces in answers |
 | `api_url` | The canonical JSON URL for re-fetching |
