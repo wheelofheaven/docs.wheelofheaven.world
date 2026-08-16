@@ -90,6 +90,14 @@ It also writes a reverse `data/sources/cited-by.json` index for the
 `Cited by` blocks. Those generated stubs are not hand-authored; the
 underlying source record stays single-sourced in `data/sources.json`.
 
+Every emitted record carries a `licensing_status` — merged from the
+hand-maintained sidecar `data/sources/licensing.json` (the single
+authority; never regenerated). Vocabulary: `public_domain`, `licensed`,
+`unknown` (examined, could not determine), and `unverified` (never
+examined — the builder default for any source absent from the sidecar).
+To record a determination, add the source id to the sidecar's `statuses`
+map and re-run the build; do not edit `sources.json` directly.
+
 ## Translations
 
 Translations mirror the English structure:
