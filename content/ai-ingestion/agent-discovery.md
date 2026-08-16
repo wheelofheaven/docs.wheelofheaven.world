@@ -101,13 +101,29 @@ answer is fine, and training or fine-tuning on the corpus is fine. A
 project that publishes `llms-full.txt` and runs a public MCP server
 would be incoherent saying otherwise.
 
-### One control point
+### Where crawler access is actually controlled
 
-Crawler access is controlled in **exactly one place**: the Cloudflare
-dashboard, under AI Crawl Control. Cloudflare's managed `robots.txt`
-feature *prepends* its own block to the file the repository serves —
-so if per-agent rules exist in both places, the deployed file contains
-two groups for the same user-agent with opposite rules.
+Crawler policy lives in the Cloudflare dashboard, not the repository —
+but it is spread across **three independent controls**, and only one of
+them generates the `robots.txt` file. Turning off the wrong one changes
+nothing about what crawlers read, which is exactly the trap this section
+exists to document:
+
+| Control | Where | What it does |
+|---|---|---|
+| **Managed robots.txt** | AI Crawl Control → Robots.txt tab | **Generates the file.** This is the one that injects the `Disallow` block and the `ai-train=no` content signal. |
+| Configure AI bot policies | Security → Settings → Bot traffic | Search / Agent / Training categories. Replaces the legacy toggle from 2026-09-15. All three should be **Allow**. |
+| Block AI bots *(legacy)* | Security → Settings → Bot traffic | WAF-level enforcement, deprecating 2026-09-15. Blocks at the edge rather than by request. |
+
+To check which is active without the dashboard, read
+`is_robots_txt_managed` and `fight_mode` from the zone's
+`/bot_management` API — the dashboard cards show available configuration
+rather than live state, and can mislead.
+
+Cloudflare's managed `robots.txt` feature *prepends* its own block to
+the file the repository serves — so if per-agent rules exist in both
+places, the deployed file contains two groups for the same user-agent
+with opposite rules.
 
 That file has no well-defined meaning. Google merges same-agent groups
 and lets the least restrictive rule win; crawlers that take the first
@@ -118,7 +134,8 @@ property a crawl policy must not have.
 So: **do not add per-agent `Allow:` stanzas to `static/robots.txt`.**
 They are redundant against the wildcard group, and they are the exact
 thing that collides. If a specific crawler needs to be blocked, block
-it in the dashboard. A warning to this effect is in the file itself.
+it in the dashboard — in the AI bot policies panel, not by editing the
+repository file. A warning to this effect is in the file itself.
 
 The corollary is that the repository cannot express the open policy on
 its own. If the managed block is enabled, its `Disallow` rules are what

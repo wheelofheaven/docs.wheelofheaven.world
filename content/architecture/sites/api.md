@@ -4,11 +4,17 @@ description = "The static JSON API — Zola-generated endpoints serving every cu
 weight = 20
 +++
 
-The Wheel of Heaven API is a **static JSON twin of the public site**.
-Every page on `www.wheelofheaven.world` has a deterministic JSON URL
-on `api.wheelofheaven.world`, plus surfaces (bibliography, glossary,
+The Wheel of Heaven API is a **static JSON twin of the corpus**. Every
+*content* page on `www.wheelofheaven.world` — wiki, timeline, articles,
+news, library, sources — has a deterministic JSON URL on
+`api.wheelofheaven.world`, plus surfaces (bibliography, glossary,
 translation provenance, schemas, controlled vocabularies) that don't
 exist on www.
+
+The mirror covers the corpus, **not the whole site**. Chrome and
+utility pages — `/read/`, `/faq/`, `/map/`, `/gallery/`, `/listen/`,
+`/datasets/`, the taxonomy and policy pages — have no twin, by design.
+See [The twin link contract](#the-twin-link-contract) below.
 
 For the catalogue of every endpoint, the response envelope, controlled
 vocabularies, and JSON Schemas, see [API Reference](@/reference/api/_index.md).
@@ -18,7 +24,7 @@ vocabularies, and JSON Schemas, see [API Reference](@/reference/api/_index.md).
 The API exists so machines — AI agents, third-party integrations,
 analytics, downstream sites — can read the same corpus the reading
 site presents to humans. It is also the entry point we deliberately
-expose to LLMs: every page has a JSON twin, and a handful of
+expose to LLMs: every content page has a JSON twin, and a handful of
 `/v1/context/*` endpoints are curated as direct system-prompt material.
 
 **This is not a database in front of an application server.** Every
@@ -141,8 +147,88 @@ Cloudflare purges the entire zone on each successful deploy.
   `/v1/schema/{kind}/` (its schema), and the relevant `/v1/enums/`.
 - `/llms.txt` (API-side) is a short manifest pointing AI agents at
   `/v1/context/*` and `/v1/`.
-- Every www HTML page carries a `<link rel="alternate"
-  type="application/json">` pointing to its API twin.
+- Content pages on www carry a `<link rel="alternate"
+  type="application/json">` pointing to their API twin — see the
+  contract below for exactly which.
+
+## The twin link contract
+
+Every mirrored www page advertises its JSON counterpart in `<head>`:
+
+```html
+<link rel="alternate" type="application/json"
+      title="Wheel of Heaven - JSON API twin"
+      href="https://api.wheelofheaven.world/v1/wiki/elohim/">
+```
+
+This is the highest-volume agent-facing signal the project emits. An
+agent that follows a citation to a page URL finds the cheap
+representation from there, without needing to know the API exists.
+
+**Why it matters — measured on `/wiki/elohim/`:**
+
+| | Size | vs page |
+|---|---|---|
+| Rendered HTML | 350,364 B | 1.0× |
+| API `body_html` | 55,690 B | **6.3× smaller** |
+| Plain-text floor | 48,519 B | 7.2× smaller |
+
+The saving is in dropping page chrome — nav, footer, JSON-LD, inline
+SVG — not in the body format. Converting that body from HTML to
+Markdown would add only **1.15×** on top. This is the number to reach
+for whenever "should we serve Markdown?" comes up: the twin link
+already banks ~98% of the available reduction, at the canonical URL,
+with no new infrastructure.
+
+### Which pages emit it
+
+Emitted for the site root, and for any path whose section — after any
+language prefix is stripped — is `wiki`, `timeline`, `articles`,
+`news`, `library` or `sources`. Language variants are included
+(`/de/wiki/elohim/` → `/v1/de/wiki/elohim/`).
+
+Two pages have a counterpart under a *different* path and are mapped
+explicitly:
+
+| www page | Twin |
+|---|---|
+| `/about/` | `/v1/context/` |
+| `/method/` | `/v1/context/method/` |
+
+Those two `/v1/context/*` endpoints are **English-only** — `/v1/de/context/`
+is a 404 — so the override matches the full path, not the
+language-stripped section. `/de/about/` therefore emits nothing rather
+than advertising an English twin for a translated page.
+
+Everything else emits no link: language homepages (`/v1/{lang}/` is
+`render = false` by design), and all chrome, utility, taxonomy and
+policy pages.
+
+### The invariant
+
+**Never advertise a twin that doesn't resolve.** A `rel="alternate"`
+pointing at a 404 is worse than no link — it burns a request and
+teaches agents to distrust the signal. Before today's audit the link
+was emitted unconditionally and ~266 pages advertised twins that 404'd.
+
+So: adding a new www section means either adding its API mirror *or*
+leaving it out of the allow-list in
+`themes/bifrost/templates/partials/seo.html`. Changing the mirror means
+updating that list in the same change.
+
+### Template hazards
+
+Two Tera traps bit this tag, both live for a long time before being
+caught:
+
+- **`default()` in output position double-escapes.** Slashes rendered
+  as `&#x2F;`, giving `.../v1&#x2F;wiki&#x2F;elohim&#x2F;`. Conformant
+  HTML parsers decode it; naive scrapers — the audience the link exists
+  for — read a broken URL. Hoist into a `{% set %}`, then emit with
+  `| safe`.
+- **`current_path` has no leading slash on some language homepages**
+  (`ja`, `ko`, `ru`, `zh`, `zh-Hant`), which produced `.../v1ja/`.
+  Don't depend on it: strip any leading slash and re-add exactly one.
 
 ## Related
 

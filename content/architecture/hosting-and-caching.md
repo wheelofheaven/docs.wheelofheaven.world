@@ -303,3 +303,43 @@ across 6 non-English langs instead of 103 × 9), plus drop the
 **Cross-reference:** the API repo's `scripts/postbuild.sh` and
 `scripts/prebuild.py` enforce the working patterns. Don't reintroduce
 the JSON mirror without first verifying file count stays under cap.
+
+### Low zone cache-hit ratio on Pages is expected
+
+**Symptom:** Cloudflare zone analytics reports a cache-hit ratio of
+3–13% for www, averaging around 7%. On a fully static site that looks
+alarming.
+
+**Why it's fine:** Pages serves HTML with `cache-control: max-age=0,
+must-revalidate`, so the *zone* cache reports `cf-cache-status: DYNAMIC`
+and never counts a hit. But Pages has its own globally distributed
+serving layer — the "origin" is already Cloudflare. Measured on
+`/wiki/elohim/`: uncached HTML TTFB is 71–197 ms against ~40 ms for a
+zone-cached asset. **A 30–60 ms penalty**, not the 10× you'd see with a
+distant origin.
+
+**Why we don't fix it:** edge-caching HTML via Cache Rules or
+`s-maxage` buys tens of milliseconds and costs stale pages after every
+deploy. With several sessions pushing content daily, that's a bad
+trade. Checked deliberately; leave it alone.
+
+Note that `robots.txt` does report `max-age=14400` — that comes from the
+zone's `browser_cache_ttl`, not from any managed-robots feature. Don't
+read it as a signal that Cloudflare is generating the file; check
+`is_robots_txt_managed` via the `/bot_management` API instead.
+
+### Cloudflare Web Analytics is provisioned but collects nothing
+
+**Symptom:** Web Analytics appears configured for the zone
+(`auto_install: true` on the RUM site config), but no data arrives.
+
+**Cause:** two independent failures. The beacon script is not present in
+the rendered HTML at all — and even if it were, the site's own CSP
+blocks it twice over: `script-src 'self'` refuses
+`static.cloudflareinsights.com/beacon.min.js`, and `connect-src` has no
+`cloudflareinsights.com` entry for the POST.
+
+**If you want it working:** add both CSP entries in `static/_headers`
+and confirm injection. **If you don't:** turn the provisioning off, so
+the dashboard stops implying analytics exist. Either way, don't assume
+traffic data is being collected — as of 2026-08 it is not.

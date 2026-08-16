@@ -14,10 +14,16 @@ corpus with AI systems** — LLMs, retrieval-augmented generation
 pipelines, agentic assistants, embeddings indexes, fine-tuning corpora,
 or just a one-off paste into a chat window.
 
-The project is **built to be ingested**. Every page on
-[www.wheelofheaven.world](https://www.wheelofheaven.world) has a
-deterministic JSON twin on
-[api.wheelofheaven.world](https://api.wheelofheaven.world). Curated
+The project is **built to be ingested**. Every content page on
+[www.wheelofheaven.world](https://www.wheelofheaven.world) — wiki,
+timeline, articles, news, library, sources — has a deterministic JSON
+twin on [api.wheelofheaven.world](https://api.wheelofheaven.world),
+advertised from the page itself via `<link rel="alternate"
+type="application/json">`. That twin is **6.3× smaller** than the
+rendered page, so it is the cheapest way to read a page you already
+have the URL for. (Chrome and utility pages have no twin — see
+[the twin link contract](@/architecture/sites/api.md#the-twin-link-contract).)
+Curated
 narrative summaries are published at stable URLs for direct
 system-prompt use. The full corpus is available as a single
 `llms-full.txt` file. Everything is CC0-1.0 public domain — no auth, no
