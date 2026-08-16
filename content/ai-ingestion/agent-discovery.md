@@ -36,6 +36,7 @@ The services they describe live on other subdomains.
 | [`/.well-known/mcp/server-card.json`](https://www.wheelofheaven.world/.well-known/mcp/server-card.json) | MCP server identity and transports | [MCP server schema](https://modelcontextprotocol.io/) |
 | [`/.well-known/agent-skills/index.json`](https://www.wheelofheaven.world/.well-known/agent-skills/index.json) | The nine tools, described | emerging |
 | [`/.well-known/auth.md`](https://www.wheelofheaven.world/.well-known/auth.md) | Authentication policy | emerging |
+| [`/auth.md`](https://www.wheelofheaven.world/auth.md) | The same document — scanners disagree on which path to probe, so both answer. A `200` rewrite in `_redirects`, not a second copy. | emerging |
 
 Every HTML response also carries a link header pointing at the catalog,
 so an agent that fetches any page at all has a path to the rest:
@@ -196,14 +197,17 @@ Verify the whole surface after a deploy:
 ```bash
 for p in /robots.txt /llms.txt /.well-known/api-catalog \
          /.well-known/mcp/server-card.json \
-         /.well-known/agent-skills/index.json /.well-known/auth.md; do
+         /.well-known/agent-skills/index.json /.well-known/auth.md \
+         /auth.md; do
   printf '%s -> ' "$p"
   curl -s -o /dev/null -w '%{http_code} %{content_type}\n' \
     "https://www.wheelofheaven.world$p"
 done
 ```
 
-All six should return `200`. `/.well-known/api-catalog` should report
-`application/linkset+json` and `/.well-known/auth.md` should report
-`text/markdown` — both come from `static/_headers`, since neither path
-has an extension Cloudflare Pages would recognise on its own.
+All seven should return `200`. `/.well-known/api-catalog` should report
+`application/linkset+json`, and both `auth.md` paths should report
+`text/markdown` — these come from `static/_headers`, since neither path
+has an extension Cloudflare Pages would recognise on its own. `_headers`
+rules match the **request** path, so the root alias needs its own rule
+even though it is served by a rewrite rather than a second file.
