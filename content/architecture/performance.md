@@ -43,17 +43,31 @@ fetches late and LCP suffers.
 
 Fix: an explicit preload in `<head>` (in `themes/bifrost/templates/base.html`),
 gated to locale-root paths so other pages don't pay for an unused fetch.
-The relevant chunk emits this HTML on every locale homepage:
+The relevant chunk emits a preload link without an initial `href` on every
+locale homepage, then assigns the matching theme poster immediately after the
+persisted theme has been resolved:
 
 ```html
 <link
+    id="landing-poster-preload"
     rel="preload"
     as="image"
     type="image/webp"
-    href="https://assets.wheelofheaven.world/videos/landing/01-question-poster.webp"
+    data-cdn-base="https://assets.wheelofheaven.world"
     fetchpriority="high"
 />
+<script>
+    const preload = document.getElementById("landing-poster-preload");
+    const filename = document.documentElement.dataset.theme === "light"
+        ? "01-question-light-poster.webp"
+        : "01-question-poster.webp";
+    preload.href = preload.dataset.cdnBase + "/videos/landing/" + filename;
+</script>
 ```
+
+This avoids fetching the dark poster for a returning light-theme visitor (or
+both posters for everyone). Theme initialization therefore belongs near the
+top of `base.html`, before this preload and before stylesheet discovery.
 
 In the template it's wrapped in an `{_is_landing}` conditional set
 earlier in `base.html` — see the file for the locale-root check.
@@ -133,11 +147,25 @@ already had the old file will keep using it until natural eviction —
 purge the URL in Cloudflare if you want all visitors switched
 immediately.
 
-§2–§6 posters have been resized with the same recipe (`-q 65 -resize
-800 450`).
+§2–§6 posters, including the light-theme variants, have been resized with the
+same recipe (`-q 65 -resize 800 450`).
 They're below the fold, so they don't affect LCP — only bandwidth and
 scroll-transition snappiness — but resizing them was worth the few
 hundred KB total saving across the five sections.
+
+### Theme-specific landing media
+
+Each §1–§6 `<video>` carries four lazy URL attributes:
+`data-poster-dark`, `data-poster-light`, `data-video-dark`, and
+`data-video-light`. A synchronous script at the end of the landing template
+selects one pair from `html[data-theme]`; the unused theme is never assigned
+to a media element and is therefore not downloaded. A `MutationObserver`
+repeats the selection when the visitor toggles theme and resumes the visible
+video after its replacement source is ready.
+
+Keep `preload="none"`. Initial source assignment deliberately does not call
+`load()`, so the first-engagement gate still keeps video bytes off the LCP
+path. Only the theme-matched poster is needed for first paint.
 
 ## Font discipline: web-font fetches on the LCP path
 
@@ -274,8 +302,12 @@ Pair `aria-hidden` with `inert` from the start.
 2. Place the poster and `.webm` at
    `assets.wheelofheaven.world/videos/landing/<n>-<slug>-poster.webp` /
    `<n>-<slug>.webm`.
+   For theme-specific media, use `<n>-<slug>-light-poster.webp` and
+   `<n>-<slug>-light.webm` for the light pair while leaving the unsuffixed
+   pair as the dark default.
 3. Add the section markup to `themes/bifrost/templates/index.html` with
-   `<video preload="none" poster="...">`.
+   `<video preload="none">` and all four `data-poster-*` / `data-video-*`
+   attributes.
 4. If the new section becomes the **first** section (`§1` / above-the-
    fold), update the preload URL in `templates/base.html` to point at
    the new poster.
