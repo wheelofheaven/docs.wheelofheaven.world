@@ -6,8 +6,13 @@ weight = 20
 
 Bifrost is the Zola theme that powers `www.wheelofheaven.world`. Named
 after the rainbow bridge in Norse mythology — and reused here by
-`docs-theme` (it imports Bifrost's design tokens via SCSS so palette,
-typography, and spacing stay in sync).
+`docs-theme`, which imports Bifrost's design tokens via SCSS so palette,
+typography, and spacing come from one source.
+
+The docs site pins Bifrost as a submodule, independently of the pin in
+`www`. Nothing keeps the two pins level, so token changes reach the docs
+site only when someone bumps its pin — and only the four files under
+`sass/abstracts/` matter when deciding whether to.
 
 ## Overview
 

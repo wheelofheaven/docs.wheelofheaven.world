@@ -34,11 +34,36 @@ start there:
 - **Zola** 0.22.1 (pinned via `mise.toml`)
 - **Custom theme:** `themes/docs-theme/` — imports Bifrost SCSS tokens
   (palette, spacing, type) via `@forward "../../../bifrost/sass/abstracts/..."`
-  so the docs site stays in visual lockstep with the main site.
-- **Bifrost is mounted as a submodule** at `themes/bifrost/` (the same
-  submodule the main site uses — pinned to the same SHA on deploy).
-  The docs site does NOT activate Bifrost as its theme; it only consumes
-  the tokens.
+  so the docs site shares the main site's design tokens.
+- **Bifrost is mounted as a submodule** at `themes/bifrost/` — the same
+  repo the main site uses, but pinned independently. The docs site does
+  NOT activate Bifrost as its theme; it only consumes the tokens.
+
+### The Bifrost pin is manual, and that is fine
+
+Nothing synchronises this pin with the one in
+`www.wheelofheaven.world`. There is no CI in this repo and no sync
+script; Cloudflare Pages just clones at whatever SHA `main` records, so
+the pin advances only when someone commits a bump. Expect the two repos'
+pins to drift apart — as of 2026-08-17 they were 12 commits and 8 days
+apart, with no ill effect.
+
+That is tolerable because the docs site consumes **only four files**:
+
+```
+themes/bifrost/sass/abstracts/{colors,variables,functions,mixins}.scss
+```
+
+Everything else in Bifrost — templates, components, JS, the bundle — is
+irrelevant here. So:
+
+- **Bump the pin when** you need a token that changed in one of those
+  four files (a new palette entry, a spacing step, a mixin).
+- **Don't bump it** just because Bifrost moved. A theme change that
+  doesn't touch `sass/abstracts/` cannot affect this site, and bumping
+  pulls in unrelated churn under cover of an unrelated commit.
+- **To check before bumping:** `git -C themes/bifrost diff <pinned>..<target> -- sass/abstracts/`.
+  Empty output means there is nothing here to gain.
 - **mise** for tool versioning and task definitions.
 - **Cloudflare Pages** for hosting, watching `main`.
 

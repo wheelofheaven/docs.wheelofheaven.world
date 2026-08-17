@@ -2,8 +2,16 @@
 //
 // Bifrost is included as a git submodule under themes/bifrost. We don't
 // activate it as the Zola theme (config.toml → theme = "docs-theme"),
-// but we use its SCSS abstracts so the docs site's palette, spacing,
-// and typography stay in sync with the main site automatically.
+// but we use its SCSS abstracts so the docs site's palette, spacing, and
+// typography come from the same source as the main site.
+//
+// "Same source" is not "automatically in sync": the submodule is pinned,
+// nothing advances it for us, and this repo's pin drifts freely from the
+// one in www.wheelofheaven.world. Upstream token changes land here only
+// when someone bumps the pin. These four @forwards are the entire
+// surface the docs site consumes, so that is the only diff worth
+// checking before a bump — see .claude/CLAUDE.md, "The Bifrost pin is
+// manual".
 
 @forward "../../../bifrost/sass/abstracts/colors";
 @forward "../../../bifrost/sass/abstracts/variables";
