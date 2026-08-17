@@ -31,27 +31,29 @@ Inline bookmark button and the slide-in panel that gathers everything a
 reader can pick back up: books and pages they're part-way through, audio
 they're mid-way into, notes they've taken, and pages they saved for later.
 
-The panel is a **floating glass card docked to the trailing edge**, not an
-edge-welded drawer — it uses the same overlay grammar as the
-keyboard-shortcuts modal and the navbar dropdowns: `--color-navbar-bg` +
-`blur(20px) saturate(180%)`, a hairline border on all four sides, `1rem`
-radius, `0 24px 48px` shadow, over an 8px-blurred scrim. Its rows are
-transparent and tint on hover like `navbar-dropdown__link`, so the blur
-stays visible through the list instead of being covered by opaque tiles.
+The panel is built to **the same recipe as `.search-modal`**, so the two
+overlays read as one family:
 
-Two details worth knowing before editing it:
+| | Value |
+|---|---|
+| Container | `background: transparent`, `border: 1px solid var(--color-border)`, `1rem` radius |
+| Shadow | `0 25px 50px` drop + `0 0 0 1px` outer ring + `inset 0 1px 0` top highlight |
+| Glass | on `::before` — `--color-navbar-bg` + `blur(12px)` |
+| Header | transparent + `blur(10px)`, `rgba(255,255,255,0.1)` rule |
+| Scrim | `rgba(0,0,0,0.3)`, **unblurred** — keeps the page behind it sharp |
 
-- **The glass stays on `.reading-list-panel__content` itself**, even though
-  `_search-modal.scss` hosts its blur on a `::before`. That element is the
-  one carrying the slide `transform`, and WebKit only drops backdrop-filter
-  for a *transformed ancestor* — a self-transform is fine. Moving the blur
-  to a pseudo would turn the self-transform into an ancestor transform and
-  kill the glass on iOS.
-- **`--panel-inset` / `--panel-closed-x`.** The card is inset from the
-  viewport, so the closed position has to clear the inset too or a sliver
-  stays on screen. RTL overrides only `--panel-closed-x` (flexbox already
-  docks the card to the correct edge; CSS translate is physical and does
-  not follow direction).
+Note what that costs, because it is easy to "fix" by accident: **the panel
+does not slide.** Glass can live on a pseudo-element only while nothing
+above it is transformed — WebKit drops backdrop-filter for any element with
+a transformed ancestor. That is why `.search-modal` centres itself with
+`margin-inline: auto` rather than `translateX(-50%)` and animates opacity
+alone, and the panel now does the same. Reintroducing a
+`transform: translateX()` here would silently kill the blur on iOS. The
+upside is that `--panel-closed-x`, its RTL sign-flip and a defensive
+overflow clip all stopped being necessary; only `--panel-inset` remains.
+
+RTL needs nothing: `justify-content: flex-end` is direction-aware, so the
+card docks to the correct edge on its own.
 
 **Source:**
 [`themes/bifrost/sass/components/_reading-list.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_reading-list.scss)
@@ -62,7 +64,32 @@ Two details worth knowing before editing it:
 | `.reading-list-panel`                | The panel itself; opened by any `[data-toggle-reading-list]` or `Shift+B`. |
 | `.reading-list-panel__group`         | One titled group — continue reading, continue listening, recent notes, saved for later. |
 | `.reading-list-panel__group-title`   | The group heading.                                                 |
-| `.reading-list-panel__item`          | One entry — links to the page or verse, shows title and context.   |
+| `.reading-list-panel__item`          | One row, hairline-separated — the `.search-result` idiom.          |
+| `.reading-list-panel__section`       | Accent section chip ("Wiki", "Library · Ch. 6").                    |
+| `.reading-list-panel__item-title`    | The title. Carries the weight; goes accent on hover.               |
+| `.reading-list-panel__meta`          | "42% · 2 hours ago" — the quiet quantitative line.                 |
+
+### Row anatomy
+
+Every group renders the same three-part row — chip, title, meta — so the
+panel reads as one list rather than three. Rows are borderless and
+separated by a hairline, tinting on hover, exactly like `.search-result`;
+cards with their own border and fill fought the glass behind them.
+
+Two things that are easy to get wrong here:
+
+- **`.reading-list-panel__list` is not unique.** Each group renders one.
+  Any lookup for it must be scoped to its group — `updatePanel()` used a
+  panel-wide `querySelector` and wrote the saved items into the *Continue*
+  group's list, so with both kinds present the open items disappeared.
+- **`__meta` uses `--color-text-muted`, not `--color-text-subtle`.** It
+  deliberately diverges from `.search-result__url`, which uses the subtle
+  token at reduced opacity — that is $gray-500 on the light theme, 2.1:1
+  against the panel, and this line carries real information.
+
+Quoted note passages use `<q>`, not hardcoded quotation marks: the element
+supplies locale-correct marks on its own, which matters across ten
+languages.
 
 The panel is built client-side from `localStorage`. Two scripts share it:
 `reading-list.js` owns the panel and the saved-for-later group, and
@@ -143,21 +170,43 @@ all four theme branches (`themes/_init.scss` dark + light, `_dark.scss`,
 `_light.scss`) and **inverts per theme**, because the badge has to clear two
 different things at once: its own digit, and the chrome behind it.
 
-| Theme | Fill        | Digit       | Contrast |
-|-------|-------------|-------------|----------|
-| Dark  | `$pink-300` | `$pink-900` | 7.5:1    |
-| Light | `$pink-800` | `$white`    | 5.6:1    |
+| Theme | Fill         | Digit        | Contrast |
+|-------|--------------|--------------|----------|
+| Dark  | `$mint-300`  | `$mint-900`  | 7.7:1    |
+| Light | `$mauve-700` | `$white`     | 6.8:1    |
 
-A pale fill pops against the dark navbar but disappears into the light one
-(1.2:1 against it), hence the inversion rather than one shared fill. Both
-directions clear WCAG AA for normal text — the badge is 12px, well under the
-18.66px bold that would let it qualify as large text at 3:1.
+The fills come from the **accent family** — the same mint and mauve as the
+links, focus rings and section chips — so the count reads as part of the UI
+rather than a warning pasted onto it.
+
+The pair inverts per theme because the badge has to clear two things at
+once: its own digit, and the chrome behind it. A pale fill pops against the
+dark navbar but disappears into the light one. Both directions clear WCAG AA
+for normal text — the badge is 12px, well under the 18.66px bold that would
+let it qualify as large text at 3:1.
+
+The badge also carries `box-shadow: 0 0 0 2px var(--color-background)`. It
+sits on top of the icon it annotates, and without that ring the two shapes
+merge into one blob; the ring is what makes it read as a distinct chip.
 
 This replaced a static `c.$pink` fill with `color: white`. `$pink` resolves
 to `$pink-300`, a pale peach, so that was **1.2:1 — illegible in both
 themes**, and it was wrong in three places at once (`.nav-badge`, the
 bookmark toggle badge, and the Read-dropdown badge, the last on
 `--color-accent-primary` at 1.3:1 against dark-theme mint).
+
+### Known contrast weaknesses elsewhere
+
+Two related issues live in `_search-modal.scss` and are **not** fixed, since
+correcting them changes the search overlay's own appearance:
+
+- `.search-result__url` uses `--color-text-subtle` at `opacity: 0.7` —
+  $gray-500 on the light theme, ~2.1:1.
+- `.search-result__section` writes its tint and border as
+  `rgba(var(--color-accent-primary), 0.1)`. The custom property holds a hex,
+  so `rgba()` receives an invalid argument and the browser drops both
+  declarations — the chip renders as bare accent text. The Continue panel's
+  section chip deliberately matches how it *renders*, not what it declares.
 
 Two constraints are load-bearing:
 
