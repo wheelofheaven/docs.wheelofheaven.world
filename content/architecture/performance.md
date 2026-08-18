@@ -174,6 +174,12 @@ layer falls back to `var(--color-background)` — white in light mode and the
 canonical near-black in dark mode — so cross-section transitions never expose
 the browser's black unloaded-video surface in the light theme.
 
+Landing media URLs are immutable CDN objects. When an existing poster or clip
+is replaced in place, append the asset repository's short commit SHA as a
+`?v=` token in `templates/index.html`. This preserves long-lived caching for
+unchanged scenes while ensuring that browsers and edge caches request the new
+object immediately.
+
 ## Font discipline: web-font fetches on the LCP path
 
 The `iAWriterQuattroS` monospace was historically declared on every
