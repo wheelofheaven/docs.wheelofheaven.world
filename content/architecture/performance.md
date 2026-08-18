@@ -167,6 +167,13 @@ Keep `preload="none"`. Initial source assignment deliberately does not call
 `load()`, so the first-engagement gate still keeps video bytes off the LCP
 path. Only the theme-matched poster is needed for first paint.
 
+The selected poster is also applied as the media layer's CSS background. The
+video remains transparent until `loadeddata` confirms that its first frame is
+decoded, then fades in over that poster. If neither has painted yet, the media
+layer falls back to `var(--color-background)` — white in light mode and the
+canonical near-black in dark mode — so cross-section transitions never expose
+the browser's black unloaded-video surface in the light theme.
+
 ## Font discipline: web-font fetches on the LCP path
 
 The `iAWriterQuattroS` monospace was historically declared on every
