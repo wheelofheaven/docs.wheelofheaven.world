@@ -91,6 +91,30 @@ Quoted note passages use `<q>`, not hardcoded quotation marks: the element
 supplies locale-correct marks on its own, which matters across ten
 languages.
 
+The chip carries its section's identity glyph ahead of the label, as a
+`.section-mark--chip` sized in rem rather than the inherited `1em` — the
+chip's font-size is 0.6875rem, and these are detailed Game-Icons marks that
+turn to mush at 11px. It takes `currentColor` so glyph and label read as one
+accent token, and the chip is a flex row: the marks have no baseline of
+their own and sat visibly low against uppercase micro-type.
+
+Runtime-built markup can't call the `section_icons::section` Tera macro, so
+`scripts/section-icons.js` generates `static/js/section-icons.js`
+(`window.WohSectionIcons.markup(slug)`) from `data/icons.json` plus
+`templates/partials/icons/`, and `npm run bundle` regenerates it into
+`core.bundle.js`. **It is deliberately a bundle module rather than a
+per-page inline map** like `wiki-section.html`'s `WIKI_CATEGORY_ICONS`: the
+five glyphs are ~10KB and are needed on every page, so the cached bundle
+pays for them once instead of every request. When `data/icons.json` isn't
+reachable — the standalone theme clone has no site root — the generator
+keeps the committed copy rather than writing an empty map over it.
+
+One asymmetry to know: continue/listening/notes rows carry a section
+*slug*, but a saved row stores `section` as the section **title**, which is
+translated and so can't key an icon map. `reading-list.js` derives the slug
+from the row's URL instead, which also covers rows saved before glyphs
+existed.
+
 The panel is built client-side from `localStorage`. Two scripts share it:
 `reading-list.js` owns the panel and the saved-for-later group, and
 `continue-reading.js` renders the in-progress, listening and notes groups
@@ -221,27 +245,60 @@ Two constraints are load-bearing:
 
 RTL flips the badge to the leading corner via `sass/layout/_rtl.scss`.
 
-The distinction from the bookmark-adjacent badge
-(`.reading-list-toggle__badge`) is deliberate: that one still counts only
-saved pages, because it sits next to bookmark-specific labels.
+### Every count in the chrome is this one badge
 
-### `.reading-list-toggle__badge` renders in two contexts
+`.nav-badge` is now the only count in the chrome. It renders in four places
+— the burger toggle, the bookmark button inside the burger overlay, the
+desktop `.navbar__reading-btn`, and **inline** in the Read dropdown's "Open
+reading list" row — and all four read the same open-item total from
+`continue-reading.js` via `[data-continue-badge]`.
 
-It appears both pinned to the navbar bookmark button and **inline** inside
-the Read dropdown's "Open reading list" row. `_reading-list.scss` writes it
-as `&__badge` nested under `.reading-list-toggle`, which BEM-concatenates to
-a bare `.reading-list-toggle__badge` — a *class* selector, not a descendant
-one — so its corner-pinning rules apply to the inline instance too. The
-dropdown block in `layout/_navbar-dropdown.scss` therefore has to explicitly
-reset `position: static` and repeat `&--visible` at its own (0,3,0)
-specificity.
+Three placements are corner-pinned; the dropdown row takes
+`.nav-badge--inline`, which drops the corner geometry (`position: static`,
+`margin-inline-start`, no separation ring) and overrides `--visible` to
+`inline-flex` at (0,2,0) so the chip joins the text flow. Inside the burger
+overlay the badge is inset to `top/right: 4px`: its 44px `.navbar__bar-btn`
+host is a bordered pill around a 22px glyph, so the button's own corner sits
+too far from the mark it annotates.
 
-Both were live bugs. The inline badge was being absolutely positioned out of
-its row, and it stopped appearing entirely the moment `reading-list.js`
-moved from an inline `style.display` to a modifier class — an inline style
-beats any selector, so the specificity shortfall had been masked. If you add
-a third rendering context, reset `position` and re-declare `--visible` there
-too.
+The burger's badge hides while the menu is open
+(`.navbar--mobile-expanded .navbar__mobile-toggle .nav-badge`). The overlay
+carries the same count on the bookmark button inside it, and a count riding
+a close X reads as "5 things to close".
+
+**Retired:** `.reading-list-toggle__badge` and `reading-list.js`'s
+`updateCounterBadge()`. That badge counted *saved bookmarks only*, and it
+rendered next to two controls showing the open-item total — so the chrome
+disagreed with itself about what "your reading" adds up to. The saved count
+now reaches the shared badge through the `woh:reading-list-changed` event
+that `saveReadingList()` dispatches. Its old copy went too: the dropdown
+row's description named only the saved pile, so it was rewritten in all ten
+locales to name both groups the panel shows.
+
+The retired class had left two live bugs on record, worth keeping in mind
+for any future badge: `_reading-list.scss` wrote it as `&__badge` nested
+under `.reading-list-toggle`, which BEM-concatenates to a bare
+*class* selector rather than a descendant one — so corner-pinning leaked
+onto the inline instance — and `--visible` had to be repeated at the
+dropdown's own specificity, a shortfall masked for as long as the JS wrote
+an inline `style.display` (which beats any selector).
+
+### The corner FABs render above the burger overlay
+
+`.search-fab`, `.reader-fab` and `.to-top` are `position: fixed; z-index:
+110` in the bottom-right — exactly where the expanded burger menu puts its
+bar-controls row (theme, language, reading list). They stayed above the
+overlay, so the reading-list button was fully occluded: `elementFromPoint`
+at its badge returned `search-fab__icon`, the count painted underneath, and
+a tap on the bookmark opened search.
+
+`layout/_navbar.scss` hides the cluster for as long as the menu is up, from
+inside the existing `html:has(body.mobile-nav-open)` block. **That host is
+load-bearing, not incidental.** A plain `body.mobile-nav-open .reader-fab`
+scores (0,2,1) — an exact tie with `body:has(.wiki__sidebar) .reader-fab` in
+`components/_reader-fab.scss`, which wins on source order because components
+load after layout. `html:has(body.mobile-nav-open)` scores (0,2,2) and
+actually applies.
 
 ## `.continue-chip` / `.continue-module`
 
