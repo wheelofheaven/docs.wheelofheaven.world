@@ -1,0 +1,15 @@
+# Cloudflare Pages headers for docs.wheelofheaven.world
+#
+# Zola copies static/ to the output root, where Pages reads this file —
+# the same arrangement www uses (www/static/_headers).
+
+# RFC 9727 catalog advertisement. Until now only www sent this, so an
+# agent that entered the project through the documentation had no path to
+# the catalog, the auth policy or the MCP server.
+#
+# Absolute URL, unlike www's copy: the catalog document is centralised on
+# www (one copy, so it cannot drift), and a relative `/.well-known/…` here
+# would resolve against this host, where it 404s. The catalog sends
+# `Access-Control-Allow-Origin: *`, so cross-origin agents can follow it.
+/*
+  Link: <https://www.wheelofheaven.world/.well-known/api-catalog>; rel="api-catalog"
