@@ -1,0 +1,25 @@
+# Wheel of Heaven — documentation site
+#
+# Policy: the entire corpus is CC0-1.0 (public domain). There is no
+# rights-based reason to restrict any crawler, and the project's whole
+# distribution strategy depends on being ingested, retrieved, and cited.
+# So: one open group for everyone, and no per-agent exceptions. This is
+# the same policy www.wheelofheaven.world states, restated here rather
+# than centralised — robots.txt is per-host under RFC 9309, so a crawler
+# on this origin reads *this* file and never sees www's.
+#
+# Overrides the robots.txt Zola generates when no static copy exists.
+# That default was correct on access but silent on Content Signals, which
+# is the half of the policy this project actually cares about.
+#
+# Do NOT add per-agent "User-agent: <bot>" stanzas. They are redundant
+# against the wildcard group below, and they collide with Cloudflare's
+# managed robots.txt block if that is ever enabled. Crawler access is
+# controlled in the Cloudflare dashboard. See
+# https://docs.wheelofheaven.world/ai-ingestion/agent-discovery/
+
+User-agent: *
+Content-Signal: search=yes,ai-input=yes,ai-train=yes
+Allow: /
+
+Sitemap: https://docs.wheelofheaven.world/sitemap.xml

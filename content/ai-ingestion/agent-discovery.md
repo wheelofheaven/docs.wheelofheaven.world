@@ -26,6 +26,13 @@ All discovery documents are served from `www.wheelofheaven.world`,
 because that is where a scanner following `wheelofheaven.world` lands.
 The services they describe live on other subdomains.
 
+`robots.txt` is the one exception, and it has to be: under
+[RFC 9309](https://www.rfc-editor.org/rfc/rfc9309.html) it is read
+per-host, so a crawler fetching an image from `assets` reads *that*
+host's file and never sees this one. It is therefore restated on every
+host rather than centralised here — see
+[Crawler policy](#crawler-policy) below.
+
 | Path | What it is | Spec |
 |---|---|---|
 | [`/robots.txt`](https://www.wheelofheaven.world/robots.txt) | Crawl rules and content signals | [RFC 9309](https://www.rfc-editor.org/rfc/rfc9309.html) |
@@ -100,6 +107,32 @@ indexing for search is fine, use as retrieval input for a generative
 answer is fine, and training or fine-tuning on the corpus is fine. A
 project that publishes `llms-full.txt` and runs a public MCP server
 would be incoherent saying otherwise.
+
+### Every host states it
+
+Because `robots.txt` is read per-host, a policy stated only on `www` is
+a policy three quarters of the project never makes. Each host serves its
+own copy of the group above, from its own source:
+
+| Host | Served from |
+|---|---|
+| `www` | `static/robots.txt` in the www repo |
+| `wheelofheaven.world` | redirects to `www` |
+| `api` | `static/robots.txt` in the api repo |
+| `docs` | `static/robots.txt` — overrides the one Zola generates, which was silent on Content Signals |
+| `assets` | `robots.txt` at the repo root, served by Cloudflare Pages |
+| `mcp` | a route in `src/worker.ts`, ahead of the catch-all 404 |
+
+Only `www` and `api` carry a `Sitemap:` line, because only they have
+one. `assets` serves media referenced by the other sites rather than a
+browsable set of URLs of its own.
+
+A missing file is not a neutral default here. Under RFC 9309 a `404`
+means "no restrictions", so nothing was ever being *blocked* on the
+hosts that lacked one — but nothing was being *declared* either, and
+the declaration is the half this project cares about. Cloudflare's
+robots.txt monitor is the place this shows up: it reports Content
+Signals as "Declared" or "Not set" per hostname.
 
 ### Where crawler access is actually controlled
 
