@@ -230,6 +230,11 @@ Proxied: yes
 - Automatic certificate provisioning
 - Full (strict) SSL mode
 - HTTPS enforced
+- HSTS is set **zone-wide** in the Cloudflare dashboard, not per
+  repository — and the edge value silently replaces any
+  `Strict-Transport-Security` an origin sends. Do not add one to a
+  `_headers` file. See
+  [Security and Transport](@/architecture/security-and-transport.md).
 
 ## Headers configuration
 

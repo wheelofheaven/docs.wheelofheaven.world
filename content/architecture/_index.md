@@ -25,6 +25,11 @@ this section drills into specific corners.
   repository: how the framework's claims, evidence, and source
   interpretation are recorded and versioned, the five orthogonal claim
   axes, and the page-to-claim publication-integration contract.
+- **[Security and Transport](@/architecture/security-and-transport.md)** —
+  which security headers each of the six hosts sends and where each is
+  configured, the zone-wide HSTS policy and its ramp, the `security.txt`
+  reporting channel with its generated expiry, and why preload is
+  deliberately deferred.
 - **[Hosting and Caching](@/architecture/hosting-and-caching.md)** —
   what gets cached where, with TTLs by asset type, how cache
   invalidation works on deploy, and how to debug a stale-content
