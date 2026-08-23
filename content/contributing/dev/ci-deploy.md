@@ -236,7 +236,7 @@ Proxied: yes
 Custom headers via a `_headers` file in the output:
 
 ```
-# static/_headers (api example)
+# static/_headers
 /*
   Access-Control-Allow-Origin: *
   Access-Control-Allow-Methods: GET, HEAD, OPTIONS
@@ -245,6 +245,36 @@ Custom headers via a `_headers` file in the output:
 /v1/*
   Cache-Control: public, max-age=3600
 ```
+
+### Two ways a `_headers` change silently does nothing
+
+Both of these cost real time on 2026-08-23. Neither produces an error you
+will see without the Pages build log, and in both cases *some* headers keep
+working, which is what makes them convincing.
+
+**On `api`, `static/_headers` is not the file that ships.** `zola build`
+copies it into `public/`, and then `scripts/postbuild.sh` overwrites
+`public/_headers` wholesale with a heredoc. Response headers for the API go
+in that heredoc. `static/_headers` has been deleted from that repo so it
+cannot mislead again — do not recreate it. The tell was on the wire all
+along: live API responses carry `X-License`, `X-Citable` and
+`X-API-Version`, none of which were in the static file.
+
+**A long comment preamble can stop rules applying.** `docs` shipped a
+`_headers` whose rule block sat under ~36 lines of leading comments; the
+`Content-Security-Policy`, `X-Frame-Options` and `Permissions-Policy` lines
+never appeared on a response, while the `Link` header in the same block
+did. Trimming the preamble to ~7 lines — changing nothing else — made all
+three apply. The exact threshold is unknown, so the rule of thumb is: keep
+`_headers` comments short, and put the reasoning in the commit message.
+
+Also keep comments **outside** the rule blocks. Every indented line under a
+path is parsed as `name: value`, so an indented `#` is not obviously safe,
+and the blocks that matter carry the CSP and HSTS.
+
+**Verify after deploying**, always — `curl -sI` the host and count the
+headers you expect. A `_headers` change that deploys cleanly and does
+nothing looks identical to one that worked.
 
 ## Redirects
 
