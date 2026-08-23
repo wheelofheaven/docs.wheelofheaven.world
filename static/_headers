@@ -1,39 +1,10 @@
-# Cloudflare Pages headers for docs.wheelofheaven.world
-#
-# Zola copies static/ to the output root, where Pages reads this file —
-# the same arrangement www uses (www/static/_headers).
-#
-# Keep comments OUTSIDE the rule blocks. Every indented line under a path
-# is parsed as `name: value`, so an indented `#` is not obviously safe,
-# and these blocks carry the CSP — not the place to find out.
+# Cloudflare Pages headers for docs.wheelofheaven.world.
+# Zola copies static/ to the output root, where Pages reads this file.
+# Rationale for these values lives in the commit history and in
+# content/ai-ingestion/agent-discovery.md — not inline, because a long
+# comment preamble is the one thing that differed from www's working file
+# when three of these headers failed to apply.
 
-# RFC 9727 catalog advertisement. Until now only www sent this, so an
-# agent that entered the project through the documentation had no path to
-# the catalog, the auth policy or the MCP server.
-#
-# Absolute URL, unlike www's copy: the catalog document is centralised on
-# www (one copy, so it cannot drift), and a relative `/.well-known/…` here
-# would resolve against this host, where it 404s. The catalog sends
-# `Access-Control-Allow-Origin: *`, so cross-origin agents can follow it.
-#
-# Security headers mirror www's set, minus two deliberate differences.
-#
-# `img-src` and `font-src` are `'self'` only: this site is entirely
-# self-hosted. Every request from the homepage, /architecture/,
-# /components/, /reference/icons/ and a Mermaid-bearing page goes to this
-# origin and nowhere else — verified by recording network traffic, because
-# the source tree *mentions* cdn.jsdelivr.net, fonts.googleapis.com and
-# registry.npmjs.org, all of them inside vendored bundles and lockfiles
-# rather than anything the browser fetches.
-#
-# No `'unsafe-eval'`, even though Mermaid renders here: the vendored
-# mermaid.min.js contains no `new Function(` and no bare `eval(`, so the
-# same `script-src 'self' 'unsafe-inline'` www uses is enough. It needs
-# `style-src 'unsafe-inline'` for the styles it injects into diagram SVG.
-#
-# No HSTS: it belongs on the apex, which currently serves no HSTS at all
-# and only 301s to www. Adding it per-subdomain here would be cargo cult —
-# see the note in www/static/_headers about the `preload` token.
 /*
   Link: <https://www.wheelofheaven.world/.well-known/api-catalog>; rel="api-catalog"
   X-Content-Type-Options: nosniff
