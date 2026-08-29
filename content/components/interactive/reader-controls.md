@@ -407,6 +407,42 @@ something to show, so a first-time reader's layout is byte-for-byte what
 it was without them. The chip additionally waits for
 `requestIdleCallback`, because the landing hero is the page's LCP.
 
+### The chip is built from navbar material
+
+`.continue-chip__link` used to carry its own palette — a
+`rgba(0, 0, 0, 0.45)` fill, `blur(12px) saturate(160%)` on the element,
+hardcoded white text, a 25%-white border. Every one of those is something
+the chrome around it expresses as a token, and at `0.45` the fill was
+roughly **four times as opaque as the navbar pill floating right above
+it**. The navbar read as tinted air; the chip read as a black card dropped
+onto the video. That gap, not the layout, was what made it feel foreign.
+
+It is now the navbar's own recipe — `var(--color-navbar-bg)` plus
+`blur(12px)` on a `::before`, a `--color-border` hairline, `--color-text` /
+`--color-text-muted` for copy, and the navbar's `1rem` radius. Being the
+same *mechanism* rather than a matched set of values is the point: the
+chip also joined the over-hero token remap in `pages/_home.scss`, so it
+flips with the rest of the chrome instead of hardcoding its own white.
+
+The old opaque fill was defending against a WebKit backdrop-filter
+drop-out — the original comment put it well: "the blur is an enhancement,
+not the thing carrying contrast." That risk is real but is now covered
+twice over, and centrally:
+
+- `themes/_init.scss` swaps `--color-navbar-bg` for the near-opaque
+  `--color-glass-bg` under `@supports not (backdrop-filter)`.
+- The chip's ancestor chain (`.landing-section__inner` and up) is
+  transform-free, which is the *other* half of why the navbar's glass
+  survives every engine. Keep it that way — a transform anywhere above the
+  chip silently kills the blur on iOS.
+
+It also turned out the chip was **double-scrimmed**:
+`.landing-section__overlay` already lays ~0.5 black over the video at the
+chip's height, so the old `0.45` fill was stacking a second scrim on a
+surface that was already dark. Measured on the rendered hero, the token
+version clears WCAG AA on all three lines in both themes — tightest is the
+light-theme label at 5.06:1.
+
 Two things this component gets asked about:
 
 - **Class names live only in JS strings**, so PurgeCSS cannot see them in
