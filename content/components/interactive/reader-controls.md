@@ -27,33 +27,109 @@ get neither the FAB nor a back-to-top.
 
 ## `.bookmark-btn` / Continue panel
 
-Inline bookmark button and the slide-in panel that gathers everything a
+Inline bookmark button and the overlay card that gathers everything a
 reader can pick back up: books and pages they're part-way through, audio
 they're mid-way into, notes they've taken, and pages they saved for later.
 
-The panel is built to **the same recipe as `.search-modal`**, so the two
-overlays read as one family:
+It is **the search overlay, opened from the bookmark icon instead of the
+magnifier** — not merely styled to match it. Same geometry, same glass,
+same scrim, same page treatment, so a reader who has opened one already
+knows how the other behaves:
 
 | | Value |
 |---|---|
-| Container | `background: transparent`, `border: 1px solid var(--color-border)`, `1rem` radius |
+| Position | `fixed`, `top: 5.5rem` (`4.5rem` <1000px, `4rem` <640px), centred with `margin-inline: auto` |
+| Width | `90%` / `95%` / `98%` at the same breakpoints as `.search-modal` |
+| Container | `background: transparent`, `border: 1px solid var(--color-border)`, `1rem` radius, `max-height: 70/75/80vh` |
 | Shadow | `0 25px 50px` drop + `0 0 0 1px` outer ring + `inset 0 1px 0` top highlight |
 | Glass | on `::before` — `--color-navbar-bg` + `blur(12px)` |
-| Header | transparent + `blur(10px)`, `rgba(255,255,255,0.1)` rule |
-| Scrim | `rgba(0,0,0,0.3)`, **unblurred** — keeps the page behind it sharp |
+| Header | transparent + `blur(10px)`, `rgba(255,255,255,0.1)` rule, title + "Press Esc to close" + close |
+| Scrim | `rgba(0,0,0,0.3)`, **unblurred** — the page blur is the shared `.search-modal-blur` layer at 4px |
+| Page | root scroll locked, FABs hidden, navbar receded (desktop only) |
 
-Note what that costs, because it is easy to "fix" by accident: **the panel
-does not slide.** Glass can live on a pseudo-element only while nothing
-above it is transformed — WebKit drops backdrop-filter for any element with
-a transformed ancestor. That is why `.search-modal` centres itself with
-`margin-inline: auto` rather than `translateX(-50%)` and animates opacity
-alone, and the panel now does the same. Reintroducing a
-`transform: translateX()` here would silently kill the blur on iOS. The
-upside is that `--panel-closed-x`, its RTL sign-flip and a defensive
-overflow clip all stopped being necessary; only `--panel-inset` remains.
+Three deliberate divergences from `.search-modal`, all of them corrections
+rather than drift:
 
-RTL needs nothing: `justify-content: flex-end` is direction-aware, so the
-card docks to the correct edge on its own.
+- **`max-width: 48rem`, not `80rem`.** Search runs to the navbar's full
+  width because its results are a two-column grid of title plus body
+  excerpt. These rows are single-column; 1280px of short titles reads as a
+  mostly-empty table.
+- **`z-index: 200`, not `60`.** The panel has to clear the FAB stack
+  (`.to-top` and `.reader-fab` at 110/120, the glossary tooltip at 150).
+  Those are hidden while it is open, but it must still out-rank anything
+  that reappears mid-transition.
+- **`visibility` is stepped, not eased.** See the gotcha below — this one
+  is load-bearing for focus, and `.search-modal` still has the latent bug.
+
+Note what the shared recipe costs, because it is easy to "fix" by accident:
+**the panel does not slide.** Glass can live on a pseudo-element only while
+nothing above it is transformed — WebKit drops backdrop-filter for any
+element with a transformed ancestor. That is why `.search-modal` centres
+itself with `margin-inline: auto` rather than `translateX(-50%)` and
+animates opacity alone, and the panel now does the same. Reintroducing a
+`transform: translateX()` here would silently kill the blur on iOS.
+
+RTL needs nothing, and needs less than it used to: a centred card has no
+edge to dock to, so the old direction-aware `justify-content: flex-end`
+(and, before that, `--panel-closed-x` with its RTL sign-flip) is gone.
+Only the tab strip mirrors, which it does on its own.
+
+### Tabs
+
+The panel holds three unrelated piles behind one icon, so it presents them
+as three tabs rather than one long scroll:
+
+| Tab | Contents | Rendered by |
+|---|---|---|
+| Reading | In-progress books and pages, then audio | `continue-reading.js` → `[data-continue-mount="reading"]` |
+| Saved | Bookmarked pages, plus the Export / Import / Clear footer | `reading-list.js` |
+| Notes | Verse-anchored notes across every book (up to 30) | `continue-reading.js` → `[data-continue-mount="notes"]` |
+
+The strip is styled as `.search-filters`' **chip row**, not as an
+underlined tab bar. The two overlays open from adjacent controls in the
+same chrome; giving them two different "pick a subset" idioms would make
+them look related but behave unrelated.
+
+- Each pill carries a live count, and goes to `--empty` (dimmed, never
+  removed) at zero — a tab that vanishes when its pile empties makes the
+  strip jump under the pointer and hides the fact that the pile exists.
+- The active pill fills from `--color-badge-bg` / `--color-badge-text`,
+  **not** `--color-accent-primary`. The accent is a mid-tone in both
+  themes and neither white nor the page background clears 4.5:1 on it; the
+  badge pair is the theme's existing legible accent fill.
+- Full WAI-ARIA tabs semantics: `role="tablist"` / `role="tab"` /
+  `role="tabpanel"`, roving `tabindex`, arrows (mirrored under RTL) and
+  Home/End. Opening moves focus onto the selected tab.
+- `openPanel(tab)` takes an optional tab name, and the delegated toggle
+  handler reads it off the button, so any entry point can deep-open:
+  `data-toggle-reading-list="notes"`. The bare attribute every current
+  call site uses means *pick for me* — `pickBestTab()` lands on the first
+  tab that has something in it rather than on whichever was open last.
+- Group headings survive only where a tab holds more than one list (the
+  reading tab, when something is being read *and* something listened to).
+  Elsewhere the pill above already names the pile.
+
+### Gotcha: `transition: all` on anything inside an overlay
+
+`visibility` is **inherited**, and the panel rests at
+`visibility: hidden`. Two consequences bit in sequence, and both are
+invisible until you try to move focus into the panel:
+
+1. `transition: opacity .3s ease, visibility .3s ease` — what
+   `.search-modal` still declares — keeps the panel computing as `hidden`
+   for the whole fade-in. Nothing inside a hidden subtree can take focus,
+   so `focus()` on open did nothing at all, silently. No number of `rAF`s
+   fixes it; the property genuinely has not flipped yet. The fix is to
+   step it: `visibility 0s linear .3s` at rest (delay the hide until the
+   fade-out finishes) and `visibility 0s linear 0s` on `--open`.
+2. With that fixed, the *tab buttons* stayed hidden anyway — because
+   `transition: all` on `.reading-list-panel__tab` animated the inherited
+   `visibility` change on the descendant. Enumerate transitioned
+   properties inside an overlay; never use `all`.
+
+Symptom to recognise: the overlay opens and looks right, but
+`document.activeElement` is still `<body>`, and keyboard navigation inside
+it does nothing until roughly one transition-duration later.
 
 **Source:**
 [`themes/bifrost/sass/components/_reading-list.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_reading-list.scss)
@@ -62,7 +138,13 @@ card docks to the correct edge on its own.
 |--------------------------------------|-------------------------------------------------------------------|
 | `.bookmark-btn`                      | Inline button that toggles whether the current entry is saved.    |
 | `.reading-list-panel`                | The panel itself; opened by any `[data-toggle-reading-list]` or `Shift+B`. |
-| `.reading-list-panel__group`         | One titled group — continue reading, continue listening, recent notes, saved for later. |
+| `.reading-list-panel__container`     | The glass card. (Was `__content` before it took the search overlay's geometry.) |
+| `.reading-list-panel__tabs`          | The `role="tablist"` chip row.                                     |
+| `.reading-list-panel__tab`           | One pill; `--active` fills it, `--empty` dims it.                  |
+| `.reading-list-panel__tab-count`     | The live count inside a pill.                                      |
+| `.reading-list-panel__tabpanel`      | One tab's contents; hidden via the `hidden` attribute.             |
+| `.reading-list-panel__empty`         | A tab's own "nothing here" block — glyph, title, hint.             |
+| `.reading-list-panel__group`         | One titled group, only where a tab holds more than one list.       |
 | `.reading-list-panel__group-title`   | The group heading.                                                 |
 | `.reading-list-panel__item`          | One row, hairline-separated — the `.search-result` idiom.          |
 | `.reading-list-panel__section`       | Accent section chip ("Wiki", "Library · Ch. 6").                    |
@@ -79,9 +161,10 @@ cards with their own border and fill fought the glass behind them.
 Two things that are easy to get wrong here:
 
 - **`.reading-list-panel__list` is not unique.** Each group renders one.
-  Any lookup for it must be scoped to its group — `updatePanel()` used a
+  Any lookup for it must be scoped — `updatePanel()` once used a
   panel-wide `querySelector` and wrote the saved items into the *Continue*
-  group's list, so with both kinds present the open items disappeared.
+  group's list, so with both kinds present the open items disappeared. The
+  saved list now carries its own `[data-saved-list]` hook.
 - **`__meta` uses `--color-text-muted`, not `--color-text-subtle`.** It
   deliberately diverges from `.search-result__url`, which uses the subtle
   token at reduced opacity — that is $gray-500 on the light theme, 2.1:1
@@ -116,11 +199,14 @@ from the row's URL instead, which also covers rows saved before glyphs
 existed.
 
 The panel is built client-side from `localStorage`. Two scripts share it:
-`reading-list.js` owns the panel and the saved-for-later group, and
-`continue-reading.js` renders the in-progress, listening and notes groups
-into the `[data-continue-mount]` slot. They stay in step through a
-`woh:reading-list-changed` document event, so bundle order matters —
-`continue-reading.js` must load after `reading-list.js`.
+`reading-list.js` owns the panel, the tab strip and the saved tab;
+`continue-reading.js` fills the two mounts the strip exposes,
+`[data-continue-mount="reading"]` and `[data-continue-mount="notes"]`.
+Tab counts come from `ContinueReading.getReadingCount()` and
+`getNotesCount()`, read defensively so the panel still works if that module
+is absent. They stay in step through a `woh:reading-list-changed` document
+event, so bundle order matters — `continue-reading.js` must load after
+`reading-list.js`.
 
 ### What counts as an open item
 
@@ -135,9 +221,10 @@ directly rather than through `LibraryStorage` — that module only ships in
 | `woh_listen_progress`  | `listen-button.js`     | Position in an audio session.           |
 | `woh-reading-list`     | `reading-list.js`      | Pages saved for later.                  |
 
-Notes (`woh_library_notes`) render as their own group but stay out of the
-badge count — they are annotations on open items, not a separate pile of
-unfinished business.
+Notes (`woh_library_notes`) get their own tab but stay out of the badge
+count — they are annotations on open items, not a separate pile of
+unfinished business. The badge is `getOpenItemCount()`, which is
+`getReadingCount()` plus the saved count.
 
 Everything expires after 90 days, so a count can shrink on its own. Page
 and audio records are keyed by the **locale-stripped path**, so the same
