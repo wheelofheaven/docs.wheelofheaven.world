@@ -109,27 +109,42 @@ them look related but behave unrelated.
   reading tab, when something is being read *and* something listened to).
   Elsewhere the pill above already names the pile.
 
-### Gotcha: `transition: all` on anything inside an overlay
+### Gotcha: `transition: all` on a persistent element inside an overlay
 
 `visibility` is **inherited**, and the panel rests at
-`visibility: hidden`. Two consequences bit in sequence, and both are
-invisible until you try to move focus into the panel:
+`visibility: hidden`. Opening it changes that on every descendant — so
+`transition: all` on a descendant animates the inherited `visibility`
+change, and Chrome holds that element at `hidden` for the duration.
+Nothing inside a hidden subtree can take focus, so moving focus onto the
+selected tab as the panel opened did nothing at all, silently.
 
-1. `transition: opacity .3s ease, visibility .3s ease` — what
-   `.search-modal` still declares — keeps the panel computing as `hidden`
-   for the whole fade-in. Nothing inside a hidden subtree can take focus,
-   so `focus()` on open did nothing at all, silently. No number of `rAF`s
-   fixes it; the property genuinely has not flipped yet. The fix is to
-   step it: `visibility 0s linear .3s` at rest (delay the hide until the
-   fade-out finishes) and `visibility 0s linear 0s` on `--open`.
-2. With that fixed, the *tab buttons* stayed hidden anyway — because
-   `transition: all` on `.reading-list-panel__tab` animated the inherited
-   `visibility` change on the descendant. Enumerate transitioned
-   properties inside an overlay; never use `all`.
+Measured, not inferred: with everything else already fixed, injecting an
+enumerated `transition` on `.reading-list-panel__tab` alone flipped the
+button's computed `visibility` from `hidden` to `visible` at t0 and let
+focus land. That is why every transition inside the panel is enumerated.
 
-Symptom to recognise: the overlay opens and looks right, but
-`document.activeElement` is still `<body>`, and keyboard navigation inside
-it does nothing until roughly one transition-duration later.
+**Symptom to recognise:** the overlay opens and looks right, but
+`document.activeElement` is still `<body>` and keyboard navigation inside
+it does nothing.
+
+**It only bites elements that persist across open/close.** A transition
+needs a before-change style, so freshly-inserted nodes are immune — they
+just take their computed style. That is exactly why `.search-modal` never
+showed this despite having carried `transition: all` on six rules and
+`visibility .3s ease` on the modal for as long as it has existed: it
+rebuilds its results and suggestions from `innerHTML` on every open, and
+it moves focus to the navbar input, which lives *outside* the modal. The
+reading panel builds its tab strip once in `createPanel()` and reuses it,
+so its buttons do have a before-change style.
+
+Both overlays are now written the same defensive way — stepped
+`visibility`, enumerated transitions — but be honest about what that
+bought: on `.reading-list-panel` it fixed a reproducible focus failure; on
+`.search-modal` it is hygiene against a footgun that its render strategy
+happened to hide. Four A/B variants against the old declarations
+(`transition: all` on the persistent `.search-modal__close`, eased
+`visibility`, and both together) all focused correctly, so do not expect
+the search change to fix anything you can observe.
 
 **Source:**
 [`themes/bifrost/sass/components/_reading-list.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_reading-list.scss)
