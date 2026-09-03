@@ -18,6 +18,7 @@ pipelines are Python.
 |---|---|
 | Setting up the multi-repo dev environment | [Local Setup](@/contributing/dev/local-setup.md) |
 | Templates, SCSS, shortcodes (Bifrost) | [Bifrost Theme](@/contributing/dev/bifrost-theme.md) |
+| Iterating on the theme without a 3-minute rebuild | [Fast Theme Loop](@/contributing/dev/fast-theme-loop.md) |
 | Image processing, build pipeline, content validation | [Pipelines](@/contributing/dev/pipelines.md) |
 | Per-page Open Graph cards (social unfurls) | [OG Image Pipeline](@/contributing/dev/og-image-pipeline.md) |
 | Auto-posting new content to Telegram, Bluesky, etc. | [Social Broadcast Pipeline](@/contributing/dev/social-broadcast.md) |

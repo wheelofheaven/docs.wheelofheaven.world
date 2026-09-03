@@ -64,6 +64,12 @@ mise run serve
 
 Site available at <http://127.0.0.1:1199>.
 
+On the reading site, `mise run serve` builds all ten languages — about
+three minutes per rebuild, including for a one-line SCSS change. If
+you're working on the theme, use `mise run dev` (English only, ~19s) or
+`mise run css` (~0.5s, SCSS only) instead. See
+[Fast Theme Loop](@/contributing/dev/fast-theme-loop.md).
+
 ## Per-repo setup
 
 ### www.wheelofheaven.io (deployed at www.wheelofheaven.world)
@@ -123,10 +129,15 @@ run = "rm -rf public || true"
 ### Common commands
 
 ```sh
-mise run serve    # dev server
+mise run serve    # dev server (full site — all 10 locales)
 mise run build    # production build
 mise run check    # validate site
 mise run clean    # remove build output
+
+# www only — fast loops for theme work, see Fast Theme Loop
+mise run dev      # dev server, English only        (~19s per rebuild)
+mise run dev-lean # ditto, minus generated /sources/ (~10s)
+mise run css      # SCSS-only loop, no Zola          (~0.5s)
 ```
 
 ## Submodule workflow

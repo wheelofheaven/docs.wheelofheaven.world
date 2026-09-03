@@ -14,6 +14,17 @@ The docs site pins Bifrost as a submodule, independently of the pin in
 site only when someone bumps its pin — and only the four files under
 `sass/abstracts/` matter when deciding whether to.
 
+## Previewing your changes
+
+Bifrost is developed through the `www` repo — the theme has no site of
+its own. Be aware that Zola has no incremental path for theme edits: a
+one-line SCSS change under `themes/` re-renders all 10,689 pages, which
+is about three minutes.
+
+Use `mise run dev` (English only, ~19s) or `mise run css` (SCSS only,
+~0.5s) instead of `mise run serve`. See
+[Fast Theme Loop](@/contributing/dev/fast-theme-loop.md).
+
 ## Overview
 
 - **Repository:** [github.com/wheelofheaven/bifrost](https://github.com/wheelofheaven/bifrost)
