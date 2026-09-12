@@ -25,8 +25,16 @@ edge aligns visually.
 | `.related-content__grid`         | Two- or three-up grid of suggestion cards.                 |
 | `.related-content__item`         | One suggestion card — built on `.card`.                    |
 
-The list is generated server-side by walking taxonomies and the
-`page.extra.see_also` array; clients see a static set, no JS round-trips.
+The list is precomputed at build time by `scripts/build_related.py` in
+the site repo (`mise run related`, also run by `mise run build`), which
+writes one `data/related/<lang>.json` per locale keyed by page path. The
+rule: siblings in the same section that share the page's `extra.category`
+come first, then the next siblings in section order, up to four. The
+partial only looks its page up in that file. It used to call
+`get_section()` and scan the section's pages for every page, which made
+Zola serialise the whole section (every page with its rendered HTML) on
+each call and cost about half of the site's build time. Clients see a
+static set, no JS round-trips.
 
 ## Live examples
 
