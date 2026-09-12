@@ -24,6 +24,7 @@ the heavy lifting happens in component-level mixins like
 | `fluid-type($min, $max)`           | `font-size: clamp(…)` for responsive type.                    |
 | `mobile-table-scroll($breakpoint)` | Below `$breakpoint` (default 768px), makes a prose `table` scroll horizontally inside its own container instead of clipping at the viewport edge. Applied to the wiki, dispatch, and shared-content table styles. |
 | `respond($breakpoint)`             | Media-query shortcut: `sm` / `md` / `lg`.                     |
+| `chrome-glass($radius, $surface)`  | The navbar's glass — a ~10% tint plus a 12px backdrop blur on a `::before` — for floating chrome that should read as the same surface. Deliberately does not set `position`; see [chrome-glass](../../visual-language/chrome-glass/). |
 
 ```scss
 @use "../abstracts/mixins" as m;

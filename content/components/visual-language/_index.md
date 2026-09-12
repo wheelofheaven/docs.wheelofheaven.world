@@ -1,6 +1,6 @@
 +++
 title = "Visual language"
-description = "Glass + drifting cloud-duo gradient — the recipe Bifrost uses for premium CTAs and lead cards. Two adoption mixins: glass-cloud-card and glass-cloud-button."
+description = "Bifrost's two glass recipes: the cloud-duo gradient for premium CTAs and lead cards, and the navbar's quiet chrome glass for floating surfaces."
 sort_by = "weight"
 weight = 10
 
@@ -17,6 +17,19 @@ two mixins so adopters never reinvent the background treatment.
 |------------------------------------------------|---------|------------------------------------------|
 | [`glass-cloud-card`](glass-cloud-card/)        | Card    | Lead cards on section landings, reading-path tiles, lead Dispatch on /news/. |
 | [`glass-cloud-button`](glass-cloud-button/)    | Button  | In-content CTAs that should feel premium ("Read in *Book*", utility footers). |
+
+There is a second, unrelated glass recipe. `glass-cloud` is for surfaces
+that should draw the eye; **[`chrome-glass`](chrome-glass/)** is for
+surfaces that should not — floating chrome that reads as the same
+material as the navbar. It adds no gradient and no animation.
+
+| Mixin                              | Shape | Use for                                                |
+|------------------------------------|-------|--------------------------------------------------------|
+| [`chrome-glass`](chrome-glass/)    | Any   | Floating chrome and overlay panels: control clusters, map legends, popovers above a page rather than in it. |
+
+Do not reach for `glass-cloud` on chrome. The cloud-duo gradient makes a
+control cluster the loudest thing on the page — which is how the map's
+zoom controls ended up with cyan and mauve blobs behind their icons.
 
 Both expose two CSS custom properties (`--cloud-a`, `--cloud-b`) that
 adopters override per instance to pick a duo from the Bifrost 300-tier
