@@ -59,6 +59,33 @@ bundle-source change, **or** update the CF Pages build command above
 to include the bundle step. The build command shown above is the
 "fixed" form — once configured, CF Pages rebuilds on every push.
 
+#### Source detail pages on CF Pages
+
+The `/sources/{id}/` detail pages are Zola stubs written by
+`scripts/build_sources.py` into `content/sources/_generated/` and
+`content/{lang}/sources/_generated/`. The build command above never runs
+that script, and the stubs were gitignored in data-content from
+2026-06-12, so production served **no** source detail page until
+2026-09-15 — every reference link on every page 404'd, while local builds
+(which keep stubs from earlier `mise run sources` runs) looked fine.
+
+Since 2026-09-15 the stubs are **tracked** in data-content (801 English
+plus nine localized sets; the build stays at ~11,200 files, under the
+Pages cap). Regenerate them with `mise run sources` whenever
+`data/sources.json` changes and commit them with the data files. The
+cleaner long-term fix is to make the Pages build run the prebuild tasks
+itself, e.g.
+
+```sh
+curl -sL https://github.com/getzola/zola/releases/download/v0.22.0/zola-v0.22.0-x86_64-unknown-linux-gnu.tar.gz -o zola.tar.gz && tar xzf zola.tar.gz && python3 scripts/build_sources.py && python3 scripts/build_translations_manifest.py && python3 scripts/build_relatedness_layout.py && python3 scripts/build_related.py && cd themes/bifrost && npm ci && npm run bundle && cd ../.. && ./zola
+```
+
+after which the stubs could be un-tracked again. Pages build state is not
+visible from a developer machine (no CF credentials; the GitHub
+deployments API only lists the vestigial GitHub Pages deploys), so a push
+that shows nothing after ~12 minutes is best retriggered with an empty
+commit.
+
 ### api.wheelofheaven.world
 
 ```sh

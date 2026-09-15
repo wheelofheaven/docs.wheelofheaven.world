@@ -89,6 +89,11 @@ for English and localized shells at `/{lang}/sources/{id}/` from
 It also writes a reverse `data/sources/cited-by.json` index for the
 `Cited by` blocks. Those generated stubs are not hand-authored; the
 underlying source record stays single-sourced in `data/sources.json`.
+They are nevertheless **tracked** in data-content since 2026-09-15,
+because the Cloudflare Pages build does not run `build_sources.py` and
+production had no source pages without them — regenerate with
+`mise run sources` and commit them alongside `data/sources.json` (see
+[CI & Deploy](../dev/ci-deploy.md#source-detail-pages-on-cf-pages)).
 
 Every emitted record carries a `licensing_status` — merged from the
 hand-maintained sidecar `data/sources/licensing.json` (the single
