@@ -262,7 +262,7 @@ already `*`, with `mcp-session-id` exposed — CORS was never the problem.)
 `connect-src` in `static/_headers` now reads:
 
 ```
-connect-src 'self' https://assets.wheelofheaven.world https://mcp.wheelofheaven.world
+connect-src 'self' https://assets.wheelofheaven.world https://api.wheelofheaven.world https://mcp.wheelofheaven.world
 ```
 
 `script-src` is still `'self' 'unsafe-inline'`, and it is not yet known

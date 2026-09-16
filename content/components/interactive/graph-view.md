@@ -26,6 +26,12 @@ Fetched at runtime from
 — regenerated on api deploys, never at www build time. Roughly 193 nodes
 and 1,817 edges.
 
+The fetch is cross-origin, so `https://api.wheelofheaven.world` must stay in
+the www `connect-src` directive in `static/_headers`. `zola serve` does not
+apply that file, so a missing host only shows in production, as the page's
+own error state plus a console `Refused to connect` message (this is how
+the view was dark until 2026-09-16).
+
 Nodes carry `section`, `claim_type`, `category` and `degree`. Edges are
 typed: `see_also` (curated relatedness) or `in_body` (prose cross-link).
 
