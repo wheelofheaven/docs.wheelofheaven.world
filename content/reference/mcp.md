@@ -113,6 +113,15 @@ Every other path on the MCP host returns `404` — including
 cleanly and clients fall back to anonymous access rather than attempting
 a token exchange against a server that has no auth.
 
+**In the browser**, every page of `www.wheelofheaven.world` registers the
+same nine tools through [WebMCP](https://webmachinelearning.github.io/webmcp/),
+proxied to this server over Streamable HTTP, alongside eight page-level
+tools (site search, page metadata and text, citations, navigation). An
+agentic browser therefore gets the corpus without being told the endpoint
+exists. The names and schemas are copied from `tools/list`, so a change to
+the tool set has to be mirrored there — see the maintenance table in
+[Agent discovery](@/ai-ingestion/agent-discovery.md#webmcp-implemented-in-the-theme).
+
 Full detail: [Agent discovery and crawler policy](@/ai-ingestion/agent-discovery.md).
 
 ## Architecture notes

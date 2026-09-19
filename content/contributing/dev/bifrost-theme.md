@@ -168,6 +168,7 @@ Entry points are declared in `themes/bifrost/scripts/bundle.js`:
 |---|---|---|
 | `core.bundle.js` | every page, `?h=<contenthash>` | navbar, search-loader, reading-list, notification-stack, pwa, toc-scroll-spy, cite-copy, … |
 | `search.bundle.js` | lazy, on first search interaction, `?v=N` | `vendor/fuse.min.js`, `search.js` |
+| `webmcp.bundle.js` | lazy, only when `document.modelContext` / `navigator.modelContext` exists (agentic browsers, readiness scanners), `?v=N` | `webmcp.js` — 8 page-level WebMCP tools + the 9 MCP server tools proxied |
 | `library.bundle.js` | library pages | library-storage, library-reader, … |
 
 **Cache-busting is not uniform — this is the trap.** `core.bundle.js` is
@@ -178,6 +179,8 @@ alone will **not** reach returning visitors. You must **bump `?v=N` in
 `search-loader.js`**. Because `search-loader.js` lives in `core.bundle.js`,
 bumping it changes core's content-hash, which busts core's own cache → the fresh
 core then requests the new `search.bundle.js?v=N+1`.
+`webmcp.bundle.js` follows the same pattern: bump `?v=N` in
+`webmcp-loader.js` whenever `webmcp.js` changes.
 
 Verify a deploy end-to-end along the chain the browser follows:
 `index.html → core.bundle.js?h=… → search.bundle.js?v=…`.

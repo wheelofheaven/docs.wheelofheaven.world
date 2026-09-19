@@ -43,6 +43,7 @@ host rather than centralised here — see
 | [`/.well-known/mcp/server-card.json`](https://www.wheelofheaven.world/.well-known/mcp/server-card.json) | MCP server identity and transports | [MCP server schema](https://modelcontextprotocol.io/) |
 | [`/.well-known/agent-skills/index.json`](https://www.wheelofheaven.world/.well-known/agent-skills/index.json) | The nine tools, described | emerging |
 | [`/.well-known/auth.md`](https://www.wheelofheaven.world/.well-known/auth.md) | Authentication policy | emerging |
+| every HTML page | [WebMCP](#webmcp-implemented-in-the-theme) tool registration — 8 page-level tools plus the 9 MCP server tools, in-browser | [W3C CG draft](https://webmachinelearning.github.io/webmcp/) |
 | [`/auth.md`](https://www.wheelofheaven.world/auth.md) | The same document — scanners disagree on which path to probe, so both answer. A `200` rewrite in `_redirects`, not a second copy. | emerging |
 
 Every HTML response also carries a link header pointing at the catalog,
@@ -218,61 +219,66 @@ commerce. That is the correct shape for a public-domain knowledge
 project, and chasing the remaining checkboxes would mean publishing
 documents that describe a site this is not.
 
-### WebMCP — prepared, not enabled
+### WebMCP — implemented in the theme
 
-[WebMCP](https://blog.cloudflare.com/webmcp/) is a browser API
-(`navigator.modelContext.registerTool()`) that lets a page hand an agent
-a list of callable tools with typed parameters, instead of the agent
-screenshotting the page and guessing where to click. It is the in-browser
-counterpart to the [MCP server](@/reference/mcp.md): tools run in the
-page's own JS context, with whatever session the reader already has.
+[WebMCP](https://webmachinelearning.github.io/webmcp/) is a browser API
+that lets a page hand an agent a list of callable tools with typed
+parameters, instead of the agent screenshotting the page and guessing
+where to click. It is the in-browser counterpart to the
+[MCP server](@/reference/mcp.md): tools run in the page's own JS
+context, with whatever the reader already has open.
 
-This page previously listed WebMCP as declined, on the grounds that it
-would mean shipping JavaScript for a draft specification onto a static
-reading site. **That reasoning no longer holds.** Cloudflare injects the
-bridge at the edge via HTMLRewriter, composing selected *tool packs* into
-one tool list — so it is a zone toggle, not a build-time dependency. The
-cost side of the trade collapsed, which is reason enough to reopen a
-decision.
+The site registers its tools itself, from the bifrost theme, rather than
+through Cloudflare's edge-injected bridge. Two reasons. The CSP is
+`script-src 'self'`, so a bridge served from a Cloudflare path would be
+blocked unless the policy were loosened on a guess. And the page-level
+tools — search in the reader's language, the current page's metadata and
+text, citations, navigation — are things an edge proxy of the server
+cannot provide.
 
-What still argues for caution is the maturity, not the cost. WebMCP is a
-W3C **Community Group Draft Report** — explicitly *not* a W3C Standard
-and not on the Standards Track — implemented in Chrome and in origin
-trial. The real audience today is small.
+**How it loads.** `webmcp-loader.js`, a few lines inside
+`core.bundle.js`, checks for `document.modelContext` (the spec's entry
+point) or `navigator.modelContext` (the older name, which polyfills and
+readiness scanners shim into browsers that have no native API). Only
+when one exists does it inject `webmcp.bundle.js`, which registers the
+tools. Ordinary visitors download the stub alone.
 
-Two packs are offered, and only one is a fit:
+**Seventeen tools are registered, in two families:**
 
-- **Site MCP server** — proxies the nine existing server-side tools to
-  the in-browser agent. This is the fit: a reader browsing the corpus in
-  an agentic browser could search entries, pull primary-source passages,
-  and query the content graph without their agent knowing the MCP
-  endpoint exists. The expensive part is already built.
-- **Content Credentials (C2PA)** — reads provenance metadata from images.
-  **Leave off.** Project images are rendered by the project's own
-  pipelines and carry no C2PA manifests, so this would advertise
-  provenance-reading over images that have no provenance to read.
-  (Actually *signing* the generated renders would suit a project built on
-  epistemic labelling — but that is a pipeline project, not a toggle.)
+| Family | Tools | Notes |
+|---|---|---|
+| Page-level (8) | `search_site`, `get_current_page`, `get_page_text`, `fetch_entry`, `list_sections`, `cite_current_page`, `open_page`, `switch_language` | `search_site` reuses the site's own Fuse index and filters to the reader's language; `fetch_entry` reads the page's [JSON API twin](@/architecture/sites/api.md); `cite_current_page` returns what the Cite widget renders. |
+| MCP server (9) | `search_corpus`, `get_entry`, `get_passage`, `get_source`, `compare_traditions`, `query_graph`, `get_interpretation`, `get_method`, `get_glossary_term` | Same names and schemas as the server's `tools/list`; `execute` is a Streamable HTTP call to `mcp.wheelofheaven.world`. The session is opened lazily on the first call, so registering costs no network. |
 
-**The CSP prerequisite.** The site's Content-Security-Policy would have
-silently blocked the bridge: the MCP host was not in `connect-src`, so
-a browser-side fetch from a `www` page would be refused by the site's own
-policy regardless of how permissive the MCP server is. (Its CORS is
-already `*`, with `mcp-session-id` exposed — CORS was never the problem.)
-`connect-src` in `static/_headers` now reads:
+Every tool carries `readOnlyHint: true` except `open_page` and
+`switch_language`, which navigate. All registrations share one
+`AbortController`; `window.wohWebMCP.dispose()` unregisters everything,
+and `window.wohWebMCP.ready` resolves to the list of names that
+registered.
+
+**Keep Cloudflare's "Site MCP server" tool pack off.** It would register
+the same nine names a second time, and the spec rejects a duplicate
+registration — whichever loads second fails. The C2PA pack stays off for
+the reason given before: project images carry no provenance manifests.
+
+**The maturity caveat still stands.** WebMCP is a W3C Community Group
+Draft Report, shipping in Chrome's early preview only, and the entry
+point has already moved once (`navigator` → `document`, with Chromium 150
+deprecating the old name). The theme honours both, `document` first.
+If the API moves again, `webmcp.js` is the one file to touch.
+
+**Verify.** Cloudflare's Agent Readiness diagnostics and
+[isitagentready.com](https://isitagentready.com/) both load the page in
+a browser with a shimmed model context and record the registrations:
 
 ```
-connect-src 'self' https://assets.wheelofheaven.world https://api.wheelofheaven.world https://mcp.wheelofheaven.world
+POST https://isitagentready.com/api/scan
+{"url": "https://wheelofheaven.world"}
+→ checks.discovery.webMcp.status == "pass"
 ```
 
-`script-src` is still `'self' 'unsafe-inline'`, and it is not yet known
-whether Cloudflare serves the injected `bridge.js` from a same-origin
-path or an external one. If the toggle is enabled and the bridge fails to
-load, that is the first place to look — but the policy has deliberately
-*not* been loosened on a guess.
-
-So: the CSP is ready, the toggle is not thrown. Enabling it is a
-dashboard action under AI Crawl Control, and reversible.
+By hand, in Chrome Canary with WebMCP enabled, the *WebMCP DevTools*
+extension lists the registered tools on any page and can execute them.
 
 ### On readiness scores generally
 
@@ -291,7 +297,7 @@ somewhere else. When you change the source, change the copy:
 | If you change… | Also update |
 |---|---|
 | `mcp.wheelofheaven.world/server.json` (version, transports, package) | `www/static/.well-known/mcp/server-card.json` |
-| The MCP tool set (added, removed, or renamed a tool) | `www/static/.well-known/agent-skills/index.json` and [the MCP reference](@/reference/mcp.md) |
+| The MCP tool set (added, removed, or renamed a tool) | `www/static/.well-known/agent-skills/index.json`, [the MCP reference](@/reference/mcp.md), and `SERVER_TOOLS` in bifrost `static/js/webmcp.js` (then bump `?v=N` in `webmcp-loader.js` and re-bundle) |
 | API base URLs or documentation locations | `www/static/.well-known/api-catalog` and `api/templates/index.json` |
 
 The MCP host's own copy of the server card needs no maintenance — it is
