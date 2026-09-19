@@ -207,7 +207,7 @@ the rest. Not implementing a standard is a position, not a gap:
 
 | Not implemented | Why |
 |---|---|
-| **OAuth Protected Resource / OAuth Discovery** (RFC 9728, RFC 8414) | There are no protected resources. Publishing authorization-server metadata for a CC0 static site would advertise a login that does not exist. The MCP host returns a clean `404` on these paths precisely so clients fall back to anonymous access instead of attempting a token exchange. |
+| **OAuth Protected Resource / OAuth Discovery** (RFC 9728, RFC 8414) | There are no protected resources. Publishing authorization-server metadata for a CC0 static site would advertise a login that does not exist. The MCP host returns a clean `404` on these paths precisely so clients fall back to anonymous access instead of attempting a token exchange. This also caps the scanners' `auth.md` check: since 2026-09-19 `auth.md` states the registration position in the protocol's own terms (audience, endpoints, methods, credentials — all *none*) and passes that gate, but the check's next gate wants RFC 9728 metadata, so it reports "fail" by design. |
 | **Web Bot Auth** | Signs the requests of bots *you* operate against *other* people's sites. The project runs no crawlers. |
 | **A2A Agent Card** | Describes an agent other agents can delegate tasks to. The project publishes a corpus; it does not act on anyone's behalf. |
 | **DNS-AID** | DNS-level advertisement of AI resources. Cheap, and early enough that the record format is still moving. Revisit when it settles. |
