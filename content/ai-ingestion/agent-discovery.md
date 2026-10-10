@@ -200,6 +200,40 @@ For bulk ingestion prefer [`llms-full.txt`](@/ai-ingestion/llms-txt.md)
 or the [JSON API](@/ai-ingestion/api-for-ai.md) — negotiation is for
 agents fetching a page they already have a URL for.
 
+## Scorecard
+
+Measured with the open scanner at
+[isitagentready.com](https://isitagentready.com/) on 2026-10-10. The
+Cloudflare Agent Readiness panel runs the same checks grouped
+differently; it re-scans only on request from the dashboard.
+
+| Check | Result | Why |
+|---|---|---|
+| `robots.txt`, sitemap, `Link: rel="api-catalog"` | pass | |
+| Content Signals, AI crawler rules | pass | One open group; the policy is "everyone may" |
+| API catalog, MCP server card, skills index | pass | |
+| WebMCP | pass | 17 tools, since 2026-09-19 |
+| DNS-AID | pass | 4 SVCB records + DNSSEC, since 2026-10-10 |
+| Markdown negotiation | fail, by design | Pro-plan feature; the JSON twin already removes the page chrome |
+| OAuth discovery, OAuth protected resource | fail, by design | No protected resources |
+| `auth.md` | fail, by design | Describes registration; the next gate wants OAuth metadata |
+| A2A agent card | fail, by design | The project does not act on anyone's behalf |
+| ARD capability manifest | not yet | v0.9 draft; the only open item |
+| Commerce (5) | neutral | Nothing for sale |
+
+Overall level: **2, "Bot-Aware"**. Level 3 requires OAuth or A2A, which
+this project will not publish, so 2 is the ceiling and the correct
+result.
+
+To re-run:
+
+```bash
+curl -s -X POST https://isitagentready.com/api/scan \
+  -H 'Content-Type: application/json' -d '{"url":"https://wheelofheaven.world"}' \
+  | python3 -c 'import json,sys; c=json.load(sys.stdin)["checks"]; \
+    [print(g, k, v["status"]) for g in c for k,v in c[g].items() if isinstance(v,dict) and "status" in v]'
+```
+
 ## What the project does not implement
 
 Cloudflare's Agent Readiness scanner checks sixteen things. The project
@@ -364,6 +398,21 @@ done
 just the file — it reports "auth.md exists but is missing the expected
 Auth.md heading" if the document is titled anything else. Retitling that
 line to something more natural silently un-ticks the check.
+
+Then the two surfaces that are not files:
+
+```bash
+# DNS-AID: the scanner's own method — DNS-over-HTTPS with the DNSSEC flag
+for n in _index._agents _mcp._agents; do
+  curl -s -H 'accept: application/dns-json' \
+    "https://cloudflare-dns.com/dns-query?name=$n.wheelofheaven.world&type=SVCB&do=1" \
+    | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["Status"], d["AD"], [a["data"] for a in d.get("Answer",[]) if a["type"]==64])'
+done
+# expect: 0 True ['1 www.wheelofheaven.world. …'] and 0 True ['… mcp.wheelofheaven.world. …']
+
+# WebMCP: the bundle the loader fetches, and the loader inside core
+curl -s -o /dev/null -w '%{http_code}\n' 'https://www.wheelofheaven.world/js/dist/webmcp.bundle.js?v=1'
+```
 
 All seven should return `200`. `/.well-known/api-catalog` should report
 `application/linkset+json`, and both `auth.md` paths should report

@@ -1,6 +1,6 @@
 +++
 title = "Security and Transport"
-description = "Security headers per host, the zone-wide HSTS policy and its ramp, security.txt and the vulnerability-reporting channel, and why preload is deliberately deferred."
+description = "Security headers per host, the zone-wide HSTS policy and its ramp, DNSSEC and where its two halves live, security.txt and the vulnerability-reporting channel, and why preload is deliberately deferred."
 weight = 25
 +++
 
@@ -113,6 +113,76 @@ The `preload` token was previously present in www's header *without* the
 domain being on the list, which advertised something untrue. If preload is
 ever adopted, add the token as part of submitting, not before.
 
+## DNSSEC
+
+The zone has been signed since **2026-10-10**. It never was before: every
+DNS answer for the project — including the `_agents` records that
+advertise the MCP server to agents — was unauthenticated, and a validator
+could not tell a genuine answer from a forged one. The immediate trigger
+was [DNS-AID](@/ai-ingestion/agent-discovery.md#dns-aid-published-in-the-zone),
+whose scanners refuse an unsigned discovery record; the benefit is
+zone-wide.
+
+Like HSTS, DNSSEC is a **zone-level** fact with two halves in two places:
+
+| Half | Where | What |
+|---|---|---|
+| Signing | Cloudflare → DNS → Settings → DNSSEC | Cloudflare generates the keys and signs every RRset. KSK: algorithm 13 (ECDSA P-256/SHA-256), key tag `2371`, flags 257. The ZSK rotates on Cloudflare's schedule; the KSK, and therefore the DS, is stable. |
+| Chain of trust | The registrar — **Spaceship**, not Cloudflare | One DS record at `.world`: `2371 13 2 5706B2EF71FAB75EE00725C8B28CF37ADCC16C2DFEBD4DF2DE9BA7C75B71D851`. Entered by hand: Spaceship → Launchpad → Advanced DNS → `wheelofheaven.world` → DNSSEC tab → Add DS record. The algorithm dropdown there defaults to `8 RSA/SHA-256` and must be set to `13`. |
+
+Because the registrar is external, Cloudflare cannot place the DS itself.
+It shows "pending" until the DS appears at the TLD, which on 2026-10-10
+took about twenty minutes after Spaceship accepted it (the registry's
+RDAP record showed `delegationSigned: true` within two).
+
+### Verify the DS before it goes to the registrar
+
+A wrong DS does not degrade gracefully: every validating resolver — which
+includes 1.1.1.1 and 8.8.8.8, so most of the internet — returns SERVFAIL
+for the whole zone until it is fixed or expires. So the digest is
+recomputed from the key the zone actually serves, and compared, before
+anything is pasted:
+
+```bash
+dig +short DNSKEY wheelofheaven.world | grep '^257'   # the KSK
+```
+
+The DS digest is SHA-256 over the owner name in wire format followed by
+the DNSKEY RDATA (flags, protocol, algorithm, key); the key tag is the
+RFC 4034 Appendix B checksum of the same RDATA. Both must match what the
+Cloudflare dashboard displays. On 2026-10-10 they did, exactly.
+
+### Things that would break it
+
+- **Changing nameservers away from Cloudflare without first deleting the
+  DS at Spaceship.** The DS would then vouch for keys the new provider
+  does not have, and the zone SERVFAILs on every validating resolver until
+  the DS expires from caches. Remove the DS, wait a day, then move.
+- **Disabling DNSSEC in Cloudflare while the DS is still at the
+  registrar.** Same failure, same remedy, in the other order: delete the
+  DS first, then wait for the parent's TTL, then disable.
+- **Adding a second DS from any Spaceship-side "enable DNSSEC" option.**
+  Spaceship signs zones it hosts; this one is hosted at Cloudflare. The
+  only valid DS is the one Cloudflare issued.
+
+### Resolver caches outlive the fix
+
+Once the DS was at the TLD, public resolvers kept serving the pre-DS
+answers they had cached, with the `AD` bit clear, for the remaining TTL.
+Half the `_agents` names validated and half did not, and the readiness
+scanner happened to hit the stale half. Cloudflare's resolver exposes a
+per-record purge, which cleared it instantly:
+
+```bash
+for q in "wheelofheaven.world&type=DS" \
+         "_index._agents.wheelofheaven.world&type=SVCB" \
+         "_mcp._agents.wheelofheaven.world&type=SVCB"; do
+  curl -s -X POST "https://1.1.1.1/api/v1/purge?domain=$q" -o /dev/null -w '%{http_code}\n'
+done
+```
+
+Google's resolver has no equivalent; it simply ages out.
+
 ## Vulnerability reporting
 
 [`/.well-known/security.txt`](https://www.wheelofheaven.world/.well-known/security.txt)
@@ -170,3 +240,13 @@ done
 A `_headers` change that deploys cleanly and does nothing looks identical
 to one that worked, so re-run this after any change to headers — in either
 a repository or the Cloudflare dashboard.
+
+And the chain of trust, which lives nowhere in any repository:
+
+```bash
+dig +short DS wheelofheaven.world            # one line: 2371 13 2 5706…
+dig +dnssec SVCB _index._agents.wheelofheaven.world | grep -c RRSIG   # ≥ 1
+curl -s -H 'accept: application/dns-json' \
+  'https://cloudflare-dns.com/dns-query?name=wheelofheaven.world&type=A&do=1' \
+  | grep -o '"AD":true'                      # the validator's verdict
+```

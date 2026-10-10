@@ -252,6 +252,32 @@ Target:  wheelofheaven.pages.dev
 Proxied: yes
 ```
 
+Agent-discovery records, added 2026-10-10 for
+[DNS-AID](@/ai-ingestion/agent-discovery.md#dns-aid-published-in-the-zone).
+Four ServiceMode SVCB records, DNS only (never proxied), TTL Auto:
+
+```
+Type: SVCB   Name: _index._agents       Priority: 1   Target: www.wheelofheaven.world   Value: alpn="h2" port="443" mandatory="alpn,port"
+Type: SVCB   Name: _index._agents.www   Priority: 1   Target: www.wheelofheaven.world   Value: alpn="h2" port="443" mandatory="alpn,port"
+Type: SVCB   Name: _mcp._agents         Priority: 1   Target: mcp.wheelofheaven.world   Value: alpn="mcp,h2" port="443" mandatory="alpn,port"
+Type: SVCB   Name: _mcp._agents.www     Priority: 1   Target: mcp.wheelofheaven.world   Value: alpn="mcp,h2" port="443" mandatory="alpn,port"
+```
+
+Targets must not contain underscores (the draft forbids it, and
+`_mcp.wheelofheaven.world` resolves to nothing — the first attempt had
+exactly that typo). Priority only orders records that share a name, so
+the values the dashboard happens to show do not matter as long as each
+is at least 1.
+
+**DNS is edited in the Cloudflare dashboard by a person.** No repository
+holds a Cloudflare API token, the `wrangler` login on the project machine
+is read-only for zones, and the coding agents' permission policy refuses
+DNS changes outright — so a record change is never part of a deploy and
+has to be made, and verified, by hand. The zone is DNSSEC-signed with the
+DS held at an external registrar; see
+[Security and Transport](@/architecture/security-and-transport.md#dnssec)
+before touching nameservers or the DNSSEC toggle.
+
 ### SSL/TLS
 
 - Automatic certificate provisioning

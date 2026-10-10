@@ -8,6 +8,30 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-10 — DNS-AID and the first signing of the zone
+
+Agents can now find the MCP server with a single DNS query: four
+ServiceMode SVCB records under `_agents` advertise the reading site and
+`mcp.wheelofheaven.world`, on the apex and on `www`. Publishing them
+forced a larger change — the zone had never been DNSSEC-signed, and an
+unsigned discovery answer is only a hint — so `wheelofheaven.world` is
+now signed at Cloudflare with the DS held at the registrar. The readiness
+scanner's DNS-AID check passes, and every answer the zone gives carries
+the `AD` bit. Reference:
+[Agent discovery](@/ai-ingestion/agent-discovery.md#dns-aid-published-in-the-zone),
+[Security and Transport](@/architecture/security-and-transport.md#dnssec).
+
+## 2026-09 — WebMCP: the site's tools, in the browser
+
+Every page registers seventeen typed tools with the browser's model
+context, so an agentic browser can search the site in the reader's
+language, read the open page's metadata and text, fetch its JSON twin,
+cite it, navigate, and call the nine MCP server tools without knowing the
+endpoint exists. The bundle loads only when a model context is present,
+so readers pay a few lines. `auth.md` now states the registration
+position in the protocol's own terms. Reference:
+[Agent discovery](@/ai-ingestion/agent-discovery.md#webmcp-implemented-in-the-theme).
+
 ## 2026-08 — The claim catalog: distilled, bound, accepted
 
 The corpus's entire claim layer was extracted into the
