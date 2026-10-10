@@ -43,6 +43,7 @@ host rather than centralised here — see
 | [`/.well-known/mcp/server-card.json`](https://www.wheelofheaven.world/.well-known/mcp/server-card.json) | MCP server identity and transports | [MCP server schema](https://modelcontextprotocol.io/) |
 | [`/.well-known/agent-skills/index.json`](https://www.wheelofheaven.world/.well-known/agent-skills/index.json) | The nine tools, described | emerging |
 | [`/.well-known/auth.md`](https://www.wheelofheaven.world/.well-known/auth.md) | Authentication policy | emerging |
+| `_index._agents` / `_mcp._agents` (DNS) | [DNS-AID](#dns-aid-published-in-the-zone) SVCB records pointing at the site and the MCP server, DNSSEC-signed | [IETF draft](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/) |
 | every HTML page | [WebMCP](#webmcp-implemented-in-the-theme) tool registration — 8 page-level tools plus the 9 MCP server tools, in-browser | [W3C CG draft](https://webmachinelearning.github.io/webmcp/) |
 | [`/auth.md`](https://www.wheelofheaven.world/auth.md) | The same document — scanners disagree on which path to probe, so both answer. A `200` rewrite in `_redirects`, not a second copy. | emerging |
 
@@ -210,7 +211,6 @@ the rest. Not implementing a standard is a position, not a gap:
 | **OAuth Protected Resource / OAuth Discovery** (RFC 9728, RFC 8414) | There are no protected resources. Publishing authorization-server metadata for a CC0 static site would advertise a login that does not exist. The MCP host returns a clean `404` on these paths precisely so clients fall back to anonymous access instead of attempting a token exchange. This also caps the scanners' `auth.md` check: since 2026-09-19 `auth.md` states the registration position in the protocol's own terms (audience, endpoints, methods, credentials — all *none*) and passes that gate, but the check's next gate wants RFC 9728 metadata, so it reports "fail" by design. |
 | **Web Bot Auth** | Signs the requests of bots *you* operate against *other* people's sites. The project runs no crawlers. |
 | **A2A Agent Card** | Describes an agent other agents can delegate tasks to. The project publishes a corpus; it does not act on anyone's behalf. |
-| **DNS-AID** | DNS-level advertisement of AI resources. Cheap, and early enough that the record format is still moving. Revisit when it settles. |
 | **All five commerce protocols** (ACP, AP2, MPP, UCP, x402) | Nothing is for sale and nothing is paywalled. These will never apply. |
 
 The realistic ceiling for this project is therefore a full score on
@@ -218,6 +218,49 @@ discoverability and content, most of protocol discovery, and zero on
 commerce. That is the correct shape for a public-domain knowledge
 project, and chasing the remaining checkboxes would mean publishing
 documents that describe a site this is not.
+
+### DNS-AID — published in the zone
+
+[DNS for AI Discovery](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/)
+is an IETF draft that advertises agent endpoints through ordinary SVCB
+records (RFC 9460) under a reserved `_agents` label, so an agent can find
+the MCP server with one DNS query and no HTTP round trip. This page
+previously deferred it because the record format was still moving; it
+has settled on `_<service>._agents.<domain>` ServiceMode records, and the
+scanners query `_index._agents.<host>` over DNS-over-HTTPS. Published
+2026-10-10:
+
+```
+_index._agents.wheelofheaven.world.      SVCB 1 www.wheelofheaven.world. alpn="h2"     port=443 mandatory=alpn,port
+_index._agents.www.wheelofheaven.world.  SVCB 1 www.wheelofheaven.world. alpn="h2"     port=443 mandatory=alpn,port
+_mcp._agents.wheelofheaven.world.        SVCB 1 mcp.wheelofheaven.world. alpn="mcp,h2" port=443 mandatory=alpn,port
+_mcp._agents.www.wheelofheaven.world.    SVCB 1 mcp.wheelofheaven.world. alpn="mcp,h2" port=443 mandatory=alpn,port
+```
+
+The `www` twins exist because the scanners follow the apex redirect and
+query the host they land on. `mcp` in the ALPN list is the draft's way of
+carrying the agent protocol; the `_mcp` label says the same thing for
+clients that read labels instead. The draft's richer parameters
+(`well-known`, `cap`, `cap-sha256`) have no IANA numbers yet, so they
+are deliberately not published — they could only appear as opaque
+`keyNNNNN` values nobody interoperates on.
+
+**DNSSEC is on** (Cloudflare-signed, algorithm 13, DS at the registrar),
+because an unsigned discovery answer is only a hint: the draft and the
+scanners both expect the `AD` bit. The zone had never been signed before
+this; signing it was the larger part of the work.
+
+Verify the way the scanner does, with the DNSSEC flag set:
+
+```sh
+curl -s -H 'accept: application/dns-json' \
+  'https://cloudflare-dns.com/dns-query?name=_index._agents.wheelofheaven.world&type=SVCB&do=1'
+# expect Status 0, "AD": true, and one SVCB answer
+dig +short DS wheelofheaven.world      # the chain of trust at .world
+```
+
+If the MCP host or the reading site ever moves, the four targets above
+move with it — there is no build step that regenerates them.
 
 ### WebMCP — implemented in the theme
 
@@ -299,6 +342,7 @@ somewhere else. When you change the source, change the copy:
 | `mcp.wheelofheaven.world/server.json` (version, transports, package) | `www/static/.well-known/mcp/server-card.json` |
 | The MCP tool set (added, removed, or renamed a tool) | `www/static/.well-known/agent-skills/index.json`, [the MCP reference](@/reference/mcp.md), and `SERVER_TOOLS` in bifrost `static/js/webmcp.js` (then bump `?v=N` in `webmcp-loader.js` and re-bundle) |
 | API base URLs or documentation locations | `www/static/.well-known/api-catalog` and `api/templates/index.json` |
+| The MCP host or the `www` host (new hostname) | The four `_agents` SVCB targets in Cloudflare DNS — see [DNS-AID](#dns-aid-published-in-the-zone) |
 
 The MCP host's own copy of the server card needs no maintenance — it is
 imported from `server.json` at build time.
