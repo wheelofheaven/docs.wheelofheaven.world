@@ -21,6 +21,13 @@ the `AD` bit. Reference:
 [Agent discovery](@/ai-ingestion/agent-discovery.md#dns-aid-published-in-the-zone),
 [Security and Transport](@/architecture/security-and-transport.md#dnssec).
 
+The same week's reading of AI Crawl Control found that every internal
+link on the site was emitted without its trailing slash — Zola's
+`get_url` strips it — so a third of all AI-crawler requests were `308`
+redirects. All 174 page-link call sites in the theme now pass
+`trailing_slash=true`; see
+[Crawl budget](@/ai-ingestion/agent-discovery.md#crawl-budget-what-the-ai-crawlers-actually-hit).
+
 ## 2026-09 — WebMCP: the site's tools, in the browser
 
 Every page registers seventeen typed tools with the browser's model

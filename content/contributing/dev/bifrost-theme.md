@@ -147,6 +147,37 @@ assets CDN.
 | `timeline.js` | Timeline interactions |
 | `reading-list.js` | Reading list feature |
 
+## Links: every page link passes `trailing_slash=true`
+
+Zola's `get_url` drops the trailing slash from a page path even when the
+literal has one: `get_url(path="wiki/", lang=detected_lang)` renders
+`…/wiki`. Cloudflare Pages answers that with a `308` to `…/wiki/`, so
+every link in the navbar, footer, breadcrumbs, see-also cards and the
+`wiki` shortcode cost a redirect per click — and per crawl. In one week
+of October 2026, 6,240 of the 35k requests from AI crawlers were exactly
+those redirects. Since bifrost `78278f7` all 174 page-link call sites
+pass the flag:
+
+```tera
+{{ get_url(path="wiki/", lang=detected_lang, trailing_slash=true) }}
+{{ get_url(path="sources/" ~ source.id, lang=detected_lang, trailing_slash=true) }}
+{{ get_url(path="", lang=detected_lang, trailing_slash=true) }}   {# home #}
+```
+
+Two traps inside the trap: a path that starts with `/` combined with
+`lang` renders a double slash (`/zh//articles`), so page paths never start
+with `/`; and the home link uses `path=""`, because `"/"` plus the flag
+renders `/de//`. File paths — `site.webmanifest`, feeds, images, and the
+bundles loaded with `cachebust=true` — do not take the flag.
+
+Verify any template change against a build before pushing. This must
+print nothing (the lean dev build keeps the production base URL):
+
+```bash
+grep -rhoE 'href="https://www\.wheelofheaven\.world/[^"#?]*"' public-dev --include='*.html' \
+  | grep -vE '/"$' | grep -vE '\.[a-z0-9]{2,11}"$' | sort | uniq -c
+```
+
 ## JavaScript bundling & cache-busting
 
 The site does **not** serve the raw `static/js/*.js` sources — it serves

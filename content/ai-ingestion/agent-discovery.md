@@ -234,6 +234,36 @@ curl -s -X POST https://isitagentready.com/api/scan \
     [print(g, k, v["status"]) for g in c for k,v in c[g].items() if isinstance(v,dict) and "status" in v]'
 ```
 
+## Crawl budget: what the AI crawlers actually hit
+
+Cloudflare's AI Crawl Control → Metrics is the one place that shows what
+the crawlers that matter for citations do on the site. Read it
+occasionally; one reading on 2026-10-10 (seven days, 35k requests)
+found two systemic faults the scanners above cannot see:
+
+- **A third of all requests ended in a redirect** — 6,240 `308`s. Every
+  internal link was emitted without its trailing slash, because Zola's
+  `get_url` strips it unless told not to, and Pages redirects the
+  slash-less form. Fixed in the theme (see
+  [the link rule](@/contributing/dev/bifrost-theme.md#links-every-page-link-passes-trailing-slash-true)).
+- **3,630 `404`s in three families.** Roughly 260 per locale per week for
+  `/<lang>/wiki/<slug>/` pages that were never translated — nothing
+  current links them, they are ghosts of the `.io`-era URL space, and a
+  404 is the right answer. A few hundred `…/null` suffixes on content
+  pages that no current template or script produces (a stale link graph,
+  heaviest from Meta's crawler) — left to decay. And 291 on the API, one
+  cause being the manifest's URI template `/v1/graph/{section}/{slug}/`,
+  which naive crawlers fetch literally; it now redirects to the graph
+  index.
+
+What the same panel confirmed: OpenAI's traffic is overwhelmingly
+`OAI-SearchBot` (the ChatGPT search index) rather than the training
+crawler, with `ChatGPT-User` live fetches in the hundreds per week — the
+citation path is open. The library's primary-source books lead the index
+after the homepage. And the "Content format" panel showed zero requests
+asking for `Accept: text/markdown`, which is why Markdown for Agents
+stays off (see the scorecard).
+
 ## What the project does not implement
 
 Cloudflare's Agent Readiness scanner checks sixteen things. The project
