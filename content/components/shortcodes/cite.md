@@ -1,12 +1,12 @@
 +++
 title = "cite"
-description = "Inline citation marker — superscript pill that anchors to the matching `#ref-<id>` entry in the references list."
+description = "Inline citation marker — a small superscript that anchors to the matching `#ref-<id>` entry in the references list."
 template = "page.html"
 weight = 30
 +++
 
 The `cite` shortcode renders an inline citation marker — a small
-superscript pill that links to the matching entry in the page's
+superscript that links to the matching entry in the page's
 references list.
 On wiki pages, the `id` is usually a stable source ID from
 `data/sources.json`, so the marker and the reference entry stay aligned
@@ -31,13 +31,15 @@ Genesis{{/* cite(id="sefaria", text="[1]", title="Genesis 2:7") */}}.
 ## Output
 
 ```html
-<sup class="wiki-cite">
-    <a href="#ref-sefaria" class="wiki-cite__link" title="Genesis 2:7">[1]</a>
-</sup>
+<sup class="wiki-cite" id="citeref-sefaria"><a href="#ref-sefaria" class="wiki-cite__link" title="Genesis 2:7">[1]</a></sup>
 ```
 
-Styled by [`.wiki-cite`](../../content/wiki-shortcodes/) — superscript
-pill in `font-family-tech`, accent-coloured background on hover.
+The output is emitted on one line with no surrounding whitespace, because the
+marker usually follows punctuation directly; any newline would render as a
+visible gap before or inside the marker.
+
+Styled by [`.wiki-cite`](../../content/wiki-shortcodes/) — a small accent-coloured
+superscript in `font-family-tech`, no chip or border, underlined only on hover.
 
 ## Related
 

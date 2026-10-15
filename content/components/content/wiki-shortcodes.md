@@ -29,13 +29,19 @@ Source:
 [`themes/bifrost/sass/components/_wiki-cite.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_wiki-cite.scss)
 
 Styles the inline citation markers rendered by the
-[`cite` shortcode](../../shortcodes/cite/). Superscript pill in
-`font-family-tech`, accent-coloured background on hover.
+[`cite` shortcode](../../shortcodes/cite/), and — through the shared
+`%ref-marker` / `%ref-marker-link` placeholders — the lettered
+`footnote` markers (`.wiki-footnote`) and Markdown footnote refs
+(`.footnote-ref`), so all three read as the same kind of annotation: a small
+accent-coloured superscript in `font-family-tech`, no chip or border,
+underlined only on hover. The markers opt out of the host page's body-link
+underline via `> a:link` / `> a:visited`.
 
 | Class                | What                                              |
 |----------------------|---------------------------------------------------|
-| `.wiki-cite`         | Wrapper, `vertical-align: super`, `font-size: 0.75em`. |
-| `.wiki-cite__link`   | The marker itself — pill with hairline border.    |
+| `.wiki-cite`         | Wrapper, `vertical-align: super`, `font-size: 0.62em`, `line-height: 0`. Adjacent markers get a hairline gap. |
+| `.wiki-cite__link`   | The marker itself — accent text, underline on hover. |
+| `.wiki-footnote`, `.footnote-ref` | Same treatment for lettered and Markdown footnotes. |
 
 ## `.wiki-info-box` + `.wiki-definition-box`
 
