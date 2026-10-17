@@ -43,6 +43,12 @@ with schema.org `BreadcrumbList` markup: every item is an
 `itemListElement` with `position`, `name`, and `item` properties so
 Google can extract the trail for SERP enhancements.
 
+The wiki macro omits the category when it matches the page title after
+trimming whitespace and ignoring case. For example, Elohim renders
+Home → Wiki → Elohim, rather than repeating Elohim as both category and
+page. The remaining positions stay consecutive (1, 2, 3). Distinct
+categories retain the four-item trail.
+
 The home link uses the brand logomark; section links use the
 [`section-icons`](section-icons/) glyph next to the section name.
 

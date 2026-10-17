@@ -25,7 +25,32 @@ elsewhere it shows the generic set (theme + back-to-top). Visibility is
 gated to pages with reading context — landing, overview, and index pages
 get neither the FAB nor a back-to-top.
 
+### Direct Contents access
+
+On wiki entries and library books with a heading or chapter list, a
+localized **Contents** button sits beside the options button. It opens
+the existing contents sheet in one tap. It is absent on pages without
+that list and hidden while the options panel occupies the same space.
+The sheet clones the page's existing links; it does not maintain another
+table of contents.
+
+Opening the sheet focuses its close button. Tab and Shift+Tab stay within
+the sheet, Escape closes it, and closing returns focus to the initiating
+control. Closed sheets and options panels are `inert`, so invisible
+controls cannot receive keyboard focus. Contents opened from inside the
+options panel returns focus to the options toggle.
+
+The options panel, contents sheet, and labeled button use
+`--color-menu-bg` for legibility over article text. The small icon toggle
+keeps the lighter navbar glass. See [chrome-glass](../../visual-language/chrome-glass/).
+
 ## `.bookmark-btn` / Continue panel
+
+On the `/read/` landing page, mobile viewports up to 640px use 2rem of
+top padding and 2rem below the introduction, bringing the reading paths
+closer to the first screen. Desktop keeps the existing 4rem spacing.
+These overrides live in `sass/pages/_read.scss` and do not change the
+homepage's shared reading-path cards or the introductory text.
 
 Inline bookmark button and the overlay card that gathers everything a
 reader can pick back up: books and pages they're part-way through, audio

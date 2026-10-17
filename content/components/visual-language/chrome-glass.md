@@ -82,6 +82,17 @@ while looking correct in Chrome.
 
 ## Chrome versus panels
 
+Text menus use `--color-menu-bg`: 94% charcoal in dark mode and 96% white
+in light mode. This applies to desktop navbar dropdowns, the expanded
+mobile menu, reader options, and the contents sheet. The navbar itself
+and icon-only floating controls keep `--color-navbar-bg`; hero chrome
+continues to use its existing treatment.
+
+The menu token is opaque when reduced transparency is requested or
+backdrop filtering is unavailable. Define it in both explicit theme
+branches and the automatic system-theme branch when changing the recipe.
+It provides readable text even if a browser fails to render the blur.
+
 Floating surfaces divide into two kinds, and they do **not** want the
 same treatment over a dark backdrop:
 
