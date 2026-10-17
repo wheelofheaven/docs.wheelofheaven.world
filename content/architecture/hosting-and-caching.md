@@ -367,8 +367,8 @@ Old doubled-slash locale paths such as `/ko//wiki/raelism/` still return
 calls, including paths supplied by frontmatter. A 2026-10-17 rendered-site
 audit found 238 pages still emitting doubled slashes from redirect banners
 and related links after the earlier literal-path cleanup. The correction
-normalizes these inputs in wiki, article and news links, graph links and
-the DefinedTerm schema.
+normalizes these inputs in wiki, article and news links, graph links,
+custom breadcrumbs and the DefinedTerm schema.
 Avoid broad Pages redirects without checking their interaction with URL
 normalization; a redirect that also matches its normalized destination
 can loop.
