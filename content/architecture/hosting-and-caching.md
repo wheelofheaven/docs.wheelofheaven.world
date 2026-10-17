@@ -328,18 +328,50 @@ zone's `browser_cache_ttl`, not from any managed-robots feature. Don't
 read it as a signal that Cloudflare is generating the file; check
 `is_robots_txt_managed` via the `/bot_management` API instead.
 
-### Cloudflare Web Analytics is provisioned but collects nothing
+### Cloudflare Web Analytics and regional exclusions
 
-**Symptom:** Web Analytics appears configured for the zone
-(`auto_install: true` on the RUM site config), but no data arrives.
+The zone uses automatic Real User Measurements (RUM) injection with
+**Enable, excluding visitor data in the EU** selected. Keep this setting;
+do not add a manual beacon to the theme, which would bypass the regional
+injection decision.
 
-**Cause:** two independent failures. The beacon script is not present in
-the rendered HTML at all — and even if it were, the site's own CSP
-blocks it twice over: `script-src 'self'` refuses
-`static.cloudflareinsights.com/beacon.min.js`, and `connect-src` has no
-`cloudflareinsights.com` entry for the POST.
+On 2026-10-17, the site's CSP was corrected to allow
+`https://static.cloudflareinsights.com` in `script-src`, including
+Cloudflare's versioned beacon paths. Automatic injection posts to the
+same host's `/cdn-cgi/rum`, so the existing `connect-src 'self'` is sufficient.
+The external `cloudflareinsights.com` connection permission is needed only
+for manual embedding. See the [Cloudflare CSP instructions](https://developers.cloudflare.com/web-analytics/faq/#what-do-i-need-to-add-to-my-content-security-policy-csp).
 
-**If you want it working:** add both CSP entries in `static/_headers`
-and confirm injection. **If you don't:** turn the provisioning off, so
-the dashboard stops implying analytics exist. Either way, don't assume
-traffic data is being collected — as of 2026-08 it is not.
+**A missing beacon from a Swiss connection is expected.** Despite the
+short dashboard label, Cloudflare's exclusion also covers Switzerland,
+the UK and the EEA. Our check reached the Zurich data center (`ZRH`,
+`loc=CH`). It cannot validate collection for eligible regions. See
+[Cloudflare's region list](https://developers.cloudflare.com/speed/observatory/rum-beacon/#rum-excluding-eeaeu).
+
+To verify collection after deployment, use a browser connection outside
+that list with analytics blockers disabled: check that the injected script
+loads without a CSP violation, that its own POST to `/cdn-cgi/rum` succeeds,
+and that new page views appear in Web Analytics. Do not manufacture POSTs
+to that endpoint. Until that end-to-end check succeeds, treat collection
+as unverified. Historic missing page views cannot be reconstructed from
+request counts.
+
+### Crawl URL checks
+
+On 2026-10-17, `/favicon.ico` returned 404 while `/brand/favicon.ico`
+returned the existing icon. The www Pages redirects now map the conventional
+root path to that asset with a 301.
+
+Old doubled-slash locale paths such as `/ko//wiki/raelism/` still return
+200 with a canonical link to `/ko/wiki/raelism/`. The template source has
+already removed leading slashes from language-aware `get_url` calls.
+Avoid broad Pages redirects without checking their interaction with URL
+normalization; a redirect that also matches its normalized destination
+can loop.
+
+For traffic diagnosis, filter zone requests by status code and then by
+hostname. The zone includes the API, assets, MCP and docs hosts, so its
+request count is not a count of human readers of www. Check whether missing
+paths are stale content links, missing assets or probes before adding
+redirects. Keep nonexistent secret and repository paths returning errors
+rather than redirecting them to the homepage.
