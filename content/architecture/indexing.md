@@ -4,29 +4,59 @@ description = "How translations are linked via hreflang and how legacy URLs stay
 weight = 40
 +++
 
-How Google sees the site, and what we do to keep that view clean.
-Sparked by a 2026-05 Search Console audit that surfaced two structural
-issues: broken hreflang (translation pages weren't being indexed) and
-~80 404s from legacy URLs and trailing-slash quirks.
+The site keeps crawl access, canonical URLs, sitemap membership and indexing
+policy aligned. A successful fetch makes a page eligible for indexing; it does
+not establish that Google has chosen to index it.
 
-## Current Search Console state (2026-05)
+## Current indexing policy
 
-Audited 2026-05-23, one week after the property started getting full
-crawl coverage.
+English editorial pages are indexable. The July 2026 policy deliberately marks
+the nine translated editions `noindex,follow` using
+`config.extra.noindex_translations = true` and `index_languages = ["en"]`.
+Generated source records (`extra.source_id`) and explicitly excluded utility
+pages (`extra.noindex`, including offline fallbacks) are also noindexed.
 
-| Reason | Pages |
-|---|---|
-| Submitted and indexed | 146 |
-| Discovered – currently not indexed | 1,281 |
-| Crawled – currently not indexed | 76 |
-| Not found (404) | 80 |
-| Page with redirect | 16 |
-| Duplicate canonical | 1 |
+The sitemap mirrors those exclusions. Its locale list is currently hardcoded
+because Zola does not pass `config.extra` into the sitemap template: a policy
+change must update both the robots partial/configuration and the sitemap guard.
+Hreflang still describes available language editions; it does not override
+`noindex`. The language gate is an editorial distribution policy, not a proven
+explanation of an indexing decline or a promise of recovery.
 
-Most of "Discovered / Crawled – not indexed" was translation pages that
-Google was treating as unrelated near-duplicates because hreflang was
-broken. The fix below addresses that structurally; expect those numbers
-to drop over the next 4–8 weeks as Google re-crawls.
+## Investigating an indexing decline
+
+Use the Search Console domain property and compare **All submitted pages** with
+**All known pages**. Historic URLs, redirects and intentional exclusions inflate
+the latter. Record the report's update date before comparing counts.
+
+Inspect representative excluded English URLs and check their live fetch,
+indexing permission, rendered content and Google-selected canonical. Check
+manual actions, security issues, sitemap processing and the old-domain redirect
+chain separately. Distinguish technical failures from **Crawled — currently not
+indexed**: neither a successful live test nor a sitemap submission guarantees
+indexing. The earlier May 2026 attribution of most exclusions to hreflang was a
+hypothesis, not an established cause.
+
+After correcting a concrete fault, verify production before requesting a crawl.
+Use validation only for an issue actually corrected across the selected scope.
+Review the same submitted-URL cohort weekly, allowing for report lag; do not
+repeatedly request indexing for unchanged pages. See Google's
+[Page indexing report guide](https://support.google.com/webmasters/answer/7440203)
+and [recrawl guidance](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl).
+
+## Search descriptions and visible introductions
+
+Wiki `description` frontmatter also supplies the visible introduction. For an
+entry with a long introduction, set `extra.seo_description` to a concise,
+page-specific summary. Bifrost uses this override for the description, Open
+Graph description and Twitter description; the visible introduction and
+structured-data description retain the original text. Existing pages without
+an override keep their previous behavior.
+
+Summaries should distinguish a source's reported claims, historical or
+scientific context, and the project's interpretation. Do not invent evidence,
+authorship or expertise for search snippets. Google may choose a different
+snippet; description length is not an indexing guarantee.
 
 ## Hreflang: how translations link to each other
 
@@ -187,12 +217,43 @@ keep an eye on the dynamic-rule count.
 
 ## Sitemap & robots
 
-- `templates/sitemap.xml` generates a single multilingual sitemap with
-  all 2,000+ URLs.
-- `static/robots.txt` declares the sitemap URL and explicitly permits
-  Google, ChatGPT, Claude, and other AI crawlers.
-- The sitemap is auto-discovered by Search Console on the first crawl —
-  no manual submission needed.
+- `themes/bifrost/templates/sitemap.xml` includes eligible English pages and
+  sections, excluding generated source records, explicit noindex pages and
+  translations under the current policy.
+- Unused Zola taxonomies are not declared: empty taxonomy declarations added
+  `/authors/`, `/tags/` and `/topics/` to the sitemap without rendering pages.
+  These URLs remain legitimate 404s until meaningful destinations exist.
+- First pagination URLs ending in `/page/1/` are excluded because they redirect
+  to section roots. `/news/page/1/` also has an HTTP 301 in `static/_redirects`.
+- `lastmod` uses Zola's `SitemapEntry.updated`, not the nonexistent `date` field.
+  Supply truthful content modification dates; never stamp every page with the
+  current build date. Entries without a date omit `lastmod`.
+- `static/robots.txt` declares the sitemap and permits crawling. It does not
+  override page-level noindex directives.
+
+### Audit before and after deployment
+
+From the main website repository, check generated files after a full build:
+
+```sh
+python3 scripts/audit_sitemap.py \
+  --sitemap public/sitemap.xml --build-dir public \
+  --output /tmp/woh-sitemap-local.json
+```
+
+Then run `mise run audit-sitemap` against production. The standard-library
+script fetches every submitted destination with four concurrent GET requests
+and writes `/tmp/woh-sitemap-audit.json`. It checks HTTP status, redirects,
+canonical agreement, robots meta and X-Robots-Tag, title and description
+presence, and duplicate sitemap URLs. Failures produce a nonzero exit code.
+Local mode catches missing generated files but cannot test edge redirects or
+headers. The report also counts incoming links from submitted pages; it is not
+a complete sitewide link graph or an assessment of editorial quality.
+
+Keep live audit output outside the repository. For important English pages,
+review the actual prose, source relevance, attribution and limitations in
+addition to technical eligibility. Short metadata and a high source count
+alone do not establish helpfulness or reliable scholarship.
 
 ## Regional search engines (not yet set up)
 
@@ -239,13 +300,6 @@ yet.
    `en_only` pattern above) aren't worth the verification overhead.
 
 ## Known not-pursued items
-
-### `/tags/` taxonomy index missing
-
-`config.toml` declares `tags` as a taxonomy with `feed = true`, but
-`/tags/` returns 404. Either the taxonomy section template isn't
-generating an index page or the taxonomy is unused on content pages.
-Worth a small Zola investigation; left for a follow-up.
 
 ### 10 genuinely missing wiki entries
 
