@@ -8,6 +8,17 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-10-17 — Indexing investigation and sitemap cleanup
+
+Removed three unrendered taxonomy roots, a pagination redirect and the offline
+fallback from the main sitemap, leaving 359 URLs that passed a complete live
+audit. Corrected sitemap modification dates, added concise descriptions for
+ten core wiki entries and published a repeatable audit command. Google accepted
+the corrected sitemap; indexing recovery remained unverified.
+The [incident record](@/architecture/indexing-recovery-2026-10.md) preserves the
+Search Console baseline, exact commits, verification limits and required
+follow-up, including the unconfirmed individual indexing request.
+
 ## 2026-10 — DNS-AID and the first signing of the zone
 
 Agents can now find the MCP server with a single DNS query: four

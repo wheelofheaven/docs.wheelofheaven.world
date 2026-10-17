@@ -40,7 +40,9 @@ this section drills into specific corners.
 - **[Indexing & Multilingual SEO](@/architecture/indexing.md)** — how
   hreflang is built from a manifest rather than Zola's native
   translations, the redirect strategy in `_redirects`, and the
-  current Search Console state.
+  indexing policy and repeatable sitemap audit.
+- **[October 2026 Indexing Recovery](@/architecture/indexing-recovery-2026-10.md)** —
+  the investigation, deployed fixes, verification evidence and remaining work.
 
 For a flat list of every repo in the org, what each one holds, and
 the GitHub URLs, the

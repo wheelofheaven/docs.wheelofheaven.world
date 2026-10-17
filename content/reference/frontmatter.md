@@ -37,7 +37,7 @@ These are read by Zola directly.
 | Field | Type | Where used | Notes |
 |---|---|---|---|
 | `title` | string | Templates (page head + h1) | Required. Under 60 chars for SEO. |
-| `description` | string | Templates (meta description), search snippet | 150–160 chars. |
+| `description` | string | Templates, search snippet; also the visible wiki introduction | Prefer a concise summary. For long wiki introductions, use `extra.seo_description` for search metadata. |
 | `template` | string | Zola template selection | Always set explicitly. See per-content-type values below. |
 | `date` | date | Articles, News, dated pages | ISO 8601. Pubdate. |
 | `updated` | date | Any page | When the page was last revised. |
@@ -81,6 +81,7 @@ The available taxonomies are configured in `config.toml` (currently
 | `editorial_pass` | `"YYYY-MM"` | Yes when rewriting | Date code of the editorial pass that last fundamentally rewrote this entry. |
 | `summary` | string | No | 2–4 sentence TL;DR. Used by AI extraction; displayed prominently on some templates. |
 | `tldr` | string | No | One-sentence takeaway. |
+| `seo_description` | string | No | Bifrost override for the meta, Open Graph and Twitter descriptions. Preserves the visible wiki introduction and structured-data description. See [Search descriptions](@/architecture/indexing.md#search-descriptions-and-visible-introductions). |
 | `category` | string | No | Free-form categorization within a content type. |
 | `keywords` | string[] | No | 3–5 keywords for SEO. |
 | `image` | string | No | Header / featured image path (relative to `static/`). |

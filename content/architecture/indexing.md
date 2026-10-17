@@ -8,6 +8,9 @@ The site keeps crawl access, canonical URLs, sitemap membership and indexing
 policy aligned. A successful fetch makes a page eligible for indexing; it does
 not establish that Google has chosen to index it.
 
+For the dated investigation, deployed commits, verification results and open
+follow-up work, see [October 2026 Indexing Recovery](@/architecture/indexing-recovery-2026-10.md).
+
 ## Current indexing policy
 
 English editorial pages are indexable. The July 2026 policy deliberately marks
@@ -133,15 +136,16 @@ tracked files keeps the manifest aligned with deployment reality.
 
 ### Build wiring
 
-The manifest is regenerated before each build:
+Manifest regeneration depends on the build entry point:
 
 - **Local builds via mise** — `mise.toml` makes the `build` task depend
   on a `translations` task that runs the script.
-- **CI (`.github/workflows/deploy.yml`)** — runs the script as a "build
-  translations manifest" step before `zola build`.
 - **Cloudflare Pages** — `data/translations.json` is **committed** to
   the repo (same pattern as `data/sources.json`), so any direct
   `zola build` has a usable manifest without needing Python.
+  The production build observed on 2026-10-17 invoked Zola directly;
+  do not assume it regenerates the manifest or that an older GitHub Actions
+  deployment workflow is still present.
 
 ### Maintenance
 
@@ -149,7 +153,7 @@ Anytime you add, remove, or rename a translated file:
 
 1. Run `mise run translations` (or rebuild via `mise run build`),
    commit the regenerated `data/translations.json` alongside the
-   content change, or let CI regenerate on the next deploy.
+   content change. Confirm regeneration explicitly if using another pipeline.
 2. The committed manifest can go stale between commits. That's fine for
    local dev (Tera will pick up the freshly-regenerated file). For
    production correctness, keep the manifest in sync with content in
@@ -299,11 +303,15 @@ yet.
    submitting. Thinly-translated sections (e.g. library stubs in the
    `en_only` pattern above) aren't worth the verification overhead.
 
-## Known not-pursued items
+## Historical follow-up list (May 2026)
+
+The findings below describe the May investigation, not a current inventory.
+Recheck each URL before taking action; for example, the Council of the Eternals
+page was present in the October audit.
 
 ### 10 genuinely missing wiki entries
 
-Search Console reports 404s for paths with no corresponding file:
+The May Search Console review reported missing paths:
 `/wiki/jacob/`, `/wiki/el/`, `/wiki/hinduism/`, `/wiki/joseph/`,
 `/wiki/joseph-smith/`, `/wiki/abrahamic-covenant/`,
 `/wiki/mosaic-covenant/`, `/wiki/council-of-the-eternals/`,
