@@ -134,7 +134,7 @@ Rendered assets inherit their brief's binding and are never bound directly.
 | Field | Type | Notes |
 |---|---|---|
 | `alternative_names` | string[] | Other names this entry is known by. Searchable. |
-| `see_also` | object[] | Related wiki entries. Format: `{ title = "Yahweh", path = "/wiki/yahweh/" }` |
+| `see_also` | object[] | Related wiki entries. Format: `{ title = "Yahweh", path = "/wiki/yahweh/" }`. Paths are relative to the language root; templates strip a leading slash before applying the current language. Use `url` for an explicit destination instead. |
 | `external_links` | object[] | Outbound references. Format: `{ title = "Wikipedia", url = "https://..." }` |
 | `references` | object[] | Sources cited in the body. Prefer stable source IDs: `{ id = "sefaria", note = "..." }`. The wiki template and `cite` shortcode use the same ID to keep the inline marker and reference list aligned. Legacy title/url records remain valid: `{ title = "...", author = "...", date = "...", url = "..." }`. |
 

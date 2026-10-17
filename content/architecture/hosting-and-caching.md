@@ -363,8 +363,12 @@ returned the existing icon. The www Pages redirects now map the conventional
 root path to that asset with a 301.
 
 Old doubled-slash locale paths such as `/ko//wiki/raelism/` still return
-200 with a canonical link to `/ko/wiki/raelism/`. The template source has
-already removed leading slashes from language-aware `get_url` calls.
+200 with a canonical link to `/ko/wiki/raelism/`. The template source removes leading slashes from language-aware `get_url`
+calls, including paths supplied by frontmatter. A 2026-10-17 rendered-site
+audit found 238 pages still emitting doubled slashes from redirect banners
+and related links after the earlier literal-path cleanup. The correction
+normalizes these inputs in wiki, article and news links, graph links and
+the DefinedTerm schema.
 Avoid broad Pages redirects without checking their interaction with URL
 normalization; a redirect that also matches its normalized destination
 can loop.
