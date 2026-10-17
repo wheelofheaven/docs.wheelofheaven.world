@@ -91,19 +91,93 @@ The zero-issue result applies to that submitted set at that time, not to all his
 The original JSON reports were temporary local diagnostics, not durable public artifacts.
 Use the [audit commands](@/architecture/indexing.md#audit-before-and-after-deployment) to produce fresh reports and keep dated operational copies outside the public repository.
 
+## Same-day follow-up: sitemap processed, recovery still unresolved
+
+A second check on **2026-10-17**, after the navigation release, found:
+
+- The sitemap report now showed **Success**, **last read October 17**, and
+  **359 discovered pages**. This confirms processing of the corrected set.
+- The aggregate Page indexing report still had **October 12** as its update
+  date, with the same counts recorded above. It cannot measure the effect of
+  the October 17 fixes yet.
+- Crawl stats, updated **October 15**, reported **5,271 requests** to the
+  main `www` host over 90 days, **98 ms** average response time, and **no host
+  problems**. Responses were 66% HTTP 200, 18% HTTP 301, and 16% HTTP 404;
+  the 404 detail showed 819 requests. 96% of requests were refresh crawls
+  and 4% discovery. These figures describe requests, not unique pages.
+
+### Stable sample inspected
+
+The times below are transcribed as displayed by Search Console; no timezone
+conversion is inferred.
+
+| URL | Inspection status | Last crawl | Fetch, permission and canonical |
+|---|---|---|---|
+| `/wiki/elohim/` | Crawled — currently not indexed | Oct 17, 2026, 11:41:22 AM | Successful smartphone fetch; crawling and indexing allowed; Google-selected canonical matches the inspected URL |
+| `/wiki/precession/` | Crawled — currently not indexed | Sep 19, 2026, 3:01:53 AM | Successful smartphone fetch; crawling and indexing allowed; matching canonical |
+| `/articles/anunnaki-and-the-elohim/` | URL is unknown to Google | N/A | No crawl or canonical data reported |
+| `/timeline/preamble/` | Crawled — currently not indexed | Sep 12, 2026, 9:44:01 PM | Successful smartphone fetch; crawling and indexing allowed; matching canonical |
+
+The aggregate Indexed pages list still included Preamble with a June 9 crawl,
+while its individual inspection reported the exclusion above. Preserve both
+observations rather than declaring recovery or assigning a new sitewide count
+from inconsistent report snapshots.
+Precession and Preamble showed a sitemap **Temporary processing error** in
+their individual records even though the current sitemap report showed Success.
+Recheck those associations after the reports refresh; no current sitemap
+failure was established by those older inspection records alone.
+
+A single indexing request was attempted for the updated Precession page.
+After the live eligibility test, Google displayed a reCAPTCHA; human completion
+was requested. Google subsequently displayed **“We had a problem submitting
+your indexing request. Please try again later.”** No success confirmation was
+obtained. This request remains **unconfirmed**; it was not retried in a loop.
+After dismissal, the page also reported that it could not connect to the
+reCAPTCHA service. This was a submission-path failure, not a Googlebot fetch
+failure for the website.
+Elohim was not submitted again because its inspection already recorded a
+same-day crawl. The earlier Elohim request remains unconfirmed.
+
+### Additional concrete repair: feed discovery
+
+Recent 404 crawl examples included `/index.xml`, `/es/index.xml`,
+`/es/rss.xml`, `/ja/rss.xml`, `/zh/rss.xml`, and `/en/`.
+Production checks also found `/es/atom.xml` missing, despite translated pages
+advertising locale-root Atom/RSS feeds in their HTML.
+The corresponding translated Articles feeds were available and populated.
+
+The follow-up changed translated feed autodiscovery and footer links to the
+localized Articles feeds, retained the English root feeds, and added 29
+explicit permanent redirects: the English legacy `index.xml`, the obsolete
+`/en/` homepage, and three root feed aliases for each of the nine locales.
+The [feed contract](@/architecture/indexing.md#feed-discovery-and-legacy-feed-urls)
+documents the destination choices.
+Release references: [website db441351107](https://github.com/wheelofheaven/www.wheelofheaven.world/commit/db441351107)
+and [Bifrost 063d03e](https://github.com/wheelofheaven/bifrost/commit/063d03e).
+
+The full local build passed. All ten language editions advertised two
+parseable, populated feeds, their footer links matched the RSS destination,
+and all 29 new redirect destinations existed without duplicate source rules.
+Other sampled 404s included historical Japanese slugs and relative image
+paths; this pass did not invent replacements or claim all 819 requests fixed.
+Feed repair is a concrete delivery improvement, not a proven explanation for
+the exclusion of successfully fetched English pages.
+
 ## Required follow-up
 
 The site maintainer should perform the first follow-up around **2026-10-24**, then compare the same reports weekly while recovery remains unresolved.
 This is a maintenance procedure; no scheduled automation was created.
 
-1. Confirm Search Console has read the corrected sitemap after October 17.
+1. The same-day follow-up confirmed the corrected sitemap was read on October 17.
+   At the next check, look for newer page-indexing and crawl reports.
    Record the report date, sitemap last-read date, submitted URL count and indexed count separately.
    The 359-URL count is a release baseline, not a permanent target as content changes.
 2. Re-run the live sitemap audit after deployments affecting routes, metadata or indexing policy.
    Fix newly submitted 404s, redirects, noindex pages or canonical conflicts before requesting further crawls.
 3. Inspect a small, stable English sample: `/wiki/elohim/`, `/wiki/precession/`, `/articles/anunnaki-and-the-elohim/`, and `/timeline/preamble/`.
    Record last crawl, fetch/indexing permission, selected canonical and indexed status.
-   Keep the preamble as an indexed comparison page; inspect additional samples when evidence warrants it.
+   Keep Preamble in the sample, but resolve its aggregate/inspection discrepancy
+   before treating it as a confirmed indexed comparison page.
 4. If desired, complete the unconfirmed Elohim indexing request in Search Console and record the actual confirmation.
    Handle any verification prompt interactively.
    Do not repeatedly submit unchanged URLs: [Google's guidance](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl) says repeats do not accelerate crawling and requests do not guarantee indexing.

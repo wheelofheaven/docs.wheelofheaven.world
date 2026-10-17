@@ -25,6 +25,11 @@ The decorative rainbow is 4rem tall.
 The concise introduction uses `footerSummary` in all ten site languages;
 `elevatorPitch` remains available for longer editorial contexts.
 
+The RSS link uses `/rss.xml` in English and the localized
+`/articles/rss.xml` in translated editions. Avoid language-root feeds:
+they were absent in production and empty in a newer local build.
+See [feed discovery](@/architecture/indexing.md#feed-discovery-and-legacy-feed-urls).
+
 ## Adding a platform
 
 1. **Icon partial** — create `partials/social/<name>.html`: an

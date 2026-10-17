@@ -47,6 +47,25 @@ repeatedly request indexing for unchanged pages. See Google's
 [Page indexing report guide](https://support.google.com/webmasters/answer/7440203)
 and [recrawl guidance](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl).
 
+## Feed discovery and legacy feed URLs
+
+English pages advertise the populated root `/atom.xml` and `/rss.xml` feeds.
+Translated pages advertise their localized `/articles/atom.xml` and
+`/articles/rss.xml` feeds instead: the directory-based translated content does
+not populate Zola's language-root feeds consistently across build versions.
+On October 17, the production locale-root feeds returned 404, while the local
+Zola 0.21 build emitted empty Atom feeds at those paths.
+
+The footer links to the corresponding RSS feed.
+Explicit 301 rules in `static/_redirects` preserve `/index.xml` and the nine
+locales' root `index.xml`, `atom.xml`, and `rss.xml` URLs; localized aliases
+lead to the populated Articles feeds.
+The observed obsolete `/en/` homepage redirects to `/`.
+Verify the deployed destinations return XML with entries, not merely HTTP 200.
+
+These repairs remove broken feed discovery and legacy URL requests; they do
+not establish a cause for Google's exclusion of otherwise fetchable pages.
+
 ## Search descriptions and visible introductions
 
 Wiki `description` frontmatter also supplies the visible introduction. For an
