@@ -38,6 +38,22 @@ on `/news/`, reading-path tiles on `/read/`) use
 generic `.card` is for index tiles and uniform grids where prominence is
 spread evenly.
 
+## Summary length
+
+Article cards, including the lead card, prefer `extra.card_summary`, then
+`description`, then `extra.summary`. Prefer one or two concise sentences
+that tell readers what the article examines. Full abstracts remain on the
+article itself. Card summaries are visually limited to four lines.
+
+The October 2026 consistency pass added dedicated summaries to the 28
+English Explainers. Translated cards use their own localized description
+unless a localized `extra.card_summary` is supplied.
+
+Library descriptions are no longer cut at an arbitrary character count.
+Their complete text remains in the markup; normal cards show up to four
+lines and featured cards up to three. This avoids stored excerpts ending
+mid-word, while the book page provides the full description.
+
 ## Live examples
 
 - **Wiki index grid** — [/wiki/](https://www.wheelofheaven.world/wiki/) tiles.

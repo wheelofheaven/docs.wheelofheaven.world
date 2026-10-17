@@ -44,13 +44,27 @@ The options panel, contents sheet, and labeled button use
 `--color-menu-bg` for legibility over article text. The small icon toggle
 keeps the lighter navbar glass. See [chrome-glass](../../visual-language/chrome-glass/).
 
-## `.bookmark-btn` / Continue panel
+## Reading paths and desktop Contents
 
-On the `/read/` landing page, mobile viewports up to 640px use 2rem of
-top padding and 2rem below the introduction, bringing the reading paths
-closer to the first screen. Desktop keeps the existing 4rem spacing.
-These overrides live in `sass/pages/_read.scss` and do not change the
-homepage's shared reading-path cards or the introductory text.
+The homepage, Read menu, reading-path cards, and footer use the same
+localized destination names: **Timeline**, **Wiki**, and **Library**.
+The cards omit competing eyebrow labels such as “Wheel of Heaven” or
+“Source Material.” Short descriptions and exploration buttons are localized
+in all ten site languages. The `/read/` introduction is a short invitation;
+the full orientation remains below the paths.
+
+At mobile widths up to 640px, `/read/` uses 2rem of top padding and 2rem
+below the introduction. Desktop retains 4rem spacing. The homepage's shared
+reading-path cards keep their own surrounding layout.
+
+Above 900px, wiki Contents is the first element in a sticky, scrollable
+sidebar. Portraits, metadata, sharing, and agent tools follow it.
+The sidebar is bounded by the viewport so long heading lists remain usable.
+Below that breakpoint, the existing script moves Contents after the article
+summary; the labeled mobile Contents button also remains available.
+The page classification is now below the main title rather than in metadata.
+
+## `.bookmark-btn` / Continue panel
 
 Inline bookmark button and the overlay card that gathers everything a
 reader can pick back up: books and pages they're part-way through, audio

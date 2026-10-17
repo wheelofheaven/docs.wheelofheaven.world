@@ -5,10 +5,25 @@ template = "page.html"
 weight = 90
 +++
 
-The site footer surfaces external platforms two ways: a **`footer__socials`** row
-of monochrome icons, and a **Social Media** column of text links. Both live in
-`themes/bifrost/templates/partials/footer.html`; the icon SVGs are one partial
-each under `partials/social/`.
+The site footer uses one **`footer__socials`** row of labeled monochrome icons.
+The duplicate Social Media text column was removed in October 2026.
+The row lives in `themes/bifrost/templates/partials/footer.html`; each icon
+has a partial under `partials/social/`.
+
+## Footer hierarchy
+
+The default view contains a short localized introduction, Start reading, and
+Get started. The wordmark links home. Two link columns remain side by side
+on phones; the introduction sits above them.
+
+A native **More links** disclosure holds secondary sections, press assets,
+community, development, and privacy links. It works without JavaScript and
+keeps those destinations available to keyboard users and crawlers.
+Social links, the license, and desktop language/theme controls remain visible.
+The decorative rainbow is 4rem tall.
+
+The concise introduction uses `footerSummary` in all ten site languages;
+`elevatorPitch` remains available for longer editorial contexts.
 
 ## Adding a platform
 
@@ -19,9 +34,7 @@ each under `partials/social/`.
    `target="_blank" rel="noopener"`, and an `aria-label`. Keep it monochrome so
    it inherits the footer text colour and inverts cleanly in dark mode.
 2. **Include it** in the `footer__socials` row in `footer.html`.
-3. **Text link** (optional) — add a `link_macros::smart_link(...)` list item to
-   the Social Media column.
-4. **Brand hover** (optional) — in `sass/layout/_footer.scss`, under
+3. **Brand hover** (optional) — in `sass/layout/_footer.scss`, under
    `&__social-link`, add `&--<name>:hover { color: <brand>; }`. Because the SVG
    is `fill="currentColor"`, tinting the link colour tints the mark.
 
@@ -31,8 +44,7 @@ each under `partials/social/`.
 (`fill="currentColor"`), links to
 [huggingface.co/wheelofheaven](https://huggingface.co/wheelofheaven), sits in the
 socials row after GitHub, and its `--huggingface:hover` rule tints the mark
-Hugging Face yellow (`#ffd21e`) on hover. A matching "Hugging Face" text link
-lives in the Social Media column.
+Hugging Face yellow (`#ffd21e`) on hover.
 
 **Which icons get a colour.** Only platforms with a real brand colour carry a
 hover tint — Telegram (blue), YouTube (red), Open Collective (blue), Hugging Face

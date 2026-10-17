@@ -1,12 +1,12 @@
 +++
 title = "claim-badge"
-description = "Renders the four-badge claim-type row with the page's claim_type highlighted. Single macro."
+description = "Renders one page classification with an expandable explanation, or the complete static claim-type legend."
 template = "page.html"
 weight = 20
 +++
 
-`macros/claim-badge.html` renders the four-badge claim-type row that
-appears next to page titles. The macro is the single entry point for the
+`macros/claim-badge.html` renders one page classification with an expandable
+explanation beside the page title. The macro is the single entry point for the
 [claim badge](../../chrome/claim-badge/) UI — every template that wants
 to surface claim type calls this macro.
 
@@ -25,13 +25,13 @@ to surface claim type calls this macro.
 
 | Param         | Type    | Required | Default  | What                                                  |
 |---------------|---------|----------|----------|-------------------------------------------------------|
-| `claim_type`  | string  | yes      | `""`     | One of `direct` / `framework` / `inferred` / `speculative`. Empty renders the row with no active badge. |
-| `legend`      | bool    | no       | `false`  | If `true`, renders the four-row "what each type means" legend used on the landing page (§6) instead of the badge row. |
-| `lang`        | string  | no       | `"en"`   | Language code for the tooltip descriptions.            |
+| `claim_type`  | string  | yes      | `""`     | One of `direct` / `framework` / `inferred` / `speculative`. Empty or unknown values render nothing. |
+| `legend`      | bool    | no       | `false`  | If `true`, renders the four-row "what each type means" legend used on the landing page (§6) instead of the page disclosure. |
+| `lang`        | string  | no       | `"en"`   | Language code for labels, explanations, and Method links.            |
 
 ## Why one macro for both modes
 
-The badge tooltip body (shown on individual entry pages) and the
+The badge explanation (shown on individual entry pages) and the
 landing-page legend share the same descriptions — keeping them in one
 macro means the two surfaces can never drift apart. Both source their
 text from the same four `trans()` keys
@@ -40,4 +40,4 @@ text from the same four `trans()` keys
 
 ## Related
 
-- [Chrome → Claim badge](../../chrome/claim-badge/) — the visual surface and state machine.
+- [Chrome → Claim badge](../../chrome/claim-badge/) — the visual surface and native disclosure behavior.
