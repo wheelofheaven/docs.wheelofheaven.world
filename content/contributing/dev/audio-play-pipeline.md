@@ -1464,3 +1464,12 @@ Three reasons:
   language paragraph IDs feed the timing sidecars
 - [Editorial Passes](@/contributing/content/editorial-passes.md) —
   the broader editorial campaigns this work sits inside
+
+## LWTE alignment repair (18 October 2026)
+
+The four English chapters of *Let's Welcome the Extraterrestrials* now align to the existing French reference units.
+English TTS sidecars were regenerated, but the existing recordings and timings still use the previous proportional assignments.
+The book's `audioHold.en` metadata therefore withholds English playback until its four tracks and all ambient variants are rebuilt and checked.
+French audio and the first two books' repaired releases are unchanged.
+No synthesis was performed as part of this text correction.
+The source/conservation audit and citation migration ledger are in `data-library/reviews/lwte-alignment-2026-10-18/`.

@@ -80,3 +80,15 @@ string for the same book in the same language.
 ## Related
 
 - [Shortcodes → library](../../shortcodes/library/) — the content-side shortcode that uses the same metadata source.
+
+## Edition alignment notices
+
+`render_verse` and `get_paragraph_text` respect optional `alignment[lang]` metadata.
+A shared English passage labels its covered reference IDs; later units link back to it.
+An absent English counterpart displays an edition notice with an expandable French source instead of presenting French as an English translation.
+The reference IDs, source text, and annotation controls remain available.
+See [Library Book Format](@/reference/library-book-format.md#alignment-between-published-editions) for the data contract.
+
+The book template also reads `book_data.audioHold[detected_lang]`.
+While that message is set, both featured and sidebar Listen controls are withheld and the message is shown in the sidebar.
+This allows a corrected reading edition to ship without exposing stale audio reference timings.

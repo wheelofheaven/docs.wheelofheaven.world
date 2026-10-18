@@ -451,3 +451,29 @@ python -m json.tool book-name/chapter-1.json
 ### 5. Deploy
 
 Update submodule pointers in `www` and `api`, then push.
+
+## Alignment between published editions
+
+A translation's paragraph boundaries can differ from the source's.
+Keep `n` and `refId` stable; align by the passage's content, never by proportional paragraph counts.
+`paragraph.alignment.en` records exceptional English correspondences:
+
+```json
+{"status": "group", "refIds": ["LWTE-4:34", "LWTE-4:35", "LWTE-4:36"]}
+{"status": "covered-by", "refId": "LWTE-4:34"}
+{"status": "not-in-witness", "note": "This passage is absent from the English edition."}
+```
+
+A `group` stores the shared English passage once in `i18n.en`.
+A `covered-by` or `not-in-witness` unit has an empty `i18n.en`; it must not contain an invented translation or a neighboring passage.
+The reader shows an explicit notice and keeps the French source accessible.
+This metadata is optional; existing translation fallback remains unchanged for unannotated books.
+
+Reviewed assignments live in `data-library/reviews/lwte-alignment-2026-10-18/`.
+The application script verifies source-text conservation and exact before/after chapter hashes.
+The first LWTE alignment retains all 836 French references and restores English headings and list items omitted by the retired importer.
+
+Book metadata may also contain `audioHold`, a language-keyed map of public explanations.
+A nonempty message withholds that language's Listen controls while recordings or reference timings are being corrected.
+For example, `{"en": "English audio is being updated to match the corrected paragraph references."}` leaves French playback available.
+Remove the entry after replacement recordings, timings, and ambient variants have been validated and published.
