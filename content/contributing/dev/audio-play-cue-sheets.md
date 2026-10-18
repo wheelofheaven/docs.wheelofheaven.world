@@ -107,6 +107,19 @@ text **is**, not a production choice — so it lives in
 every language. The field lives in the source-text chapter JSON once
 and applies across all translations.
 
+Changing a `kind` tag does not alter already published audio. A continuation
+repair requires reassembling the affected chapter and rebuilding its timing,
+Opus, ambient, cinematic, and manifest artifacts. Moving words between reference
+units also requires refreshing their TTS sidecar and narration clips. Stable
+reference IDs preserve audio targets, but do not by themselves preserve timing
+alignment after text moves.
+
+The audio renderer measures the decoded, treated PCM clips that it actually
+assembles. Raw MP3 and treated MP3 durations can differ; measuring one and playing
+the other accumulates drift. The ambient renderer likewise loops decoded beds
+and joins PCM frames to preserve scene gaps. Even a rebuild that uses only cached
+narration must refresh the manifest's durations and media hashes.
+
 ### Why `kind` isn't in the cue sheet
 
 Cue sheets carry production directives — what the producer chooses to
