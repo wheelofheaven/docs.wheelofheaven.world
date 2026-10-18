@@ -26,6 +26,10 @@ ARIA roles) gets a consistent `2px` accent-coloured ring on
 against rounded corners. `var(--color-focus)` is defined per-theme so
 the ring reads correctly in both light and dark modes.
 
+Inline wiki and article links keep this outline as well as their subtle background highlight.
+The highlight alone is not a sufficient focus indicator against either page theme.
+Navbar component hover/focus rules must preserve the keyboard outline.
+
 ## When to override
 
 Don't. The whole point of a global rule is consistency. Per-component
@@ -40,3 +44,4 @@ read wrong against the drifting background.
 ## Related
 
 - [`glass-cloud-button`](../../visual-language/glass-cloud-button/) — overrides the focus ring to match the cloud duo.
+- [Navigation and search](../../interactive/navigation-search/) — keyboard entry, focus containment, and Escape behavior.
