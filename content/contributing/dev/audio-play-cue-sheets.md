@@ -103,9 +103,11 @@ text **is**, not a production choice — so it lives in
 | `title`        | A section header inside a chapter — e.g. "The Atomic Bombs", "Overpopulation", "The Tower of Babel" in TBWTT | Longer pre/post pause, may carry an SFX cue from the cue sheet, may read with a different cadence | Rendered as `<h3>` / styled differently from body paragraphs |
 | `continuation` | Continues the immediately-prior paragraph mid-sentence, or attaches its detached citation | TTS-concatenated with the previous paragraph, no inter-paragraph silence | Flows inline with the preceding reference unit; interlinear mode retains separate rows |
 
-`kind` is **language-agnostic**: a section title is a section title in
-every language. The field lives in the source-text chapter JSON once
-and applies across all translations.
+`kind` supplies the shared default across translations. When a published
+translation has different paragraph boundaries, optional `kindByLang` overrides
+it for that language, for example `{"en": "continuation"}`. Both the reader and
+audio assembler resolve the language override first; other languages retain
+the shared default.
 
 Changing a `kind` tag does not alter already published audio. A continuation
 repair requires reassembling the affected chapter and rebuilding its timing,

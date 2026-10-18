@@ -92,3 +92,7 @@ See [Library Book Format](@/reference/library-book-format.md#alignment-between-p
 The book template also reads `book_data.audioHold[detected_lang]`.
 While that message is set, both featured and sidebar Listen controls are withheld and the message is shown in the sidebar.
 This allows a corrected reading edition to ship without exposing stale audio reference timings.
+
+Edition notices use `library-book__edition-note`, which stays visible without the reference-translation toggle and inherits theme-aware link colors.
+The reader resolves `kindByLang[detected_lang]` before `kind`, so translated paragraphs can flow across reference units without changing the source-language layout.
+`render_verse` accepts optional `preserve_paragraph_breaks` (default false); the book template supplies `book_data.preserveParagraphBreaks[detected_lang]` to retain blank-line breaks within translated reference units.

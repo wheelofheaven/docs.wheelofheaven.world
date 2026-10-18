@@ -477,3 +477,11 @@ Book metadata may also contain `audioHold`, a language-keyed map of public expla
 A nonempty message withholds that language's Listen controls while recordings or reference timings are being corrected.
 For example, `{"en": "English audio is being updated to match the corrected paragraph references."}` leaves French playback available.
 Remove the entry after replacement recordings, timings, and ambient variants have been validated and published.
+
+When published editions have different paragraph boundaries, `kindByLang` may override `kind` for a specific language (for example, `{"en": "continuation"}`).
+The reader and audio assembler resolve this override before the shared `kind` value.
+Book metadata `preserveParagraphBreaks` is an optional language-keyed boolean map; enabled languages render double newlines within their translation as visible paragraph breaks.
+LWTE uses both fields to preserve English EPUB paragraph flow while keeping French reference units stable.
+
+The localized API chapter endpoint resolves `kindByLang` into its returned `kind`.
+For exceptional correspondences it exposes the requested language's `alignment` record and `sourceText`; missing counterparts return empty `text` instead of silently falling back to French.
