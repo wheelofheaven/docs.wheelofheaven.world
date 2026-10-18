@@ -101,7 +101,7 @@ text **is**, not a production choice — so it lives in
 |---|---|---|---|
 | `body`         | Regular prose (default if omitted)  | Speaker reads at normal cadence, default pauses around it | Standard verse paragraph    |
 | `title`        | A section header inside a chapter — e.g. "The Atomic Bombs", "Overpopulation", "The Tower of Babel" in TBWTT | Longer pre/post pause, may carry an SFX cue from the cue sheet, may read with a different cadence | Rendered as `<h3>` / styled differently from body paragraphs |
-| `continuation` | Continues the immediately-prior paragraph mid-sentence (a paragraph break that exists in the source for layout, not narrative pacing) | TTS-concatenated with the previous paragraph, no inter-paragraph silence | Visually joined or rendered with a tighter spacing |
+| `continuation` | Continues the immediately-prior paragraph mid-sentence, or attaches its detached citation | TTS-concatenated with the previous paragraph, no inter-paragraph silence | Flows inline with the preceding reference unit; interlinear mode retains separate rows |
 
 `kind` is **language-agnostic**: a section title is a section title in
 every language. The field lives in the source-text chapter JSON once

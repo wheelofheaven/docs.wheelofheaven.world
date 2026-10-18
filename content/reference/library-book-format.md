@@ -367,6 +367,34 @@ Examples:
 | `text` | string | Original-language text |
 | `i18n` | object | Translations keyed by language code |
 | `refId` | string | Canonical reference ID |
+| `kind` | string | Optional `body` (default), `title`, or `continuation` |
+
+The API's library chapter endpoints preserve `kind` when it is present, so
+clients can reconstruct reading paragraphs without merging reference IDs.
+
+### Reading paragraphs and reference units
+
+Published reference numbers are stable, even when an OCR or ingestion error
+split one source paragraph into several records. Mark the second and subsequent
+records `kind: "continuation"` to join them to the preceding record in the reader.
+For example, TBWTT 2:69–70 reads as one continuous quotation, while both
+`#c2p69` and `#c2p70` remain valid selection, bookmark, and audio targets.
+
+Bifrost groups consecutive continuation records in
+`.library-book__reading-paragraph`. Normal reading mode flows their text inline
+and shows the first record's gutter. Interlinear mode keeps each translation
+beside its own source record, with normal row spacing.
+
+When a translated sentence belongs to the neighboring reference, move only
+that sentence and retain the complete wording and order of each language.
+Do not infer corresponding boundaries from relative character positions.
+Use the reviewed manifests in `data-library/curation/` and
+`scripts/repair_paragraph_boundaries.py` (dry-run by default, `--apply` to write).
+It checks source text, reference identities, and wording conservation before
+writing. Rebuild any tracked single-file book bundle after chapter edits.
+
+Existing recordings may require regeneration after text moves between reference
+units: keeping IDs preserves the targets, but does not update audio timestamps.
 
 ## Speaker types
 
