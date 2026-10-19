@@ -1475,6 +1475,7 @@ There are no configured ambient or cinematic tracks for this book.
 Chapter tracks are served as Opus with content-hashed URLs and paragraph/word timing sidecars.
 Chapter 1 uses 24 kbps to stay within the asset host's 25 MiB file limit; the other chapters use 40 kbps.
 Oversized MP3 masters remain local and are omitted from the published manifest.
+While streamed Opus reports an unknown or infinite browser duration, the player uses the timing sidecar's duration for its time display, progress, and seeking.
 Validation compares decoded track durations, checks every spoken reference against the English reader, bounds word timings to their paragraphs, and checks continuation joins.
 This technical validation does not replace a full listening review.
 
