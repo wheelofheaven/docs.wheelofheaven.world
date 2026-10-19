@@ -17,11 +17,14 @@ The footer is an exhaustive, always-visible navigation area with no
 The desktop grid has a wide introduction and four link columns containing
 Get started / Start reading, Sections / Press, Community / Social Media,
 and Development / Privacy & terms.
-Below 900px the introduction spans the grid; below 640px all columns stack.
+Between 641px and 1100px the introduction stays on the left, spanning two
+rows, with all four link groups arranged in two columns to its right.
+At 640px and below all columns stack for phone screens.
 
 The original spacing is restored: content top margins of 3rem on desktop,
 2rem below 768px, and 1.5rem below 600px, with 1rem between link items.
-The decorative rainbow is 13rem tall on desktop and 10rem below 768px.
+The decorative rainbow stays 13rem tall at every viewport width, plus any
+bottom safe-area inset.
 Social icons, the license, and desktop language/theme controls remain in
 the bottom bar.
 The introduction uses the localized `elevatorPitch`.
