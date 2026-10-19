@@ -1444,7 +1444,7 @@ Three reasons:
 | `ffmpeg: command not found` | `brew install ffmpeg`. Required for paragraph concatenation and duration measurement. |
 | Voice sounds wrong on a specific name | Add or refine the entry in `data-library/lexicon/{lang}.yaml`. Re-run — only affected paragraphs re-generate. |
 | Audio cuts off mid-paragraph | Paragraph too long for the API. Split it via the paragraph split tooling (see [Paragraph Split Tooling](@/contributing/dev/paragraph-split-tooling.md)). |
-| Per-paragraph cache grew huge | `_work/` is gitignored; safe to `rm -rf data-library/audio/_work/` to reclaim space. Next run will re-fetch what it needs. |
+| Per-paragraph cache grew huge | Preserve paid provider MP3s, alignments, and metadata. Use the release-verified intermediate cleanup described below; deleting all of `_work/` can incur synthesis charges again. |
 | Listen button says "Loading studio voice…" when a prerecorded chapter exists | Stale service worker is holding the old `core.bundle.js`. Bump `CACHE_VERSION` in `www.wheelofheaven.world/static/sw.js` and redeploy. For local dev, unregister the SW in DevTools → Application → Service Workers. |
 | Prerecorded engine never activates even with manifest present | Check the browser console for the manifest fetch URL — must match `https://assets.wheelofheaven.world/audio/{lang}/{slug}/manifest.json`. Verify `data-book-slug` is set on the enclosing `.library-book` element and that paragraph IDs follow the `c{ch}p{n}` pattern. |
 
@@ -1481,3 +1481,44 @@ This technical validation does not replace a full listening review.
 
 The English playback hold is removed with the completed release, and the book is listed in the Listen directory.
 The source/conservation audit and citation migration ledger remain in `data-library/reviews/lwte-alignment-2026-10-18/`; the audio release report is `data-library/reviews/lwte-audio-2026-10-19.json`.
+
+## LWTE French narration
+
+The French production uses the existing four-chapter edition and its stable reference IDs.
+Before synthesis, the text was compared against the Nova Distribution 2001 PDF: dropped headings, bylines, citations, and short passages were restored, an interrupted sentence was completed, and print furniture was separated from narrative text.
+The auditable repair receipts and verification commands are in `data-library/reviews/lwte-french-2026-10-19/`.
+English text and its narration inputs are unchanged.
+
+The narration covers 707 reference units.
+Citation-only units and the postal/contact directory are silent; the closing date remains spoken.
+Book-and-language-specific exceptions live in `data-library/audio/text-overrides/{slug}.{lang}.json` and are applied by `dump_tts_text.py` before standard normalization.
+An exception can supply reviewed narration text or a skip flag with a reason; it does not rewrite the source reader.
+Unknown reference numbers are rejected, and French exceptions do not apply to English or other editions.
+
+Use `scripts/validate_lwte_french.py` to verify the current French chapters and their exact relationship to the preceding English alignment.
+The earlier English alignment manifests retain their original hashes; their strict whole-file checks apply to that historical revision.
+
+## Working with limited local disk space
+
+Produce one language at a time and finish its validation, publication, and cleanup before starting the next.
+Keep at least 10 GiB free; check `df -h` before each chapter assembly and stop launching new work if the reserve is crossed.
+Budget transient space for decoded PCM, treated clips, a joined chapter WAV, and the encoded outputs; concurrent chapter assembly multiplies that peak.
+Prefer one chapter assembly at a time when storage is constrained.
+
+Keep the original paid paragraph MP3s, provider alignment JSON, input/cache metadata, and request ledger.
+Together these allow treatment, timing, and delivery files to be regenerated without paying for synthesis again.
+If those originals must leave the local disk, first copy them to durable external storage and verify hashes; an unverified copy is not a backup.
+
+After the CDN release and its playback checks pass, remove derived treated MP3s and decoded WAVs using the release report:
+
+```sh
+python3 scripts/cleanup_audio_intermediates.py reviews/lwte-fr-audio-2026-10-19.json
+python3 scripts/cleanup_audio_intermediates.py reviews/lwte-fr-audio-2026-10-19.json --apply
+```
+
+The first command reports reclaimable space without deleting anything.
+The script verifies all delivery hashes and requires the paid source cache for every disposable file.
+It never removes paid originals, alignment files, ledgers, or published delivery assets.
+Oversized untracked chapter masters can be rebuilt from those originals and can be removed separately after delivery verification.
+Retain only one full generated website preview at a time; remove obsolete generated `public/` output while preserving source checkouts, audit reports, and any unique review artifacts.
+Do not run blanket cache deletion or repository cleanup across shared worktrees.
