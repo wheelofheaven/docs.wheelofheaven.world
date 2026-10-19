@@ -82,11 +82,17 @@ while looking correct in Chrome.
 
 ## Chrome versus panels
 
-Text menus use `--color-menu-bg`: 94% charcoal in dark mode and 96% white
-in light mode. This applies to desktop navbar dropdowns, the expanded
-mobile menu, reader options, and the contents sheet. The navbar itself
-and icon-only floating controls keep `--color-navbar-bg`; hero chrome
-continues to use its existing treatment.
+Navigation is one glass family: the navbar, its desktop dropdowns, and
+the expanded mobile menu use `--color-navbar-bg`, a 12px backdrop blur,
+and `--color-border`.
+The mobile panel joins the bar without a change in tint.
+Desktop dropdown content adds no second background layer.
+On the landing page's dark heroes and the timeline space overlay, desktop
+dropdowns share the navbar's local color tokens so their tint and text
+stay consistent in light mode.
+
+Reader options and the contents sheet use `--color-menu-bg`: 94% charcoal
+in dark mode and 96% white in light mode.
 
 The menu token is opaque when reduced transparency is requested or
 backdrop filtering is unavailable. Define it in both explicit theme
