@@ -64,8 +64,8 @@ Before the first ElevenLabs call, the data side is done:
    a `speaker` field (`Narrator`, `Raël`, or `Yahweh`). This is what
    the generation script reads to pick the right voice. See the
    `Re-attribute 49 paragraphs in ETTMTTP ch2` commit for the
-   curation pass. LWTE is out of scope for the audio play MVP — all
-   its paragraphs are labeled `Narrator` pending its own curation.
+   curation pass. LWTE's English narration uses `Narrator` throughout;
+   a dramatized, multi-speaker production remains separate work.
 3. **TTS text normalization.** Each paragraph has a `tts_text` in
    `{slug}/tts/chapter-N.{lang}.json` with citations stripped, quote
    marks removed, footnote noise gone, etc. 98 sidecars total
@@ -1465,11 +1465,18 @@ Three reasons:
 - [Editorial Passes](@/contributing/content/editorial-passes.md) —
   the broader editorial campaigns this work sits inside
 
-## LWTE alignment repair (18 October 2026)
+## LWTE English narration (19 October 2026)
 
-The four English chapters of *Let's Welcome the Extraterrestrials* now align to the existing French reference units.
-English TTS sidecars were regenerated, but the existing recordings and timings still use the previous proportional assignments.
-The book's `audioHold.en` metadata therefore withholds English playback until its four tracks and all ambient variants are rebuilt and checked.
-French audio and the first two books' repaired releases are unchanged.
-No synthesis was performed as part of this text correction.
-The source/conservation audit and citation migration ledger are in `data-library/reviews/lwte-alignment-2026-10-18/`.
+The four English chapters of *Let's Welcome the Extraterrestrials* use the reference alignment reviewed on 18 October.
+Their narration covers 728 spoken reference units; French-only material and references pointing to shared English passages are not narrated as duplicate or invented English text.
+The production uses the existing Phoenix voice and Multilingual v2 model, with pronunciation fallbacks and the standard narration treatment.
+There are no configured ambient or cinematic tracks for this book.
+
+Chapter tracks are served as Opus with content-hashed URLs and paragraph/word timing sidecars.
+Chapter 1 uses 24 kbps to stay within the asset host's 25 MiB file limit; the other chapters use 40 kbps.
+Oversized MP3 masters remain local and are omitted from the published manifest.
+Validation compares decoded track durations, checks every spoken reference against the English reader, bounds word timings to their paragraphs, and checks continuation joins.
+This technical validation does not replace a full listening review.
+
+The English playback hold is removed with the completed release, and the book is listed in the Listen directory.
+The source/conservation audit and citation migration ledger remain in `data-library/reviews/lwte-alignment-2026-10-18/`; the audio release report is `data-library/reviews/lwte-audio-2026-10-19.json`.
