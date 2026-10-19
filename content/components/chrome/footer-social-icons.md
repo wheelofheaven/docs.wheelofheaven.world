@@ -5,25 +5,26 @@ template = "page.html"
 weight = 90
 +++
 
-The site footer uses one **`footer__socials`** row of labeled monochrome icons.
-The duplicate Social Media text column was removed in October 2026.
+The site footer includes a **`footer__socials`** row of labeled monochrome icons
+and a Social Media text group in the full navigation grid.
 The row lives in `themes/bifrost/templates/partials/footer.html`; each icon
 has a partial under `partials/social/`.
 
 ## Footer hierarchy
 
-The default view contains a short localized introduction, Start reading, and
-Get started. The wordmark links home. Two link columns remain side by side
-on phones; the introduction sits above them.
+The footer is an exhaustive, always-visible navigation area with no
+**More links** disclosure.
+The desktop grid has a wide introduction and four link columns containing
+Get started / Start reading, Sections / Press, Community / Social Media,
+and Development / Privacy & terms.
+Below 900px the introduction spans the grid; below 640px all columns stack.
 
-A native **More links** disclosure holds secondary sections, press assets,
-community, development, and privacy links. It works without JavaScript and
-keeps those destinations available to keyboard users and crawlers.
-Social links, the license, and desktop language/theme controls remain visible.
-The decorative rainbow is 4rem tall.
-
-The concise introduction uses `footerSummary` in all ten site languages;
-`elevatorPitch` remains available for longer editorial contexts.
+The original spacing is restored: content top margins of 3rem on desktop,
+2rem below 768px, and 1.5rem below 600px, with 1rem between link items.
+The decorative rainbow is 13rem tall on desktop and 10rem below 768px.
+Social icons, the license, and desktop language/theme controls remain in
+the bottom bar.
+The introduction uses the localized `elevatorPitch`.
 
 The RSS link uses `/rss.xml` in English and the localized
 `/articles/rss.xml` in translated editions. Avoid language-root feeds:
