@@ -368,9 +368,23 @@ Examples:
 | `i18n` | object | Translations keyed by language code |
 | `refId` | string | Canonical reference ID |
 | `kind` | string | Optional `body` (default), `title`, or `continuation` |
+| `preserveLineBreaks` | boolean | Optional; render each newline in this record's source and translations as a visible line break |
+| `headingBefore` | object | Optional unnumbered heading before this reference: `{ "text": "Source heading", "i18n": { "en": "Translated heading" } }` |
 
 The API's library chapter endpoints preserve `kind` when it is present, so
 clients can reconstruct reading paragraphs without merging reference IDs.
+They also preserve `preserveLineBreaks` and resolve `headingBefore` to a string in the requested language, falling back to the source heading.
+
+Use `preserveLineBreaks` only for verified verse, stanzas, or line-separated lists.
+Ordinary prose keeps its existing whitespace behavior.
+Bifrost applies the flag in the translation, source, and parallel-reference views.
+An unnumbered `headingBefore` renders as an `h3` with an anchor such as `c3p4-heading`, immediately before the existing `c3p4` reference.
+It does not add a reference, renumber paragraphs, or create an audio target.
+
+The ETTMTTP print-layout repair is recorded in `data-library/curation/2026-10-20-ett-print-layout.json`.
+It restores the five stanzas at 1:41–45, the four list lines at 3:5, and the source headings before 1:41 and 3:4 in all ten languages.
+Reviewed narration overrides retain the exact inputs used by existing recordings, including their pause punctuation.
+The restored standalone headings remain unspoken in those recordings; all 475 reference targets and all 30 chapter/language narration sidecars stay unchanged.
 
 ### Reading paragraphs and reference units
 
