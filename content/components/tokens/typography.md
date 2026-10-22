@@ -1,27 +1,38 @@
 +++
 title = "Font coverage and scholarly transliteration"
-description = "Jost coverage, the Firmament Sans scholarly extension, and the separation between Latin transliteration and source scripts."
+description = "Firmament Sans body typography, scholarly Latin coverage, versioned web fonts, and the separation between transliteration and source scripts."
 template = "page.html"
 weight = 25
 +++
 
-The primary Latin reading font is Jost.
-Its self-hosted files include the full upstream Latin Extended and Cyrillic coverage in regular, italic, bold, and bold italic.
-The files live at `static/fonts/vendor/jost/jost-full-*.woff2` in the website repository.
-The regular face is preloaded by Bifrost; other styles load when used.
+The primary Latin and Cyrillic reading font is [Firmament Sans](https://firmament.wheelofheaven.world/),
+Wheel of Heaven's scholarly extension of Jost.
+Bifrost selects all four static styles: regular, italic, bold, and bold italic.
+The website supplies the self-hosted files at
+`static/fonts/vendor/firmament-sans/0.1/FirmamentSans-*.woff2`.
+The regular face is preloaded; other styles load when used.
 
-## Existing coverage
+## Coverage and deployment
 
-Full Jost covers letters such as `ā ē ī ō ū š`, which were missing from the website's older Latin/Cyrillic subset.
-The font files contain 524 mapped codepoints; the previous regular file contained 297.
-CSS uses the self-hosted files directly without a `local()` override, so installed Jost versions cannot silently change coverage.
-The vendor directory includes the font's Open Font License and pinned build provenance.
+Each 0.1 style contains 584 Unicode mappings, including 60 additions to full upstream Jost.
+Alongside macrons and carons (`ā ē ī ō ū š`), Firmament adds scholarly forms such as
+`ḥ ṣ ṭ ḫ ṛ ḇ ṯ`, half-ring letters `ʾ ʿ`, schwa `ə Ə`, and four combining marks below.
+It preserves Jost's existing Latin and Cyrillic outlines and layout.
 
-## Scholarly extension
+CSS uses the deployed files directly without a `local()` override, so installed fonts cannot silently change coverage.
+The vendor directory includes the Open Font License, pinned build provenance, and SHA-256 checksums.
+Versioned paths respect the CDN's immutable font cache: future releases need a new directory,
+matching Bifrost declarations/preload, and an updated service-worker precache.
+The website's service worker uses cache version `v22` for this migration.
+Older Jost files remain available for cached stylesheets.
 
-[Firmament Sans](https://github.com/wheelofheaven/firmament-sans) is the separately named, experimental Jost derivative for scholarly Latin transliteration.
-Its first static builds add under-dotted, underlined, and under-breve letters, half-ring letters, and schwa.
-It remains separate from the website's body-font selection while its specimens undergo visual review.
+## Review and maintenance
+
+[Firmament Sans 0.1](https://github.com/wheelofheaven/firmament-sans) remains an optical-review pilot.
+Deployment does not imply complete scholarly or language coverage.
+Remaining work includes broader IPA and Latin coverage, optical spacing and stacked accents,
+general mark-to-mark attachment, and variable-font masters.
+The [specimen](https://firmament.wheelofheaven.world/) provides four-style proofs and an interactive character inventory.
 
 The fork contains a corpus inventory with Unicode names, occurrence counts, example paths, and coverage comparisons.
 Counts describe published Markdown source and library JSON strings across all locales; they are not measurements of browser fallback.
@@ -36,4 +47,6 @@ The shaping checks compare precomposed and decomposed forms and verify that ordi
 
 This extension addresses Latin transliteration within prose.
 Hebrew, Greek, cuneiform, and East Asian writing keep their script-specific fonts and the existing body/display/citation/metadata roles.
-An unsupported character in a heading or quotation needs investigation of that element's font stack; changing Jost alone does not change Space Grotesk or IBM Plex Serif.
+An unsupported character in a heading or quotation needs investigation of that element's font stack; changing the body family alone does not change Space Grotesk or IBM Plex Serif.
+
+See the [script-expansion study](https://github.com/wheelofheaven/firmament.wheelofheaven.world/blob/main/docs/script-expansion.md) for proposed Greek, Hebrew, Arabic, cuneiform, and CJK development. These are not new glyph repertoires in the deployed 0.1 fonts.
