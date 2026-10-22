@@ -50,6 +50,21 @@ The options panel, contents sheet, and labeled button use
 `--color-menu-bg` for legibility over article text. The small icon toggle
 keeps the lighter navbar glass. See [chrome-glass](../../visual-language/chrome-glass/).
 
+### Small-screen bounds
+
+The options panel scrolls within the available dynamic viewport height.
+At widths up to 480px it opens above the toggle so it cannot extend past
+the opposite edge of the screen.
+Its height budget follows the same bottom offset as the toggle, including
+the raised position while audio or the install banner is visible.
+Options and font buttons have at least 44px touch targets.
+The panel uses a transform-free glass background that remains painted
+while scrolling.
+
+The Contents sheet uses dynamic viewport height, keeps its close button
+outside the scrolling list, and wraps long chapter names instead of
+truncating them to a single line.
+
 ## Reading paths and desktop Contents
 
 The homepage, Read menu, reading-path cards, and footer use the same

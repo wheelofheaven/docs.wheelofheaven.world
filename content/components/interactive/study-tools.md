@@ -37,6 +37,38 @@ including its reduced-transparency and unsupported-blur fallbacks.
 The panel and its ancestors must remain transform-free for iOS blur.
 On phones the popover fits the paragraph width and scrolls within 70dvh.
 
+On screens below 1000px, opening My Study Notes hides the floating search,
+reader-options, and back-to-top controls so they cannot cover Import or
+Export.
+The panel follows dynamic viewport height and safe-area insets; in short
+landscape windows it uses the available height with a smaller top inset.
+Its close button has a 44px touch target and its note list scrolls
+independently without passing scroll gestures to the book.
+
+## Mobile note editor
+
+Below 1000px, adding or editing a personal note opens a full-screen native
+modal dialog, with the paragraph reference and book title at the top.
+The passage pane and note field scroll independently.
+The footer keeps Save and Delete reachable without scrolling through the
+passage or the note.
+Published editorial Notes remain separate from these personal notes.
+
+Opening the editor focuses Close rather than summoning the phone keyboard.
+The dialog follows `visualViewport` height and offsets when the keyboard
+opens and when the phone rotates, with safe-area padding for screen edges.
+The background book is inert and its reading position is restored on close.
+Keyboard shortcuts for the underlying reader do not run inside the dialog.
+
+Closing with unsaved edits offers Keep editing or Discard changes.
+Deleting an existing note also requires an explicit confirmation inside the
+editor.
+If browser storage fails, the text stays in the editor with an error.
+Notes use the existing storage and export format; the desktop inline editor
+is preserved.
+Editing from My Study Notes returns to that list without jumping the book
+to the paragraph first.
+
 ## Live examples
 
 - **Library book reader** — open any chapter, e.g.
