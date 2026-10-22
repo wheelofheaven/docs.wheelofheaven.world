@@ -95,6 +95,10 @@ The vendor directory includes the Open Font License, pinned build provenance, an
 Versioned paths respect the CDN's immutable font cache: future releases need a new directory,
 matching Bifrost declarations/preload, and an updated service-worker precache.
 The website's service worker uses cache version `v22` for this migration.
+Bifrost also adds `fonts=firmament-0.1` to its stylesheet URLs: a pre-deployment
+preview had requested the new CSS hash while production still served the old sheet,
+so the CDN cached Jost under that URL. The explicit release key bypasses that entry.
+Keep preview base URLs local and advance this key when publishing a new font release.
 Older Jost files remain available for cached stylesheets.
 
 ## Review and maintenance
