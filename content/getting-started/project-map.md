@@ -15,7 +15,7 @@ the *map*.
 
 ## The sites (the output)
 
-Three production sites, each its own Cloudflare Pages project:
+The public sites include these Cloudflare Pages projects:
 
 | Site | URL | What it is |
 |---|---|---|
@@ -23,6 +23,7 @@ Three production sites, each its own Cloudflare Pages project:
 | **api** | [api.wheelofheaven.world](https://api.wheelofheaven.world) | Same content as JSON, for machines |
 | **assets** | [assets.wheelofheaven.world](https://assets.wheelofheaven.world) | Image CDN — AVIF/WebP/JPG |
 | **docs** | [docs.wheelofheaven.world](https://docs.wheelofheaven.world) | This site |
+| **firmament** | [firmament.wheelofheaven.world](https://firmament.wheelofheaven.world/) | Typeface specimen, design story, and font downloads |
 
 ## The shared inputs (the source)
 
@@ -36,6 +37,14 @@ Both www and api read from the same content + theme submodules:
 
 So a single content change in `data-content` is picked up by both the
 reading site and the API on the next submodule-pointer bump.
+
+## The typeface
+
+`firmament-sans` owns the scholarly Jost derivative and its reproducible font builds.
+`firmament.wheelofheaven.world` owns the Zola showcase. The main reading site vendors
+reviewed WOFF2 releases and selects them through Bifrost; these are explicit release
+updates, not automatic submodule updates from the font repository.
+See [Firmament Sans and scholarly typography](@/components/tokens/typography.md).
 
 ## The research core (the meaning)
 

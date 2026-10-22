@@ -129,6 +129,27 @@ world-age chronology, Greek theomachy as conflict memory). Governance: RFCs
 0001–0004 all accepted; the derivation contract (RFC 0003 / ADR 0002) and
 depiction notes (RFC 0004 / ADR 0003) were adopted 2026-08-15.
 
+## Typeface repositories
+
+### firmament-sans
+
+[Font source](https://github.com/wheelofheaven/firmament-sans) for Firmament Sans,
+the independently named scholarly extension of Owen Earl's Jost. Preserves upstream
+history and sources; new build scripts, pinned inputs, fonts, audit, and specimen live
+under `scholar/`. Four static styles ship as TTF and WOFF2 under SIL OFL 1.1.
+The main website vendors reviewed releases; this repository is not its submodule.
+
+### firmament.wheelofheaven.world
+
+[Showcase source](https://github.com/wheelofheaven/firmament.wheelofheaven.world),
+deployed at [firmament.wheelofheaven.world](https://firmament.wheelofheaven.world/).
+Zola 0.22.1 on Cloudflare Pages. Owns the interactive specimen, design story, generated
+glyph inventory, licensed downloads, brand renderer, README screenshots, and multiscript
+feasibility study. Public homepage for both Firmament repositories.
+
+See [the typography guide](@/components/tokens/typography.md) for release maintenance,
+script coverage, licensing, brand assets, and the main-site integration.
+
 ## Data repositories
 
 ### data-content

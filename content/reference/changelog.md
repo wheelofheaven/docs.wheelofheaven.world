@@ -8,6 +8,20 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-10-22 — Firmament Sans and its public specimen
+
+Created Firmament Sans as an independently named scholarly extension of Jost,
+with four static styles, 584 Unicode mappings per style, and 60 additions.
+Published its Zola specimen at [firmament.wheelofheaven.world](https://firmament.wheelofheaven.world/)
+on Cloudflare Pages, including the modernist design story, interactive character
+explorer, downloads, and script-expansion study. Both GitHub READMEs now carry
+outline-based branding and live screenshots.
+
+Merged the main website's adoption through Bifrost, with versioned font assets,
+OFL/provenance/checksums, regular-face preload, and an updated offline cache.
+The [Firmament guide](@/components/tokens/typography.md) documents the design direction,
+repository responsibilities, coverage limits, brand assets, and release workflow.
+
 ## 2026-10-17 — Indexing investigation and sitemap cleanup
 
 Removed three unrendered taxonomy roots, a pagination redirect and the offline
