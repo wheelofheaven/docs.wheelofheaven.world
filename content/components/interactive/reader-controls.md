@@ -27,12 +27,18 @@ get neither the FAB nor a back-to-top.
 
 ### Direct Contents access
 
-On wiki entries and library books with a heading or chapter list, a
+On wiki entries with a heading list, a
 localized **Contents** button sits beside the options button. It opens
 the existing contents sheet in one tap. It is absent on pages without
 that list and hidden while the options panel occupies the same space.
 The sheet clones the page's existing links; it does not maintain another
 table of contents.
+
+Library books keep Contents inside the collapsible options panel only.
+The separate labeled button stays hidden on book pages so it does not
+cover another strip of prose while reading.
+The existing chapter sheet, keyboard focus handling, and chapter links
+remain available from the menu.
 
 Opening the sheet focuses its close button. Tab and Shift+Tab stay within
 the sheet, Escape closes it, and closing returns focus to the initiating
