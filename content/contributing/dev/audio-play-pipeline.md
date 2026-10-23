@@ -23,6 +23,36 @@ files at `assets.wheelofheaven.world/audio/{lang}/{slug}/c{N}.mp3`,
 each paired with a `c{N}.timing.json` sidecar that maps each paragraph
 to its `[start, end]` seconds in the audio.
 
+Before publishing, validate the complete release from `data-library/`:
+
+```sh
+python3 scripts/validate_audio_release.py --slug the-book-which-tells-the-truth --lang en
+```
+
+This checks every advertised narration and ambient file against its manifest
+content hash and timing duration, plus paragraph references and word bounds.
+It runs offline and does not generate speech.
+Publish media, timing, cinematic captions, and the refreshed manifest together:
+matching paragraph numbers alone cannot detect accumulated audio drift.
+For timing repairs that reuse existing narration, pass `--cached-only` to
+`generate_audio.py`; missing or outdated clips then abort the run instead of
+spending synthesis credits, even when an API key is configured.
+
+The website service worker caches CDN images only.
+Audio metadata and media bypass its offline image cache so metadata
+revalidation and browser byte-range requests reach the network normally.
+Changing this policy requires a service-worker cache-version bump to retire
+old copies of audio metadata stored in the image cache.
+The assets `_headers` rules target `.mp3`, `.opus`, and `.json` separately.
+Do not put an immutable rule on all of `/audio/*`: Cloudflare Pages
+[combines headers from matching rules](https://developers.cloudflare.com/pages/configuration/headers/),
+which would give timing JSON conflicting cache directives.
+
+“Play from here” loads the requested chapter directly and positions the
+narration at the paragraph once metadata is available, before playback starts.
+Rapid chapter taps discard superseded loads; stopping also cancels pending
+loads so a late response cannot restart the recording.
+
 ## End-to-end picture
 
 ```mermaid
