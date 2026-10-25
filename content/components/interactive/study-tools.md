@@ -24,11 +24,6 @@ paragraph's lower edge, without reserving a column of text width.
 Visibility is gated by the parent `.library-book__para-actions` — buttons
 appear on paragraph selection (`opacity: 0 → 1`).
 
-The bookmark icon is outlined when unsaved and filled when bookmarked.
-It uses the theme's text colour without a coloured circular background,
-including on hover, so its shape remains clear in light and dark themes.
-Pointer taps do not leave a focus ring; keyboard focus remains visible.
-
 On phones up to 600px, selection uses a short 1px marker at 35% accent
 opacity, with no paragraph background fill. Audio playback keeps its
 distinct highlight. Paragraph numbers and speaker portraits remain in
