@@ -1,95 +1,97 @@
-{# Docs footer — structurally mirrors the www footer (4-column grid +
-   bottom attribution strip + rainbow stripe) but with docs-relevant
-   content. Docs site is English-only, so no language picker; the
-   theme toggle lives in the header, not duplicated here. #}
+{# Docs footer — the reading site's footer (Bifrost partials/footer.html),
+   kept identical in structure, classes and content so layout/_footer.scss
+   applies unchanged. Differences, all deliberate: every link points at the
+   reading site (config.extra.upstream_site) because the docs have none of
+   those pages; strings are inlined in English because the docs site has no
+   translations table; and the language menu opens the chosen edition of
+   the reading site (static/js/footer-prefs.js) since the docs are
+   English-only. "Documentation" under Development links here, as it does
+   on the reading site. #}
+{% set www = config.extra.upstream_site %}
 <footer class="footer" id="footer" role="contentinfo">
   <div class="footer__content">
     <div class="footer__grid">
 
       <div class="footer__col footer__col--brand">
-        <h3 class="footer__brand">
-          <a href="{{ config.base_url }}" aria-label="{{ config.title }} home">
-            <span class="footer__brand-wordmark">
-              {% include "partials/brand/wordmark.html" %}
-            </span>
-            <span class="footer__brand-suffix">Docs</span>
-          </a>
-        </h3>
-        <p class="footer__muted">
-          Author, contributor, and developer documentation for the
-          <a href="{{ config.extra.upstream_site }}">Wheel of Heaven</a>
-          knowledge base. Open-source under CC0-1.0.
-        </p>
-        <p class="footer__muted">
-          Looking for the reading site?
-          <a href="{{ config.extra.upstream_site }}">{{ config.extra.upstream_site | replace(from="https://", to="") }}</a>
-        </p>
+        <h3 class="footer__brand">{% include "partials/brand/wordmark.html" %}</h3>
+        <p class="footer__muted">Wheel of Heaven is an open, multilingual reading of the ancient world's creation traditions — Raëlian, biblical, Mesopotamian, and others — through a single working hypothesis: that the beings called Elohim were a small advanced human civilization that came here, designed life on Earth, and left a record in the religious texts. The reading runs across twelve ages of the precessional cycle, from the project's beginning twenty-two thousand years ago to the present age of disclosure and into the long future the next Great Year is opening. The site is free, source-aware, and built so the work can be checked.</p>
       </div>
 
       <div class="footer__col">
-        <h4 class="footer__col-title">Get started</h4>
+        <h4 class="footer__col-title">Get Started</h4>
         <ul>
-          <li><a href="{{ config.base_url }}/getting-started/quickstart/">Quickstart</a></li>
-          <li><a href="{{ config.base_url }}/getting-started/project-map/">Project Map</a></li>
-          <li><a href="{{ config.base_url }}/getting-started/troubleshooting/">Troubleshooting</a></li>
-          <li><a href="{{ config.base_url }}/getting-started/conventions/">Conventions</a></li>
-          <li><a href="{{ config.base_url }}/contributing/dev/local-setup/">Local Setup</a></li>
+          <li><a href="{{ www }}/about/">About</a></li>
+          <li><a href="{{ www }}/method/">The Method</a></li>
+          <li><a href="{{ www }}/read/">Read</a></li>
+          <li><a href="{{ www }}/map/">Map</a></li>
+          <li><a href="{{ www }}/faq/">Frequently Asked Questions</a></li>
         </ul>
 
-        <h4 class="footer__col-title">Reference</h4>
+        <h4 class="footer__col-title">Start reading</h4>
         <ul>
-          <li><a href="{{ config.base_url }}/reference/frontmatter/">Frontmatter</a></li>
-          <li><a href="{{ config.base_url }}/reference/library-book-format/">Library Book Format</a></li>
-          <li><a href="{{ config.base_url }}/reference/glossary/">Glossary</a></li>
+          <li><a href="{{ www }}/wiki/elohim/">The Working Hypothesis</a></li>
+          <li><a href="{{ www }}/wiki/precession/">Precession</a></li>
+          <li><a href="{{ www }}/timeline/preamble/">Preamble</a></li>
         </ul>
       </div>
 
       <div class="footer__col">
-        <h4 class="footer__col-title">Contributing</h4>
+        <h4 class="footer__col-title">Sections</h4>
         <ul>
-          <li><a href="{{ config.base_url }}/contributing/content/wiki-entry/">Wiki Entry</a></li>
-          <li><a href="{{ config.base_url }}/contributing/content/article/">Article</a></li>
-          <li><a href="{{ config.base_url }}/contributing/content/newsroom-dispatch/">Newsroom Dispatch</a></li>
-          <li><a href="{{ config.base_url }}/contributing/content/library-book/">Library Book</a></li>
-          <li><a href="{{ config.base_url }}/contributing/content/translations/">Translations</a></li>
-          <li><a href="{{ config.base_url }}/contributing/content/editorial-passes/">Editorial Passes</a></li>
+          <li><a href="{{ www }}/">Home</a></li>
+          <li><a href="{{ www }}/read/">Read</a></li>
+          <li><a href="{{ www }}/timeline/">Timeline</a></li>
+          <li><a href="{{ www }}/wiki/">Wiki</a></li>
+          <li><a href="{{ www }}/library/">Library</a></li>
+          <li><a href="{{ www }}/listen/">Listen</a></li>
+          <li><a href="{{ www }}/sources/">Sources</a></li>
+          <li><a href="{{ www }}/datasets/">Datasets</a></li>
+          <li><a href="{{ www }}/articles/">Articles</a></li>
+          <li><a href="{{ www }}/news/">Newsroom</a></li>
+          <li><a href="{{ www }}/gallery/">Gallery</a></li>
         </ul>
 
-        <h4 class="footer__col-title">Dev</h4>
+        <h4 class="footer__col-title">Press</h4>
         <ul>
-          <li><a href="{{ config.base_url }}/contributing/dev/bifrost-theme/">Bifrost Theme</a></li>
-          <li><a href="{{ config.base_url }}/contributing/dev/pipelines/">Pipelines</a></li>
-          <li><a href="{{ config.base_url }}/contributing/dev/ci-deploy/">CI &amp; Deploy</a></li>
-        </ul>
-      </div>
-
-      <div class="footer__col">
-        <h4 class="footer__col-title">Architecture</h4>
-        <ul>
-          <li><a href="{{ config.base_url }}/architecture/overview/">Overview</a></li>
-          <li><a href="{{ config.base_url }}/architecture/sites/">Sites</a></li>
-          <li><a href="{{ config.base_url }}/architecture/sites/www/">www</a></li>
-          <li><a href="{{ config.base_url }}/architecture/sites/api/">api</a></li>
-          <li><a href="{{ config.base_url }}/architecture/sites/assets/">assets</a></li>
-          <li><a href="{{ config.base_url }}/architecture/hosting-and-caching/">Hosting &amp; Caching</a></li>
-          <li><a href="{{ config.base_url }}/reference/repository-inventory/">Repository Inventory</a></li>
+          <li><a href="{{ www }}/press/">Press kit</a></li>
+          <li><a href="{{ www }}/press/wheel-of-heaven-brand.zip" download>Brand assets</a></li>
         </ul>
       </div>
 
       <div class="footer__col">
         <h4 class="footer__col-title">Community</h4>
         <ul>
-          <li><a href="https://github.com/orgs/wheelofheaven/discussions" rel="noopener" target="_blank">GitHub Discussions</a></li>
-          <li><a href="{{ config.extra.upstream_site }}/contributing/">Contributing</a></li>
-          <li><a href="{{ config.extra.upstream_site }}/code-of-conduct/">Code of Conduct</a></li>
-          <li><a href="https://opencollective.com/wheelofheaven" rel="noopener" target="_blank">Open Collective</a></li>
+          <li><a href="{{ www }}/forums/">Discussions</a></li>
+          <li><a href="{{ www }}/contributing/">Contributing</a></li>
+          <li><a href="{{ www }}/code-of-conduct/">Code of Conduct</a></li>
+          <li><a href="https://github.com/orgs/wheelofheaven/discussions" target="_blank" rel="noopener noreferrer">GitHub Discussion<span class="external-indicator">↗</span></a></li>
+          <li><a href="https://opencollective.com/wheelofheaven" target="_blank" rel="noopener noreferrer">Open Collective<span class="external-indicator">↗</span></a></li>
         </ul>
 
-        <h4 class="footer__col-title">Source</h4>
+        <h4 class="footer__col-title">Social Media</h4>
         <ul>
-          <li><a href="{{ config.extra.github_repo }}" rel="noopener" target="_blank">Source code</a></li>
-          <li><a href="{{ config.extra.github_repo }}/issues" rel="noopener" target="_blank">Report an issue</a></li>
-          <li><a href="https://github.com/wheelofheaven/bifrost" rel="noopener" target="_blank">Bifrost theme</a></li>
+          <li><a href="https://github.com/wheelofheaven/" target="_blank" rel="noopener noreferrer">GitHub<span class="external-indicator">↗</span></a></li>
+          <li><a href="https://t.me/wheelofheaven" target="_blank" rel="noopener noreferrer">Telegram<span class="external-indicator">↗</span></a></li>
+          <li><a href="https://x.com/wheelofheaven" target="_blank" rel="noopener noreferrer">X (Twitter)<span class="external-indicator">↗</span></a></li>
+          <li><a href="https://www.youtube.com/@WheelofHeaven" target="_blank" rel="noopener noreferrer">YouTube<span class="external-indicator">↗</span></a></li>
+          <li><a href="https://huggingface.co/wheelofheaven" target="_blank" rel="noopener noreferrer">Hugging Face<span class="external-indicator">↗</span></a></li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4 class="footer__col-title">Development</h4>
+        <ul>
+          <li><a href="https://github.com/wheelofheaven/www.wheelofheaven.world" target="_blank" rel="noopener noreferrer">Source Code<span class="external-indicator">↗</span></a></li>
+          <li><a href="https://github.com/wheelofheaven/www.wheelofheaven.world/issues" target="_blank" rel="noopener noreferrer">Report Issue<span class="external-indicator">↗</span></a></li>
+          <li><a href="{{ config.base_url }}/">Documentation</a></li>
+          <li><a href="{{ www }}/rss.xml">RSS Feed</a></li>
+        </ul>
+
+        <h4 class="footer__col-title">Privacy &amp; Terms</h4>
+        <ul>
+          <li><a href="{{ www }}/privacy-policy/">Privacy Policy</a></li>
+          <li><a href="{{ www }}/cookie-policy/">Cookie Policy</a></li>
+          <li><a href="{{ www }}/contact/">Contact</a></li>
         </ul>
       </div>
     </div>
@@ -98,23 +100,66 @@
   <div class="footer__bottom">
     <div class="footer__bottom-grid">
       <div class="footer__closure">
-        Public domain (<a href="https://creativecommons.org/publicdomain/zero/1.0/" rel="noopener" target="_blank">CC0-1.0</a>).
-        Open source — content and code are free to read, fork, and reuse.
-        <br><small>
-          Part of the <a href="{{ config.extra.upstream_site }}">Wheel of Heaven</a> project.
-        </small>
+        Released to the public domain
+        <br><small>Content available under <a href="https://github.com/wheelofheaven/wheelofheaven.io/blob/main/LICENSE" class="link" target="_blank" rel="noopener noreferrer">Creative Commons Zero (CC0)</a></small>
+      </div>
+
+      <div class="footer__prefs">
+        <div class="navbar__lang-dropdown" id="lang-switcher" data-upstream="{{ www }}">
+          <button
+            class="navbar__lang-trigger"
+            id="lang-trigger"
+            type="button"
+            aria-expanded="false"
+            aria-haspopup="listbox"
+            aria-label="Select language"
+            title="Read the main site in another language"
+          >
+            <span class="navbar__lang-current" id="lang-current">English</span>
+            <svg class="navbar__lang-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <ul class="navbar__lang-menu" id="lang-menu" role="listbox" aria-label="Available languages">
+            <li class="navbar__lang-option navbar__lang-option--active" data-lang="en" role="option" aria-selected="true" lang="en">English</li>
+            <li class="navbar__lang-option" data-lang="de" role="option" lang="de">Deutsch</li>
+            <li class="navbar__lang-option" data-lang="es" role="option" lang="es">Español</li>
+            <li class="navbar__lang-option" data-lang="fr" role="option" lang="fr">Français</li>
+            <li class="navbar__lang-option" data-lang="ja" role="option" lang="ja">日本語</li>
+            <li class="navbar__lang-option" data-lang="ko" role="option" lang="ko">한국어</li>
+            <li class="navbar__lang-option" data-lang="ru" role="option" lang="ru">Русский</li>
+            <li class="navbar__lang-option" data-lang="zh" role="option" lang="zh">简体中文</li>
+            <li class="navbar__lang-option" data-lang="zh-Hant" role="option" lang="zh-Hant">繁體中文</li>
+            <li class="navbar__lang-option" data-lang="he" role="option" lang="he" dir="rtl">עברית</li>
+          </ul>
+        </div>
+
+        <button
+          id="theme-toggle"
+          class="navbar__theme-toggle"
+          type="button"
+          data-theme-toggle
+          aria-label="Toggle dark/light mode"
+        >
+          <span class="navbar__theme-icon" aria-hidden="true">
+            <span class="icon icon--moon">{% include "partials/icons/feather-moon.html" %}</span>
+            <span class="icon icon--sun">{% include "partials/icons/feather-sun.html" %}</span>
+          </span>
+        </button>
       </div>
 
       <div class="footer__socials">
-        {% include "partials/social/x-twitter.html" %}
-        {% include "partials/social/telegram.html" %}
-        {% include "partials/social/youtube.html" %}
-        {% include "partials/social/github.html" %}
-        {% include "partials/social/open-collective.html" %}
+          {% include "partials/social/x-twitter.html" %}
+          {% include "partials/social/telegram.html" %}
+          {% include "partials/social/youtube.html" %}
+          {% include "partials/social/github.html" %}
+          {% include "partials/social/huggingface.html" %}
+          {% include "partials/social/open-collective.html" %}
       </div>
     </div>
   </div>
 
-  {# Bifrost rainbow strip — kept as-is. #}
-  <div class="site-footer__rainbow" aria-hidden="true"></div>
+  {# Bifrost rainbow strip — decorative band that fades from the footer bg
+     into the pastel palette and slowly drifts across the spectrum. #}
+  <div class="footer__rainbow" aria-hidden="true"></div>
 </footer>

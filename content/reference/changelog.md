@@ -8,6 +8,41 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-10-25 — Firmament everywhere, and the docs in Bifrost's chrome
+
+Finished the Firmament adoption: the documentation site now reads in
+Firmament Sans 0.1 (its Jost subset retired, Mermaid diagrams included),
+and every Open Graph card was re-rendered in it. The re-render exposed
+that the OG renderer's font and background symlinks had pointed at the
+renamed website checkout since spring, so every live card had shipped in
+the system fallback font on a flat background; the renderer now repairs
+its links on each run, and 11,072 cards went to the CDN in one push.
+Hebrew cards use the Miriam Libre companion. The
+[OG pipeline guide](@/contributing/dev/og-image-pipeline.md) records the
+incident, the parallel re-render recipe and the push cost.
+
+This site also took on the reading site's chrome: the footer is now
+Bifrost's footer verbatim (columns, language menu, theme toggle, social
+marks, rainbow strip), its colour tokens follow Bifrost's light and dark
+themes, and the theme toggle uses the same icon control in header and
+footer. The navbar stays docs-scoped. The new
+[docs site page](@/architecture/sites/docs.md) documents the theme and
+what it shares with Bifrost.
+
+## 2026-10-24 — Script companions and the Hebrew locale
+
+Published the Firmament companion proof at
+[firmament.wheelofheaven.world/companions/](https://firmament.wheelofheaven.world/companions/):
+24 open Hebrew, Greek, Arabic, cuneiform and CJK families measured
+against a metric contract read from the Firmament outlines (x-height 460,
+cap height 700, stem 80 ‰ / 152 ‰, colour 184.6 ‰ / 283.9 ‰) and set
+beside it at reading sizes. Miriam Libre fit Hebrew and became the Hebrew
+locale's body and display companion on the main site, with Frank Ruhl
+Libre kept for citations and scripture; no open Greek fit, which is the
+case for drawing Firmament Greek (brief in `firmament-sans/scholar/greek/`).
+The [typography guide](@/components/tokens/typography.md) carries the
+contract, the Hebrew split and the adoption table.
+
 ## 2026-10-22 — Firmament Sans and its public specimen
 
 Created Firmament Sans as an independently named scholarly extension of Jost,

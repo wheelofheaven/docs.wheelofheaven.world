@@ -1,0 +1,428 @@
+@use "../abstracts/tokens" as t;
+
+// The reading site's footer, verbatim. This file is Bifrost's
+// sass/layout/_footer.scss with its three @use namespaces collapsed onto
+// the docs token module (which @forwards Bifrost's colors and variables)
+// and its typography variables mapped: $font-size-sd → $font-size-base,
+// $font-weight-lg → 700. Keep it in step with Bifrost; the markup in
+// partials/footer.html mirrors Bifrost's partials/footer.html the same way.
+// The custom properties it reads (--color-footer-bg, --color-hairline,
+// --color-text-subtle, --color-hover, --color-focus, --color-accent-*,
+// --font-family-lead) are defined in base/_theme-vars.scss with the
+// main site's values.
+
+.footer {
+    font-size: t.$font-size-base;
+    border-top: t.$hairline-width solid var(--color-hairline);
+    background: var(--color-footer-bg);
+    // Rounded top corners lift the footer off the page as a distinct panel.
+    // The hairline border-top follows the curve, so the rounding reads even
+    // when the footer bg matches the body bg (dark theme).
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
+    // iOS notch support — only the side insets; the bottom inset is folded
+    // into the rainbow strip below so the strip can reach the true edge.
+    padding-bottom: 0;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    margin-bottom: 0;
+
+    &__content {
+        max-width: 1200px;
+        margin-inline: auto;
+        margin-top: 3rem;
+        // No margin-bottom: the padding-bottom below already separates the
+        // columns from the bottom bar. Stacking both left a ~6rem dead gap
+        // above the copyright row on desktop.
+        margin-bottom: 0;
+        padding: 3rem t.$spacing-xl;
+
+        @media (max-width: 768px) {
+            margin-top: 2rem;
+            padding: 2.5rem t.$spacing-lg;
+        }
+
+        @media (max-width: 600px) {
+            margin-top: 1.5rem;
+            padding: 2.5rem t.$spacing-md;
+        }
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: 2.4fr 1fr 1fr 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+
+        @media (min-width: 641px) and (max-width: 1100px) {
+            // Keep every link group to the right of the introduction on
+            // narrower windows; use two rows instead of moving it above them.
+            grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
+            gap: 2.5rem 1.5rem;
+
+            > .footer__col--brand {
+                grid-row: span 2;
+                margin-right: 0;
+            }
+        }
+    }
+
+    &__col {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        display: flex;
+        flex-direction: column;
+        gap: 0.625rem;
+
+        .footer__col-title {
+            font-family: var(--font-family-lead);
+            font-weight: 700;
+            font-size: t.$font-size-sm;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            margin-top: 2rem;
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                font-size: t.$font-size-sm;
+                margin-bottom: 1rem;
+                line-height: 1.5;
+
+                a {
+                    color: var(--color-text);
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+
+    // Modifier: wide branding column
+    &__col--brand {
+        max-width: 400px;
+        margin-right: 3rem;
+
+        @media (max-width: 640px) {
+            margin-right: 0;
+            max-width: none;
+        }
+    }
+
+    &__muted {
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+        margin-top: 0.5rem;
+        color: var(--color-text-muted);
+        font-size: t.$font-size-sm;
+    }
+
+    &__bottom {
+        border-top: t.$hairline-width solid var(--color-hairline);
+        max-width: 1200px;
+        margin-inline: auto;
+        padding: 1.5rem t.$spacing-xl;
+
+        @media (max-width: 768px) {
+            padding: 1.25rem t.$spacing-lg;
+        }
+
+        @media (max-width: 600px) {
+            padding: 1.25rem t.$spacing-md;
+        }
+    }
+
+    &__bottom-grid {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: 1.5rem;
+
+        @media (max-width: 640px) {
+            grid-template-columns: 1fr;
+            text-align: center;
+            justify-items: center;
+        }
+    }
+
+    &__prefs {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        // Mobile gets the language and theme controls inside the burger
+        // menu (globe icon → lang pane, mobile-theme-toggle in the bar
+        // controls). Hide the footer duplicates there so users don't see
+        // a second "Select language" + theme row at the bottom of the
+        // page when the burger is collapsed.
+        @media (max-width: 999px) {
+            display: none;
+        }
+
+        // Open the language menu upward so it doesn't escape the footer.
+        .navbar__lang-menu {
+            top: auto;
+            bottom: calc(100% + 0.5rem);
+            transform: translateY(8px);
+
+            &--open {
+                transform: translateY(0);
+            }
+        }
+    }
+
+    &__closure {
+        // System mono — the footer is in the DOM on every page, so
+        // referencing $font-family-tech here pulls iAWriterQuattroS
+        // Regular+Bold into the network burst on every cold visit.
+        // The closure is one short line of small chrome text; system
+        // mono renders it cleanly without the 91 KB webfont fetch.
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: t.$font-size-base;
+        color: var(--color-text-muted);
+
+        small {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            color: var(--color-text-subtle);
+        }
+
+        // Enhanced link styling for theme awareness
+        a,
+        .link {
+            color: var(--color-accent-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid transparent;
+
+            &:hover {
+                color: var(--color-accent-secondary);
+                text-decoration: none;
+                border-bottom-color: currentColor;
+            }
+
+            &:focus {
+                outline: 2px solid var(--color-focus);
+                outline-offset: 2px;
+                border-radius: 2px;
+            }
+        }
+
+        // Light theme specific link styling
+        [data-theme="light"] & {
+            a,
+            .link {
+                color: #{t.$mauve-600};
+
+                &:hover {
+                    color: #{t.$blue-600};
+                    text-shadow: 0 0 8px rgba(163, 196, 243, 0.3);
+                }
+            }
+        }
+
+        // Dark theme specific link styling
+        [data-theme="dark"] & {
+            a,
+            .link {
+                color: #{t.$mint};
+
+                &:hover {
+                    color: #{t.$blue};
+                    text-shadow: 0 0 12px rgba(152, 245, 225, 0.4);
+                }
+            }
+        }
+    }
+
+    &__socials {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+
+        @media (max-width: 640px) {
+            justify-content: flex-start;
+        }
+    }
+
+    &__social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        color: inherit;
+
+        &:hover {
+            background-color: var(--color-hover);
+            transform: translateY(-2px);
+        }
+
+        svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        // Brand colour on hover for the platforms that have a real brand
+        // colour (X and GitHub are monochrome brands, left as-is). The marks
+        // use currentColor, so tinting the link colour tints the icon.
+        &--telegram:hover         { color: #26a5e4; }
+        &--youtube:hover          { color: #ff0000; }
+        &--open-collective:hover  { color: #297eff; }
+        &--huggingface:hover      { color: #ffd21e; }
+    }
+}
+
+// Mobile override: stack columns
+@media (max-width: 640px) {
+    .footer__grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .footer__col--brand {
+        margin-right: 0;
+        max-width: none;
+    }
+}
+
+// Bifrost rainbow strip — decorative band at the very bottom of the footer.
+// The rainbow itself fills the strip; a CSS mask fades its alpha from the top
+// downward so the footer's background shows through above and the colors only
+// emerge in the lower portion. The mask uses a multi-stop curve so the fade
+// is gentle and wide instead of a hard line. The horizontal hue pans slowly
+// using a seamlessly-looping gradient (first/last stop are the same color).
+.footer__rainbow {
+    display: block;
+    position: relative;
+    height: 13rem;
+    // Absorb the iOS bottom safe-area inset inside the strip so the rainbow
+    // continues all the way to the device edge with no theme-bg gap below.
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: content-box;
+    margin: 0;
+    background: linear-gradient(
+        90deg,
+        #{t.$pink-300}     0%,
+        #{t.$lavender-300} 14%,
+        #{t.$mauve-300}    28%,
+        #{t.$blue-300}     42%,
+        #{t.$cyan-300}     56%,
+        #{t.$mint-300}     70%,
+        #{t.$green-300}    84%,
+        #{t.$pink-300}     100%
+    );
+    background-size: 200% 100%;
+    background-repeat: repeat-x;
+    background-position: 0% 50%;
+
+    // Soft, wide vertical fade-in via alpha mask. The top stays fully
+    // transparent (footer bg shows through), then a long ease ramps the
+    // rainbow up. The mask plateaus at full opacity around 80% so the
+    // bottom ~20% of the strip is a solid band of pure rainbow color.
+    // The fade samples a smoothstep curve (3t² − 2t³) over the 5% → 88%
+    // range. Many closely-spaced stops keep each linear segment short, so
+    // the eye reads the transition as a smooth S-curve. The bottom 12%
+    // stays at full opacity — a thin band of solid pastel.
+    $fade: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0)     0%,
+        rgba(0, 0, 0, 0)     5%,
+        rgba(0, 0, 0, 0.020) 12%,
+        rgba(0, 0, 0, 0.066) 18%,
+        rgba(0, 0, 0, 0.133) 24%,
+        rgba(0, 0, 0, 0.217) 30%,
+        rgba(0, 0, 0, 0.314) 36%,
+        rgba(0, 0, 0, 0.420) 42%,
+        rgba(0, 0, 0, 0.545) 49%,
+        rgba(0, 0, 0, 0.651) 55%,
+        rgba(0, 0, 0, 0.752) 61%,
+        rgba(0, 0, 0, 0.840) 67%,
+        rgba(0, 0, 0, 0.914) 73%,
+        rgba(0, 0, 0, 0.967) 79%,
+        rgba(0, 0, 0, 0.997) 85%,
+        rgba(0, 0, 0, 1)     88%,
+        rgba(0, 0, 0, 1)    100%
+    );
+    -webkit-mask-image: $fade;
+            mask-image: $fade;
+
+    animation: footer-rainbow-shift 90s linear infinite;
+    pointer-events: none;
+
+    // Film-grain overlay — matches the fine, balanced grain baked into the
+    // cosmic hero background used across our thumbnails. A seamless, fine
+    // fractal-noise texture (SVG feTurbulence at high frequency ≈ 1px specks),
+    // desaturated to monochrome. Blended with `overlay` so it lays down BOTH
+    // lighter and darker specks (real film grain) instead of the sooty,
+    // darken-only look of multiply; overlay also naturally fades grain out of
+    // the lightest highlights, which is physically correct. The parent's
+    // alpha mask clips this pseudo too, so the grain fades in with the rainbow.
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+        background-size: 220px 220px;
+        background-repeat: repeat;
+        mix-blend-mode: overlay;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+// background-size is 200% (gradient tile = 2× element width); shifting the
+// position by -200% advances exactly one tile, which lines up seamlessly
+// with the next tile because the gradient's first/last stops are both pink.
+@keyframes footer-rainbow-shift {
+    0%   { background-position: 0%    50%; }
+    100% { background-position: -200% 50%; }
+}
+
+// External link indicator — replaces the inline ↗ unicode (which renders thin
+// and inconsistently across fonts) with a crisp SVG drawn via CSS mask. The
+// element keeps the underlying ↗ glyph in markup for accessibility, but
+// text-indent hides it so only the SVG shows.
+.external-indicator {
+    $svg: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 17 17 7 M9 7H17V15' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+
+    display: inline-block;
+    width: 0.65em;
+    height: 0.65em;
+    margin-left: 0.35em;
+    vertical-align: -0.05em;
+    background-color: currentColor;
+    opacity: 0.5;
+    mask: url($svg) no-repeat center / contain;
+    -webkit-mask: url($svg) no-repeat center / contain;
+
+    // Hide the unicode glyph itself; the SVG mask draws the visible arrow.
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    a:hover & {
+        opacity: 0.85;
+        transform: translate(0.075em, -0.075em);
+    }
+}

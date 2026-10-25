@@ -17,7 +17,7 @@ file serving for the asset CDN.
 | **www** | <https://www.wheelofheaven.world> | The reading site — wiki, articles, library, timeline, news, sources | Zola + Bifrost theme, 10 languages |
 | **api** | <https://api.wheelofheaven.world> | JSON endpoints (same content as www, machine-readable) | Zola + Python prebuild script |
 | **assets** | <https://assets.wheelofheaven.world> | Image CDN — AVIF/WebP/JPG + OG cards | Static file serving |
-| **docs** | <https://docs.wheelofheaven.world> | This site — author, contributor, dev docs | Zola + custom `docs-theme` (English-only) |
+| **docs** | <https://docs.wheelofheaven.world> | This site — author, contributor, dev docs | Zola + custom `docs-theme` on Bifrost's tokens, fonts and footer (English-only) |
 
 Per-site detail on the pages below.
 

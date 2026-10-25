@@ -11,7 +11,7 @@
 @use "layout/shell";
 @use "layout/sidebar";
 @use "layout/toc";
-@use "layout/footer-full";
+@use "layout/footer";
 @use "components/page";
 @use "components/code";
 @use "components/search";
@@ -19,7 +19,7 @@
 @use "components/external-links";
 @use "components/details";
 @use "components/alerts";
-@use "components/theme-toggle";
+@use "components/footer-prefs";
 @use "components/prev-next";
 @use "components/edit-on-github";
 @use "components/landing";

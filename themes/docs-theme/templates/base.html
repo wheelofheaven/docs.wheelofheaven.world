@@ -175,9 +175,11 @@
 
             {% include "partials/search.html" ignore missing %}
 
-            <button class="theme-toggle" type="button" aria-label="Toggle color theme">
-                <span class="theme-toggle__icon theme-toggle__icon--dark" aria-hidden="true">◑</span>
-                <span class="theme-toggle__icon theme-toggle__icon--light" aria-hidden="true">◐</span>
+            <button class="navbar__theme-toggle" type="button" data-theme-toggle aria-label="Toggle dark/light mode">
+                <span class="navbar__theme-icon" aria-hidden="true">
+                    <span class="icon icon--moon">{% include "partials/icons/feather-moon.html" %}</span>
+                    <span class="icon icon--sun">{% include "partials/icons/feather-sun.html" %}</span>
+                </span>
             </button>
         </div>
         <div class="site-header__rainbow" aria-hidden="true"></div>
@@ -212,6 +214,7 @@
     {% include "partials/shortcuts.html" %}
 
     <script src="{{ get_url(path='js/theme-toggle.js', cachebust=true) | safe }}" defer></script>
+    <script src="{{ get_url(path='js/footer-prefs.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/code-copy.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/nav-toggle.js', cachebust=true) | safe }}" defer></script>
     <script src="{{ get_url(path='js/toc-active.js', cachebust=true) | safe }}" defer></script>
