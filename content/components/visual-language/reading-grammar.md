@@ -48,6 +48,31 @@ intersection callbacks, so short chapters and clicked entries resolve the
 same way as long ones, and the last chapter stays marked once the page is
 scrolled out. The library reader marks its own list.
 
+## Pages on the grammar
+
+| Page | File | Notes |
+| --- | --- | --- |
+| Articles | `_article-grammar.scss` | Reading column with the contents rail on the right. |
+| Wiki entries | `_wiki-grammar.scss` | Sidebar: portrait, infobox, names, metadata, then the contents list, then share and agent controls. |
+| Timeline chapters | `_timeline-grammar.scss` | Same sidebar order; the age badge becomes a mono line under the headline. |
+| Newsroom dispatches | `_dispatch-grammar.scss` | Single column; canon links and sources as rows. |
+| Library book pages | `_library-grammar.scss` | Page chrome only; the reader is untouched. |
+| Wiki index | `_wiki-index-grammar.scss` | Header and controls only; the cards keep their design. |
+| About, info pages, FAQ, Press Kit | `_meta-grammar.scss` | One centred column; the Press Kit lives inside the info page and takes its header. |
+| Sources index and records | `_sources-grammar.scss` | Rows with an eyebrow for the kind; records with a hairline sidebar. |
+
+Index and landing pages (Articles, Newsroom, Library, Timeline, Contact,
+Datasets) are not on the grammar; their cards and heroes stay as designed.
+
+### Where the contents list sits
+
+On wiki entries and timeline chapters an inline script in the page
+template places the contents list: inline after the summary on phones,
+and on desktop below the metadata block in the sidebar, above the share
+and agent controls. The template markup matches that desktop order. The
+scroll-spy scrolls the sidebar, the list's real scroll container, so the
+current chapter stays in view.
+
 ## Fonts
 
 The grammar introduced one face: **iA Writer Mono S**, the strictly

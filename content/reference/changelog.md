@@ -19,9 +19,12 @@ rainbow appears in four fixed placements per page and as a prism wash
 behind the header. The contents rail now follows the reader on article
 and timeline pages as it did on wiki pages, with a rewritten scroll-spy.
 The citation panels set BibTeX in a new vendored monospace, iA Writer
-Mono S. Index pages keep their cards. The
+Mono S. Index pages keep their cards. A second pass the same day took the
+meta pages (About, the info pages, the FAQ, the Press Kit) and the Sources
+index and records onto the grammar, and moved the contents list on wiki
+entries and timeline chapters below the sidebar metadata. The
 [reading grammar](@/components/visual-language/reading-grammar.md) page
-documents the rules and how to add a page to them.
+documents the rules, the pages on them and how to add one.
 
 ## 2026-10-25 — Firmament everywhere, and the docs in Bifrost's chrome
 
