@@ -1,5 +1,12 @@
 // Self-hosted webfonts.
 //
+// URLs are root-absolute on purpose: this file is compiled into main.css
+// AND inlined through critical.scss into every page's <head>. A relative
+// "fonts/…" resolves against the page URL in the inlined copy, so on any
+// page below the root the browser requested /section/page/fonts/… (404)
+// before falling back to the main.css declaration — one wasted request
+// per face per page view. The docs site is served from the domain root.
+//
 // Firmament Sans is the body face: the four static 0.1 styles the main
 // website serves (see static/fonts/vendor/firmament-sans/README.md).
 // No unicode-range: the file carries Latin, Cyrillic and the scholarly
@@ -20,7 +27,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-Regular.woff2") format("woff2");
+    src: url("/fonts/vendor/firmament-sans/0.1/FirmamentSans-Regular.woff2") format("woff2");
 }
 
 @font-face {
@@ -28,7 +35,7 @@
     font-style: italic;
     font-weight: 400;
     font-display: swap;
-    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-Italic.woff2") format("woff2");
+    src: url("/fonts/vendor/firmament-sans/0.1/FirmamentSans-Italic.woff2") format("woff2");
 }
 
 @font-face {
@@ -36,7 +43,7 @@
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-Bold.woff2") format("woff2");
+    src: url("/fonts/vendor/firmament-sans/0.1/FirmamentSans-Bold.woff2") format("woff2");
 }
 
 @font-face {
@@ -44,7 +51,7 @@
     font-style: italic;
     font-weight: 700;
     font-display: swap;
-    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-BoldItalic.woff2") format("woff2");
+    src: url("/fonts/vendor/firmament-sans/0.1/FirmamentSans-BoldItalic.woff2") format("woff2");
 }
 
 @font-face {
@@ -52,8 +59,8 @@
     font-style: normal;
     font-weight: 500 700;
     font-display: swap;
-    src: url("fonts/space-grotesk.woff2") format("woff2-variations"),
-         url("fonts/space-grotesk.woff2") format("woff2");
+    src: url("/fonts/space-grotesk.woff2") format("woff2-variations"),
+         url("/fonts/space-grotesk.woff2") format("woff2");
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
                    U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
                    U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
