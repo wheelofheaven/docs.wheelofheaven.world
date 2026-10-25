@@ -30,10 +30,11 @@
 
     <link rel="canonical" href="{{ current_url | default(value=config.base_url) | safe }}">
 
-    {# Preload the two webfonts so they arrive before SCSS parsing
-       references them. Both are variable woff2 files (Jost covers
-       weights 400-700; Space Grotesk covers 500-700). #}
-    <link rel="preload" href="{{ get_url(path='fonts/jost.woff2') | safe }}" as="font" type="font/woff2" crossorigin>
+    {# Preload the two first-paint webfonts so they arrive before SCSS
+       parsing references them: Firmament Sans Regular (body; the other
+       three static styles load on use) and the variable Space Grotesk
+       (display, 500-700). #}
+    <link rel="preload" href="{{ get_url(path='fonts/vendor/firmament-sans/0.1/FirmamentSans-Regular.woff2') | safe }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ get_url(path='fonts/space-grotesk.woff2') | safe }}" as="font" type="font/woff2" crossorigin>
 
     {# Favicons — full set copied from the www repo, same brand mark. #}

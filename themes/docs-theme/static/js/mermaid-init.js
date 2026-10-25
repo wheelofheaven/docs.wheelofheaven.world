@@ -107,7 +107,7 @@
             startOnLoad: false,
             theme: 'base',
             themeVariables: themeVarsFor(resolvedTheme()),
-            fontFamily: '"Jost", -apple-system, BlinkMacSystemFont, sans-serif',
+            fontFamily: '"Firmament Sans", -apple-system, BlinkMacSystemFont, sans-serif',
             flowchart: {
                 curve: 'basis',
                 useMaxWidth: true,

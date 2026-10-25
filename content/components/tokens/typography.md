@@ -207,6 +207,20 @@ CJK keep their current faces, now recorded with measurements as pairing specific
 7. Verify the production deployment, actual font URLs, checksums, computed body stack,
    and preload. A merged PR alone does not prove the new font is live.
 
+### Where Firmament is adopted
+
+| Surface | Body face | Since |
+| --- | --- | --- |
+| [Showcase](https://firmament.wheelofheaven.world/) | Firmament Sans 0.1 | 2026-10-22 |
+| [Main website](https://www.wheelofheaven.world/) (Bifrost) | Firmament Sans 0.1, `static/fonts/vendor/firmament-sans/0.1/` | 2026-10-22 |
+| This documentation site (`docs-theme`) | Firmament Sans 0.1, `themes/docs-theme/static/fonts/vendor/firmament-sans/0.1/`; Mermaid diagrams use the same family; version 0.1 has no 500 weight, so medium resolves to Regular | 2026-10-25 |
+| Open Graph images (`data-images/og`) | Firmament Sans 0.1 from the website's vendor tree; a template font change needs `--force` because the hash covers content fields only | 2026-10-25 |
+
+Deliberately unchanged: the narrative map poster (its Latin labels share Jost's outlines, and
+the served SVG is text-to-path), the EPUB stylesheet (generic families by design, so e-readers
+keep their own font preferences), and the video and brand renderers, which use Space Grotesk,
+the display face.
+
 The initial main-site adoption is recorded in
 [website PR #28](https://github.com/wheelofheaven/www.wheelofheaven.world/pull/28),
 [Bifrost PR #3](https://github.com/wheelofheaven/bifrost/pull/3), and
