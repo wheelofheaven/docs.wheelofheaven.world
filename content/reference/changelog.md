@@ -8,6 +8,21 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-10-25 — One reading grammar across the site
+
+The reading pages now share one visual grammar: articles, wiki entries,
+timeline chapters, newsroom dispatches and library book pages take the
+same header sequence (kicker, headline, rainbow dash, lede, mono byline),
+the same ink-and-hairline end matter, the same pill for every control and
+the same quotation rule, with the accent reserved for links. The Bifrost
+rainbow appears in four fixed placements per page and as a prism wash
+behind the header. The contents rail now follows the reader on article
+and timeline pages as it did on wiki pages, with a rewritten scroll-spy.
+The citation panels set BibTeX in a new vendored monospace, iA Writer
+Mono S. Index pages keep their cards. The
+[reading grammar](@/components/visual-language/reading-grammar.md) page
+documents the rules and how to add a page to them.
+
 ## 2026-10-25 — Firmament everywhere, and the docs in Bifrost's chrome
 
 Finished the Firmament adoption: the documentation site now reads in

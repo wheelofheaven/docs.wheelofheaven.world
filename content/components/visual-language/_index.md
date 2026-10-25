@@ -13,6 +13,11 @@ or premium-CTA prominence: a frosted-glass blur on top of a slowly
 drifting two-colour gradient ("cloud-duo"). The recipe is centralised in
 two mixins so adopters never reinvent the background treatment.
 
+The [reading grammar](reading-grammar/) page comes first: it sets the rules
+every reading page follows (ink and hairlines, one accent, the mono
+metadata voice, one pill, the rainbow in four placements). The mixins
+below are the surface recipes the index and landing pages still use.
+
 | Mixin                                          | Shape   | Use for                                  |
 |------------------------------------------------|---------|------------------------------------------|
 | [`glass-cloud-card`](glass-cloud-card/)        | Card    | Lead cards on section landings, reading-path tiles, lead Dispatch on /news/. |

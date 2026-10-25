@@ -176,6 +176,19 @@ Provenance, subset ranges and the checksum live in `static/fonts/vendor/miriam-l
 Miriam Libre's heaviest instance (700) measures 120 ‰, lighter than Firmament Bold's 152 ‰; Hebrew headings therefore read slightly lighter than their Latin counterparts, which was judged acceptable for a companion and is recorded in the proof.
 
 
+### Code face: iA Writer Mono S
+
+The theme's "tech" voice (`$font-family-tech`, used for labels, bylines and
+metadata) is iA Writer Quattro S, a duospace in which wide letters take one
+and a half columns. For text that is code proper, listings and BibTeX,
+that drift shows. Since 2026-10-25 Bifrost vendors **iA Writer Mono S**
+2.000 (Regular and Bold, SIL OFL, from the upstream `iaolo/iA-Fonts`
+repository, every glyph 600/1000 em) at
+`static/fonts/vendor/ia-writer-mono/` and exposes it as
+`$font-family-code`, falling back through the Quattro stack. The BibTeX
+panel of "Cite this page" uses it; site code blocks still set in Quattro
+and can move to the same token.
+
 ## Multiscript direction
 
 A coordinated family should respect each script's own reading conventions.
