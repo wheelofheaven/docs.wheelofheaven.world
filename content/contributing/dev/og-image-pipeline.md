@@ -177,6 +177,19 @@ glassmorphic chip, claim pill, and wordmark. Section accents come from
 `.og--{section}` CSS classes in `_base.css`. The visual language
 matches Bifrost so the cards feel native to the reading site.
 
+Fonts come from the website checkout through three symlinks the renderer
+maintains in `templates/`: `fonts/` → `www/static/fonts/vendor/`,
+`theme-fonts/` → `www/themes/bifrost/static/fonts/vendor/`, and
+`background.avif` → the Milky Way photograph. Since 2026-10-25 the
+reading layer is **Firmament Sans 0.1** (`fonts/firmament-sans/0.1/`),
+Hebrew cards use the **Miriam Libre** companion for Hebrew glyphs with
+Firmament Sans for Latin words and Frank Ruhl Libre as the fallback for
+marks Miriam lacks — the same stack the Hebrew locale reads in on the
+site — and the renderer repoints a stale or dangling symlink on every
+run (`_ensure_symlink()` in `generate_og.py`). See
+[the silent-fallback incident](#the-2026-10-stale-symlink-incident) for
+why that repair exists.
+
 ## Scripts
 
 ### `generate_og.py`
@@ -304,7 +317,24 @@ not the template). Force a full re-render:
 ./venv/bin/python scripts/generate_og.py --force
 ```
 
-Plan for ~70 minutes wall-clock and ~30 MB of repo growth.
+One process renders about 0.7 cards a second. Five processes, two
+languages each, finished all 11,072 cards in 31 minutes on 2026-10-25:
+
+```sh
+for pair in "en de" "fr es" "ru ja" "zh zh-Hant" "ko he"; do
+  read -r a b <<< "$pair"
+  ./venv/bin/python scripts/generate_og.py --force --lang "$a" --lang "$b" &
+done; wait
+```
+
+The renderer launches the system Chrome channel by default (Playwright's
+bundled headless shell hung on every screenshot here); set
+`OG_BROWSER_CHANNEL=chromium` to use the bundled browser. Budget for the
+push, not the render: every card changes, and the assets repo tracks the
+JPEGs directly, so a full re-render adds the whole tree to its history —
+1.34 GB for the 2026-10-25 run (cards average 124 KB with the photographic
+background). Run `sync_og_to_cdn.py --dry-run`, read the numbers, and get
+a sign-off before pushing.
 
 ## Who runs this, and when
 
@@ -454,12 +484,35 @@ means the www repo isn't on `main`, or the brand assets were moved.
 Cards rendered during the warning window need a forced re-render
 after the assets are restored.
 
+### The 2026-10 stale-symlink incident
+
+**Symptom:** Every live card was set in the system fallback font
+(SF/Segoe) on a flat gradient instead of Firmament Sans on the Milky
+Way background, and had been for months. Nothing failed: `@font-face`
+and background loads fail silently in a headless browser.
+
+**Root cause:** The three symlinks under `templates/` had been created
+once and still pointed at the renamed `www.wheelofheaven.io` checkout.
+`ensure_*_symlink()` returned early for any existing link, dangling or
+not, so the rename that the 2026-05 incident fixed for *content* was
+never fixed for *assets*.
+
+**Fix:** `_ensure_symlink()` resolves each link on every run and
+repoints it when the target differs (data-images `0fabdd1`). The full
+re-render that followed is the 2026-10-25 entry in the changelog. A
+quick check after any repo move: `ls -la templates/fonts` must resolve
+to the current website checkout.
+
 ### Hebrew renders broken
 
-Hebrew (`he`) uses a separate font (Frank Ruhl Libre) and `dir="rtl"`
-in the OG template. If only Hebrew cards look wrong, suspect
-`templates/_base.html.j2` lost its RTL handling — see
-`data-images@1707e98` for the original wiring.
+Hebrew (`he`) uses `dir="rtl"` and its own font rules in `_base.css`:
+Miriam Libre for Hebrew glyphs, Firmament Sans for Latin inside the same
+line, Frank Ruhl Libre as the fallback for cantillation and sof pasuq.
+If only Hebrew cards look wrong, check that `templates/theme-fonts/`
+resolves (it carries both Hebrew faces) and that
+`templates/_base.html.j2` still sets `dir="rtl"` — see
+`data-images@1707e98` for the original wiring and `ebf58cc` for the
+Miriam Libre rule.
 
 ## Future work
 

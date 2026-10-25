@@ -1,7 +1,9 @@
 // Light/dark toggle. Stores preference in localStorage; pre-paint script
-// in base.html reads it before first render so we don't flash.
+// in base.html reads it before first render so we don't flash. Every
+// element with [data-theme-toggle] (header and footer) drives the same
+// state; the icons swap through CSS on the resolved theme.
 (function () {
-    var btn = document.querySelector('.theme-toggle');
+    var buttons = document.querySelectorAll('[data-theme-toggle]');
     var light = document.getElementById('syntax-light');
     var dark = document.getElementById('syntax-dark');
 
@@ -25,12 +27,14 @@
         }
     }
 
-    if (!btn) return;
+    if (!buttons.length) return;
 
-    btn.addEventListener('click', function () {
-        var next = currentTheme() === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        applySyntaxCss(next);
-        try { localStorage.setItem('docs-theme', next); } catch (_) {}
+    Array.prototype.forEach.call(buttons, function (btn) {
+        btn.addEventListener('click', function () {
+            var next = currentTheme() === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            applySyntaxCss(next);
+            try { localStorage.setItem('docs-theme', next); } catch (_) {}
+        });
     });
 })();

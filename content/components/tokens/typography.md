@@ -121,10 +121,59 @@ The shaping checks compare precomposed and decomposed forms and verify that ordi
 ## Source scripts and typography roles
 
 This extension addresses Latin transliteration within prose.
-Hebrew, Greek, cuneiform, and East Asian writing keep their script-specific fonts and the existing body/display/citation/metadata roles.
+Greek, cuneiform, and East Asian writing keep their script-specific fonts and the existing body/display/citation/metadata roles.
 An unsupported character in a heading or quotation needs investigation of that element's font stack; changing the body family alone does not change Space Grotesk or IBM Plex Serif.
 
 See the [script-expansion study](https://github.com/wheelofheaven/firmament.wheelofheaven.world/blob/main/docs/script-expansion.md) for proposed Greek, Hebrew, Arabic, cuneiform, and CJK development. These are not new glyph repertoires in the deployed 0.1 fonts.
+
+### Hebrew: locale companion versus citation serif
+
+Hebrew is served by two faces with two jobs, selected by the cascade in `sass/base/_base.scss`:
+
+| Surface | Selector | Font | Why |
+| --- | --- | --- | --- |
+| Hebrew locale running prose, headings, navigation, interface text | `:lang(he)` sets `--font-family-body` and `--font-family-lead` | **Miriam Libre** (`$font-family-he-body`, `$font-family-he-display`), one variable WOFF2 (wght 400–700) subset to the Hebrew blocks | The Hebrew analog of the Firmament Sans / Space Grotesk pair. Measured in the [companion proof](https://firmament.wheelofheaven.world/companions/): stem 78 ‰ against Firmament's 80 ‰ at Regular, letter height 579 inside the x-height–cap band, colour within a few per cent. Its Hebrew revives Raphael Frank's monolinear Miriam, as Frank Ruhl Libre revives Frank's Frank-Rühl. |
+| Inline Hebrew citations in other-language prose, interlinear tokens, the language-switcher item, scripture and library originals | `:not(:root)[lang="he"]`, `.hebrew`, and every element on `--font-family-citation` | **Frank Ruhl Libre** (`$font-family-hebrew`) | The scholarly citation register. It also carries sof pasuq and cantillation, which Miriam Libre lacks; pointed source text therefore never leaves this layer. |
+
+### Arabic: interface face and reading face
+
+Arabic had no web font on the main site until 25 October 2026; readers saw whatever their
+operating system supplied. Two companions from the proof now cover it, split by job the way
+Hebrew is:
+
+| Surface | Selector | Font | Why |
+| --- | --- | --- | --- |
+| Inline terms in prose (`.arabic`), navigation, any Arabic glyph reached through the body or display stack | `.arabic`; **Cairo** listed after Noto Sans IPA in `$font-family-sans` and `$font-family-serif`. Elements tagged `lang="ar"` get direction and bidi isolation only and keep their layer's font | **Cairo**, variable wght 200–1000, slant pinned upright, Arabic-only subset (297 mappings) | Kufi-based, drawn as the companion to a geometric Latin; stem 0.96× the contract, alef on the cap height. |
+| Library originals and scripture blocks (the Hidden Words) | every element on `--font-family-citation`; **Noto Naskh Arabic** listed after Noto Sans IPA in `$font-family-citation` | **Noto Naskh Arabic**, variable wght 400–700, Arabic-only subset (1,177 mappings, full vocalisation) | Naskh carries long text more kindly than Kufi; 0.79× stem is deliberate for a reading face. |
+
+Both `@font-face` rules are bounded by `unicode-range` to the Arabic blocks, so the files load
+only on pages with Arabic and Latin never touches them. Inline Arabic is right-to-left and
+bidi-isolated like inline Hebrew. Provenance, subset ranges and checksums live in
+`static/fonts/vendor/cairo/` and `static/fonts/vendor/noto-naskh-arabic/` in Bifrost.
+Native-reader review of a full Hidden Words chapter at reading size is still owed.
+
+### Japanese body face
+
+On 25 October 2026 the Japanese body face changed from Zen Kaku Gothic New to **Noto Sans JP**
+(`$font-family-ja-body`; the Google Fonts link in `partials/fonts-css.html`). In the companion
+proof Zen Kaku measured 0.84× the contract stem, visibly lighter than Firmament beside it,
+while Noto Sans JP measured 1.01× and matches the Noto Sans SC/TC/KR siblings in weight and
+rhythm. M PLUS 1p stays the Japanese display face.
+
+Every CJK body stack (`$font-family-ja-body`, `-zh-body`, `-zh-hant-body`, `-ko-body`) now
+starts with Firmament Sans. Firmament has no CJK glyphs, so kana, kanji, hanzi and hangul fall
+through to the regional face, while Latin and Cyrillic — navigation labels, brand words,
+transliterations, the "Русский" entry in the language menu — stay in the same face as on every
+other page. Before this, the regional face supplied them, and Noto Sans JP's full-width Cyrillic
+made "Русский" render wide and wrap in the switcher on Japanese pages (found and fixed on
+25 October 2026).
+
+Before this split (24 October 2026) `:lang(he)` set the citation serif directly on every element of the Hebrew locale.
+That out-specified the plain-element heading rules and lost to component class selectors, so the locale had no body/display layering and component headings fell to system Hebrew fonts.
+The `@font-face` for Miriam Libre is bounded by `unicode-range` to U+0590–05FF, U+FB1D–FB4F, U+200C–2010, U+20AA and U+25CC, so Latin words, digits and punctuation inside Hebrew pages still come from Firmament Sans and Space Grotesk, and the file is never fetched on pages without Hebrew.
+It is preloaded only when `detected_lang == "he"` (`partials/fonts-css.html`).
+Provenance, subset ranges and the checksum live in `static/fonts/vendor/miriam-libre/` in Bifrost.
+Miriam Libre's heaviest instance (700) measures 120 ‰, lighter than Firmament Bold's 152 ‰; Hebrew headings therefore read slightly lighter than their Latin counterparts, which was judged acceptable for a companion and is recorded in the proof.
 
 
 ## Multiscript direction
@@ -143,9 +192,31 @@ The following is a development proposal, not coverage claimed by Firmament 0.1:
 The [full feasibility study](https://github.com/wheelofheaven/firmament.wheelofheaven.world/blob/main/docs/script-expansion.md)
 contains corpus evidence, candidate families, relative effort, and release gates.
 Its counts inventory source strings, not actual browser fallback or a complete target repertoire.
-Build a companion proof page first, pin exact releases and licenses, test full grapheme
-clusters and HarfBuzz shaping, and require native-reader or scholarly review at reading sizes.
 Add script fonts on demand. Do not silently merge or rename another family's outlines.
+
+### The companion proof and the metric contract
+
+The study's first step, a companion proof page, is published at
+<https://firmament.wheelofheaven.world/companions/> and generated by
+`scripts/companions.py` in the showcase repository from a pinned `google/fonts` commit.
+It defines the **metric contract** that "harmonious with Firmament" means in numbers,
+read from the 0.1 outlines:
+
+| Measure | Regular | Bold |
+| --- | ---: | ---: |
+| x-height / cap height | 460 / 700 | 460 / 700 |
+| Ascender / descender | 1070 / −375 | 1070 / −375 |
+| Stem (Latin l) | 80 ‰ | 152 ‰ |
+| Typographic colour (ink per em²) | 184.6 ‰ | 283.9 ‰ |
+
+A companion fits when its stem and colour are within a tenth of the contract at the same
+nominal weight, its working letter height sits between x-height and cap height, and its
+marks and joins survive HarfBuzz shaping. Futura's geometry does not travel between
+scripts; the measurements do. Outcomes so far: Miriam Libre adopted for the Hebrew
+locale (above); Cairo and Noto Naskh Arabic adopted for Arabic (above); the Japanese body
+face moved to Noto Sans JP; no open Greek fits, which is the argument for drawing
+Firmament Greek (brief in `firmament-sans/scholar/greek/`); cuneiform and the other CJK
+pairings keep their current faces, now recorded with measurements as pairing specifications.
 
 ## Publishing the next font release
 
@@ -168,6 +239,20 @@ Add script fonts on demand. Do not silently merge or rename another family's out
    assets. Publish the updated documentation and showcase as needed.
 7. Verify the production deployment, actual font URLs, checksums, computed body stack,
    and preload. A merged PR alone does not prove the new font is live.
+
+### Where Firmament is adopted
+
+| Surface | Body face | Since |
+| --- | --- | --- |
+| [Showcase](https://firmament.wheelofheaven.world/) | Firmament Sans 0.1 | 2026-10-22 |
+| [Main website](https://www.wheelofheaven.world/) (Bifrost) | Firmament Sans 0.1, `static/fonts/vendor/firmament-sans/0.1/` | 2026-10-22 |
+| This documentation site (`docs-theme`) | Firmament Sans 0.1, `themes/docs-theme/static/fonts/vendor/firmament-sans/0.1/`; Mermaid diagrams use the same family; version 0.1 has no 500 weight, so medium resolves to Regular | 2026-10-25 |
+| Open Graph images (`data-images/og`) | Firmament Sans 0.1 from the website's vendor tree; a template font change needs `--force` because the hash covers content fields only | 2026-10-25 |
+
+Deliberately unchanged: the narrative map poster (its Latin labels share Jost's outlines, and
+the served SVG is text-to-path), the EPUB stylesheet (generic families by design, so e-readers
+keep their own font preferences), and the video and brand renderers, which use Space Grotesk,
+the display face.
 
 The initial main-site adoption is recorded in
 [website PR #28](https://github.com/wheelofheaven/www.wheelofheaven.world/pull/28),

@@ -105,3 +105,11 @@ pre > code[data-lang]:not([data-lang=""]):not([data-lang="plain"]) {
         border-color: var(--color-accent-strong);
     }
 }
+
+// Inline code wraps instead of widening the page: a long token such as
+// `git@github.com: Permission denied (publickey)` in a heading or list
+// otherwise pushes a 390 px viewport sideways (measured 2026-10-25, 517 px).
+:not(pre) > code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}

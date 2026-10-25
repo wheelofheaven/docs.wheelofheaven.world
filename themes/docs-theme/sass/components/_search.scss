@@ -107,3 +107,12 @@
 @media (max-width: t.$breakpoint-collapse-sidebar - 1) {
     .search { max-width: none; }
 }
+
+// Let the header row shrink below the search box's intrinsic width. Flex
+// items default to min-width:auto, and an <input> reports a wide intrinsic
+// size, so at phone widths the row overflowed the viewport by ~17 px and
+// pushed the theme toggle off-screen (measured 2026-10-25).
+.search,
+.search__input {
+    min-width: 0;
+}
