@@ -135,6 +135,31 @@ Hebrew is served by two faces with two jobs, selected by the cascade in `sass/ba
 | Hebrew locale running prose, headings, navigation, interface text | `:lang(he)` sets `--font-family-body` and `--font-family-lead` | **Miriam Libre** (`$font-family-he-body`, `$font-family-he-display`), one variable WOFF2 (wght 400–700) subset to the Hebrew blocks | The Hebrew analog of the Firmament Sans / Space Grotesk pair. Measured in the [companion proof](https://firmament.wheelofheaven.world/companions/): stem 78 ‰ against Firmament's 80 ‰ at Regular, letter height 579 inside the x-height–cap band, colour within a few per cent. Its Hebrew revives Raphael Frank's monolinear Miriam, as Frank Ruhl Libre revives Frank's Frank-Rühl. |
 | Inline Hebrew citations in other-language prose, interlinear tokens, the language-switcher item, scripture and library originals | `:not(:root)[lang="he"]`, `.hebrew`, and every element on `--font-family-citation` | **Frank Ruhl Libre** (`$font-family-hebrew`) | The scholarly citation register. It also carries sof pasuq and cantillation, which Miriam Libre lacks; pointed source text therefore never leaves this layer. |
 
+### Arabic: interface face and reading face
+
+Arabic had no web font on the main site until 25 October 2026; readers saw whatever their
+operating system supplied. Two companions from the proof now cover it, split by job the way
+Hebrew is:
+
+| Surface | Selector | Font | Why |
+| --- | --- | --- | --- |
+| Inline terms in prose (`.arabic`), navigation, any Arabic glyph reached through the body or display stack | `.arabic`; **Cairo** listed after Noto Sans IPA in `$font-family-sans` and `$font-family-serif`. Elements tagged `lang="ar"` get direction and bidi isolation only and keep their layer's font | **Cairo**, variable wght 200–1000, slant pinned upright, Arabic-only subset (297 mappings) | Kufi-based, drawn as the companion to a geometric Latin; stem 0.96× the contract, alef on the cap height. |
+| Library originals and scripture blocks (the Hidden Words) | every element on `--font-family-citation`; **Noto Naskh Arabic** listed after Noto Sans IPA in `$font-family-citation` | **Noto Naskh Arabic**, variable wght 400–700, Arabic-only subset (1,177 mappings, full vocalisation) | Naskh carries long text more kindly than Kufi; 0.79× stem is deliberate for a reading face. |
+
+Both `@font-face` rules are bounded by `unicode-range` to the Arabic blocks, so the files load
+only on pages with Arabic and Latin never touches them. Inline Arabic is right-to-left and
+bidi-isolated like inline Hebrew. Provenance, subset ranges and checksums live in
+`static/fonts/vendor/cairo/` and `static/fonts/vendor/noto-naskh-arabic/` in Bifrost.
+Native-reader review of a full Hidden Words chapter at reading size is still owed.
+
+### Japanese body face
+
+On 25 October 2026 the Japanese body face changed from Zen Kaku Gothic New to **Noto Sans JP**
+(`$font-family-ja-body`; the Google Fonts link in `partials/fonts-css.html`). In the companion
+proof Zen Kaku measured 0.84× the contract stem, visibly lighter than Firmament beside it,
+while Noto Sans JP measured 1.01× and matches the Noto Sans SC/TC/KR siblings in weight and
+rhythm. M PLUS 1p stays the Japanese display face.
+
 Before this split (24 October 2026) `:lang(he)` set the citation serif directly on every element of the Hebrew locale.
 That out-specified the plain-element heading rules and lost to component class selectors, so the locale had no body/display layering and component headings fell to system Hebrew fonts.
 The `@font-face` for Miriam Libre is bounded by `unicode-range` to U+0590–05FF, U+FB1D–FB4F, U+200C–2010, U+20AA and U+25CC, so Latin words, digits and punctuation inside Hebrew pages still come from Firmament Sans and Space Grotesk, and the file is never fetched on pages without Hebrew.
@@ -180,10 +205,10 @@ A companion fits when its stem and colour are within a tenth of the contract at 
 nominal weight, its working letter height sits between x-height and cap height, and its
 marks and joins survive HarfBuzz shaping. Futura's geometry does not travel between
 scripts; the measurements do. Outcomes so far: Miriam Libre adopted for the Hebrew
-locale (above); Cairo fits Arabic in the Kufi register but the main site still has no
-Arabic web font pending native-reader review; no open Greek fits, which is the argument
-for drawing Firmament Greek (brief in `firmament-sans/scholar/greek/`); cuneiform and
-CJK keep their current faces, now recorded with measurements as pairing specifications.
+locale (above); Cairo and Noto Naskh Arabic adopted for Arabic (above); the Japanese body
+face moved to Noto Sans JP; no open Greek fits, which is the argument for drawing
+Firmament Greek (brief in `firmament-sans/scholar/greek/`); cuneiform and the other CJK
+pairings keep their current faces, now recorded with measurements as pairing specifications.
 
 ## Publishing the next font release
 
