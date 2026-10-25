@@ -174,7 +174,10 @@
     }
 }
 
-// The header toggle shares the control; keep its hit area in the header row.
-.site-header .navbar__theme-toggle {
-    flex-shrink: 0;
+// The docs navbar carries no theme toggle and no menu, so unlike Bifrost
+// (which hides the footer controls below 1000 px because its burger menu
+// repeats them) the footer keeps the language menu and theme toggle at
+// every width. Declared after layout/footer so it wins its media query.
+.footer__prefs {
+    display: flex;
 }
