@@ -160,6 +160,14 @@ proof Zen Kaku measured 0.84× the contract stem, visibly lighter than Firmament
 while Noto Sans JP measured 1.01× and matches the Noto Sans SC/TC/KR siblings in weight and
 rhythm. M PLUS 1p stays the Japanese display face.
 
+Every CJK body stack (`$font-family-ja-body`, `-zh-body`, `-zh-hant-body`, `-ko-body`) now
+starts with Firmament Sans. Firmament has no CJK glyphs, so kana, kanji, hanzi and hangul fall
+through to the regional face, while Latin and Cyrillic — navigation labels, brand words,
+transliterations, the "Русский" entry in the language menu — stay in the same face as on every
+other page. Before this, the regional face supplied them, and Noto Sans JP's full-width Cyrillic
+made "Русский" render wide and wrap in the switcher on Japanese pages (found and fixed on
+25 October 2026).
+
 Before this split (24 October 2026) `:lang(he)` set the citation serif directly on every element of the Hebrew locale.
 That out-specified the plain-element heading rules and lost to component class selectors, so the locale had no body/display layering and component headings fell to system Hebrew fonts.
 The `@font-face` for Miriam Libre is bounded by `unicode-range` to U+0590–05FF, U+FB1D–FB4F, U+200C–2010, U+20AA and U+25CC, so Latin words, digits and punctuation inside Hebrew pages still come from Firmament Sans and Space Grotesk, and the file is never fetched on pages without Hebrew.
