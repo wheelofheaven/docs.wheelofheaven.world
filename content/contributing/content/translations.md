@@ -448,6 +448,16 @@ flag in the PR description so the maintainers can review the choice.
 
 ## Per-language notes
 
+### The author's gender, in every language
+
+The author, Zara Zinsfuss (a pen name), is **male**. In every gendered
+language refer to the author, and to the corpus's first-person narrator, in
+the masculine: German *der Autor*, French *l'auteur* and *je suis arrivé*,
+Spanish *el autor* and *convencido*, Russian *я решил, я пришёл*, Hebrew
+*המחבר* and *אני כותב*. Do not infer the gender from the name. For groups
+use the plain generic masculine (*Übersetzer*, *les traducteurs*): no
+colon, star or point-médian forms, no slash forms and no doublets.
+
 ### German (de)
 
 - Use formal **Sie** for reader address (consistent with the scholarly
@@ -459,7 +469,8 @@ flag in the PR description so the maintainers can review the choice.
 ### French (fr)
 
 - Use **vous** for reader address (same reasoning as German)
-- Use inclusive writing (`les Elohim, créateur·rices…`) where natural
+- Use the plain generic masculine; no inclusive writing (no point médian
+  such as `créateur·rices`, no doublets such as `lectrices et lecteurs`)
 - Non-breaking spaces before `:`, `;`, `?`, `!` and inside guillemets:
   `« texte »`
 
