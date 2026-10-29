@@ -96,3 +96,4 @@ This allows a corrected reading edition to ship without exposing stale audio ref
 Edition notices use `library-book__edition-note`, which stays visible without the reference-translation toggle and inherits theme-aware link colors.
 The reader resolves `kindByLang[detected_lang]` before `kind`, so translated paragraphs can flow across reference units without changing the source-language layout.
 `render_verse` accepts optional `preserve_paragraph_breaks` (default false); the book template supplies `book_data.preserveParagraphBreaks[detected_lang]` to retain blank-line breaks within translated reference units.
+Verses with notes render an always-visible bracketed commentary marker at the end of the translated line; see [Study tools → Commentary marker](@/components/interactive/study-tools.md#commentary-marker-editorial-notes).

@@ -225,6 +225,44 @@ In Zola templates:
 {% endfor %}
 ```
 
+## Reader-facing translation pages
+
+Wheel of Heaven Translation books (`*-woh`) carry their reader-facing copy in
+the content page `content/library/{slug}.md`, not in `_meta.json`. When the
+page sets `review_status`, `library-book.html` switches to this layout:
+
+- the page **body** renders as the intro (`.library-book__intro`) in place of
+  the `_meta.json` `descriptions.en` lede;
+- an **About this translation** block shows three fields;
+- the sidebar *Source* and *Status: In progress* rows are hidden;
+- `editorial_history` renders as a collapsed `<details>` at the foot of the
+  page, after the text.
+
+`library-section.html` also uses the page `description` on the listing and
+featured cards for these books.
+
+```toml
+[extra]
+subtitle = "Optional; overrides the _meta.json subtitle"
+edition = "Source text or witness, its license, and the license of the translation."
+coverage = "What is translated, e.g. Chapters 1–50 translated: the whole book, 1,533 verses."
+review_status = "Reviewed and signed off."   # or "Reviewed." or "Provisional. …"
+editorial_history = """
+Production notes (pipeline stages, glossary versions, reviewer reports) in markdown.
+"""
+```
+
+**Review tiers.** Use *Reviewed* when the chapter passed the Translator →
+Editor → Reviewer pipeline, and *Reviewed and signed off* only when a founder
+sign-off is on record (`status: "stable"` in the chapter's `translation`
+block, or a sign-off package saying so). Use *Provisional* when a later
+review has reopened the text. Never claim more than the files show. Keep
+internal terms (phase names, glossary versions, model names) out of every
+field except `editorial_history`.
+
+Pages without `review_status` (non-WoH books, and translated locales until
+they are updated) render as before.
+
 ## Adding a new book
 
 1. **Catalog entry** — add the book object to `catalog.json`.
