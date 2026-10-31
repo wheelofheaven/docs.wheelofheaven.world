@@ -8,6 +8,18 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-10-31 — The reading grammar reaches the remaining reading pages
+
+An audit of every Bifrost template against the grammar found five page
+types still on their older styling. The Articles and Newsroom indexes now
+take the index header and a hairline rail, the tradition hubs under
+`/sources/tradition/` read like source records, the generic section
+template (previously unstyled, with browser-default links) lists its
+pages as hairline rows, and dataset pages set their figures, downloads
+and BibTeX in the grammar. The chronology stage stays cinematic. The
+[reading grammar](@/components/visual-language/reading-grammar.md) page
+lists every page on it.
+
 ## 2026-10-25 — One reading grammar across the site
 
 The reading pages now share one visual grammar: articles, wiki entries,

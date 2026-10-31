@@ -60,9 +60,17 @@ scrolled out. The library reader marks its own list.
 | Wiki index | `_wiki-index-grammar.scss` | Header and controls only; the cards keep their design. |
 | About, info pages, FAQ, Press Kit | `_meta-grammar.scss` | One centred column; the Press Kit lives inside the info page and takes its header. |
 | Sources index and records | `_sources-grammar.scss` | Rows with an eyebrow for the kind; records with a hairline sidebar. |
+| Author, contributors, contributor pages | `_people-grammar.scss` | Round portrait, role eyebrow, "At a glance" as mono rows; the contributors grid becomes rows. |
+| Articles and Newsroom indexes | `_feeds-grammar.scss` | Index header and hairline rail; feed kickers lose the accent, the claim pill becomes the outline badge with a dot. The lead cover card keeps its design. |
+| Tradition hubs and the generic section index | `_hubs-grammar.scss` | Hubs read like source records (kicker, headline, lede, dash, hairline sidebar, motifs as a comma list). `templates/section.html` lists its pages as hairline rows. |
+| Dataset pages | `_dataset-grammar.scss` | Figures as a mono strip, downloads as rows with a format pill, BibTeX in the code face. Scoped to the article, so the `/datasets/` index is untouched. |
 
-Index and landing pages (Articles, Newsroom, Library, Timeline, Contact,
-Datasets) are not on the grammar; their cards and heroes stay as designed.
+The home page, the timeline landing and chronology stage, the map,
+gallery, listen and `/read/` pages, Contact and the Datasets index are not
+on the grammar: they are cinematic or app surfaces, and their heroes stay
+as designed. On the index pages that are on it (wiki, library, Articles,
+Newsroom) the grammar takes the header and controls; the cards keep their
+production design.
 
 ### Where the contents list sits
 
@@ -83,7 +91,7 @@ BibTeX citation panel. See [Typography](@/components/tokens/typography.md).
 ## Adding a page to the grammar
 
 1. Add the page root to `$grammar-pages` and its reading column to `$grammar-content` in `_grammar.scss`.
-2. Create `_<page>-grammar.scss`: `@include grammar.grammar-prism` on the root, the header sequence, the rail mixins, the end-matter mixins.
+2. Create `_<page>-grammar.scss`: `@include grammar.grammar-prism` on the root, the header sequence (`grammar-headline` for the title, `grammar-index-header` for a header with the dash at its foot), the rail mixins, the end-matter mixins.
 3. If the page insets its sections with a margin rather than padding, set `&::before { left: 0 }` on that section so the dash sits on the text edge.
 4. Buttons built on `glass-cloud-button` paint their clouds on `::before`/`::after`; set `content: none` on both when turning them into pills.
 5. Add the page to the scroll-spy's `PAGES` table if it has a contents list, and rebuild the bundle.
