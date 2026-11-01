@@ -56,7 +56,7 @@ scrolled out. The library reader marks its own list.
 | Wiki entries | `_wiki-grammar.scss` | Sidebar: portrait, infobox, names, metadata, then the contents list, then share and agent controls. |
 | Timeline chapters | `_timeline-grammar.scss` | Same sidebar order; the age badge becomes a mono line under the headline. |
 | Newsroom dispatches | `_dispatch-grammar.scss` | Single column; canon links and sources as rows. |
-| Library book pages | `_library-grammar.scss` | Page chrome only; the reader is untouched. |
+| Library book pages | `_library-grammar.scss` | Page chrome only; the reader is untouched. Links in the page's own prose (the intro, the "About this translation" block and the dataset line) take the accent with a 1px underline; `text-decoration-line` keeps the dotted underline of glossary terms. |
 | Wiki index | `_wiki-index-grammar.scss` | Header and controls only; the cards keep their design. |
 | About, info pages, FAQ, Press Kit | `_meta-grammar.scss` | One centred column; the Press Kit lives inside the info page and takes its header. |
 | Sources index and records | `_sources-grammar.scss` | Rows with an eyebrow for the kind; records with a hairline sidebar. |
