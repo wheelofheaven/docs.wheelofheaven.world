@@ -66,6 +66,18 @@ Standard gray ramp:
 | `$gray-950`   | `#1b1f22` |
 | `$black`      | `#000`    |
 
+## Theme accents
+
+`--color-accent-primary` is the link and focus colour. In the dark theme
+it is `$mint` (`#98f5e1`). In the light theme it is `$mauve-700`
+(`#6649a8`), not the mid shade `$mauve-500`: the accent colours body links
+on white, where `$mauve-500` measures 3.2:1 against WCAG AA's 4.5:1.
+`$mauve-700` measures 6.8:1 on white and 6.2:1 on `$gray-100`.
+
+Over the landing page's video heroes the chrome borrows dark-theme
+tokens, and the accent there steps up to `$mauve-300` so it stays
+visible on the footage (see `pages/_home.scss`).
+
 ## How to pick a hue
 
 Bifrost uses colour assignment by **role**, not by aesthetic preference.
