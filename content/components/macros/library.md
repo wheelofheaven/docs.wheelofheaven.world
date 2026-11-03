@@ -32,9 +32,14 @@ need to write it manually.
     lang=detected_lang,
     original_lang=book.originalLang,
     ref_paragraph_text="",
+    ref_label="",
     portrait_registry=portrait_registry
 ) }}
 ```
+
+`ref_label` names the source on the reference line, such as "World English
+Bible". `library-book.html` falls back to "Reference translation" when the
+parallel book has no `versionTitles`.
 
 ## Fallback chain
 
