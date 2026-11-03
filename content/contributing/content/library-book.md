@@ -263,6 +263,19 @@ field except `editorial_history`.
 Pages without `review_status` (non-WoH books, and translated locales until
 they are updated) render as before.
 
+## Reference verse numbering
+
+On a `*-woh` book, the reference line comes from the same chapter and verse
+number of the parallel book. Where the two editions number differently, the
+verse names its counterpart in `chapter-N.json`:
+
+```json
+"referenceVerse": { "chapter": 5, "n": 31 }
+```
+
+Daniel 6 uses this because it follows BHS numbering: BHS 6:1 is English 5:31,
+and BHS 6:2-29 are English 6:1-28.
+
 ## Adding a new book
 
 1. **Catalog entry** — add the book object to `catalog.json`.
