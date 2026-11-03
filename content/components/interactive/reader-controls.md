@@ -25,6 +25,15 @@ elsewhere it shows the generic set (theme + back-to-top). Visibility is
 gated to pages with reading context — landing, overview, and index pages
 get neither the FAB nor a back-to-top.
 
+### Interlinear and Reference rows
+
+On book pages the panel has an **Interlinear** row (the original-language
+line) and a **Reference** row (the parallel reference translation, on
+`-woh` books only). Each row names its source and appears only when the book
+has that layer. Both are off by default and only one shows at a time: they
+drive the same state as the sidebar Interlinear button, so a reader's choice
+persists across books in that browser.
+
 ### Direct Contents access
 
 On wiki entries with a heading list, a
