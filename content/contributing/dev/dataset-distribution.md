@@ -223,7 +223,7 @@ minus tags), so the keyword set is pinned to `nlp`, `translation`, `text`.
 
 **Reciprocal links.** Each `-woh` book's `/library/<slug>/` reader page links back
 to its datasets via `[extra] hf_dataset` and `[extra] kaggle_dataset` fields
-(rendered by `library-book.html` as "Available as a CC0 dataset on Hugging Face ·
+(rendered by `library-book.html` as "Available as a {licence} dataset on Hugging Face ·
 Kaggle →" after the lede — the reader template does *not* render the page's
 markdown body, so the links must be frontmatter fields, not body text). See
 [frontmatter → Library book](/reference/frontmatter/).
