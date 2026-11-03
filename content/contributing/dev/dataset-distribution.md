@@ -139,13 +139,13 @@ When a source dataset changes (a regenerated graph, an edited CSV):
 
 ## Translation datasets
 
-The CC0 books of the Wheel of Heaven Translation Program (`data-library/*-woh`)
+The books of the Wheel of Heaven Translation Program whose translation layer is CC0 (`data-library/*-woh`)
 are published as HuggingFace datasets by a **separate** packager,
 `data-library/scripts/build_translation_datasets.py` (stdlib only, run from the
 data-library repo root). Per book it emits a verse-aligned parallel corpus:
 
 - **`<slug>.jsonl`** — one row per verse: `ref`, `chapter`, `verse`, `original`
-  (source script), `original_lang`, `transliteration`, `english` (WoH
+  (source script), `original_license`, `original_lang`, `transliteration`, `english` (WoH
   translation), `reference_english` (an aligned public-domain reference
   translation — empty where none exists), `reference_version`,
   `reference_license`, `commentary`, `glossary_refs`, `witness_primary`,
@@ -169,7 +169,23 @@ public-domain English edition, or (Isaiah) one whose licence can't be
 verified — with an honest card note. The join refuses
 any reference whose licence isn't public-domain/CC0, so the corpus stays honestly
 **mixed-license**: the Wheel of Heaven layer (translation, commentary, glossary)
-is CC0-1.0, the reference column is public domain.
+is CC0-1.0, the reference column is public domain, and the source column follows
+its edition (see below).
+
+**Source-text licences.** `versionLicense` covers the Wheel of Heaven layer, not
+the source text. `source_text_license()` reads the licence strings in the source
+and chapter files and matches them against `SOURCE_LICENSES`:
+
+| Source | Dataset label | Handling |
+|---|---|---|
+| SBLGNT (New Testament Greek) | CC BY 4.0 | Greek kept, edition credited on the card, `original_license` filled |
+| Perseus and Open Greek and Latin editions (Theogony; Tobit and Wisdom if published) | CC BY-SA 4.0 | Same, with the share-alike term stated |
+| ETCSL (Sumerian poems, King List) | CC0 | No open licence exists, so `original` and `transliteration` are blank and the card points to ETCSL |
+
+Older versions stay in each platform's history after a re-upload. Add any new
+source edition to the table before publishing a book from it, and set the page's
+`dataset_license` to match. Kaggle's metadata update rejects its documented id
+`CC-BY-4.0`; use its display name, `Attribution 4.0 International (CC BY 4.0)`.
 
 **Selection gates.** `discover_books()` ships a `-woh` book only if it (1) is
 **CC0** (`versionLicense == "CC0-1.0"` — refuses anything else), (2) is **not in

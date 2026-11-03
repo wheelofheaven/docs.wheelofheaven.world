@@ -167,8 +167,9 @@ etc.):
 
 | Field | Type | Notes |
 |---|---|---|
-| `hf_dataset` | string | URL of the book's CC0 parallel-corpus dataset on Hugging Face. When `hf_dataset` and/or `kaggle_dataset` is set, `library-book.html` renders an **"Available as a CC0 dataset on Hugging Face · Kaggle →"** link after the lede (each platform shown only if its field is present) — the reciprocal of the dataset card's link back to the book. Used by the `-woh` translation books; see [Dataset distribution](/contributing/dev/dataset-distribution/). |
-| `kaggle_dataset` | string | URL of the book's CC0 dataset on Kaggle (`zarazinsfuss/<slug>`). Renders alongside `hf_dataset` (see above). |
+| `hf_dataset` | string | URL of the book's parallel-corpus dataset on Hugging Face. When `hf_dataset` and/or `kaggle_dataset` is set, `library-book.html` renders an **"Available as a {licence} dataset on Hugging Face · Kaggle →"** link after the lede (each platform shown only if its field is present; the licence comes from `dataset_license`) — the reciprocal of the dataset card's link back to the book. Used by the `-woh` translation books; see [Dataset distribution](/contributing/dev/dataset-distribution/). |
+| `kaggle_dataset` | string | URL of the book's dataset on Kaggle (`zarazinsfuss/<slug>`). Renders alongside `hf_dataset` (see above). |
+| `dataset_license` | string | The dataset's licence as shown to readers: `"CC0"`, `"CC BY 4.0"` or `"CC BY-SA 4.0"`. It follows the source text, so set it only once that licence is confirmed; when unset, the line reads "Available as a dataset on". |
 
 ### Article — `[extra]` additions
 
