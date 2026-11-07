@@ -105,7 +105,7 @@ same treatment over a dark backdrop:
 | | Behaviour | Examples |
 |---|---|---|
 | **Chrome** | Dissolves — the glyphs carry the meaning, not the fill | `.navbar`, `.search-fab`, `.to-top`, `.map-zoom-controls__button` |
-| **Panels** | Keep enough body to stay readable | `.map-graph-legend`, `.map-graph-card`, `.map-graph-footer` |
+| **Panels** | Keep enough body to stay readable | `.kg__card`, `.kg__results` (on /graph/), `.claim-note`, `.snackbar` |
 
 The site already draws this line: the "Chrome over a hero" block in
 [`pages/_home.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/pages/_home.scss)
@@ -138,8 +138,6 @@ no-`backdrop-filter` fallbacks for any token you introduce — the
 |---|---|---|
 | `.navbar` | `1rem` | shared (inline, predates the mixin) |
 | `.map-zoom-controls__button` | `0.5rem` | shared |
-| `.map-graph-legend` / `-card` / `-footer` | `1rem` | `--map-chrome-bg` |
-| `.map-graph__status` / `__retry` / `__skip` | `0.5rem` | `--map-chrome-bg` |
 
 The navbar, search modal, dropdowns and glossary tooltip still inline
 the recipe rather than calling the mixin; adopting it there is a

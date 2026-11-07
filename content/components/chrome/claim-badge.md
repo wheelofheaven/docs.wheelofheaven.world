@@ -1,15 +1,21 @@
 +++
 title = "Claim badge"
-description = "One readable page classification with a native disclosure explaining direct, framework, inferred, or speculative claims."
+description = "The four-label legend (direct, framework, inferred, speculative). The page-level pill is retired: labels now sit on individual assertions."
 template = "page.html"
 weight = 20
 +++
 
-A page shows its own claim type as one fully written label: **Direct**,
-**Framework**, **Inferred**, or **Speculative**.
-The label describes the page; it does not offer a choice of classifications.
-Opening it reveals the existing editorial definition and a localized link to
-The Method.
+> **Retired as a page header, 2026-11-07.** A page argues many things at
+> once, so one label per page mislabelled most of them. Labels now attach to
+> individual assertions — see [Inline claim markers](../../shortcodes/claim/).
+> The page-level `claim_type` stays in frontmatter as metadata (the
+> `ai.claim_type` meta tag, WebMCP, the graph, the datasets).
+
+What remains of this component is the complete **legend** — the four labels
+**Direct**, **Framework**, **Inferred** and **Speculative** with their
+definitions — used on the home page and the Method page
+(`claim_badge::render(legend=true)`). The disclosure form described below
+is no longer called by any template.
 
 **Source:**
 [SCSS](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_claim-badge.scss)
@@ -41,10 +47,10 @@ explanations as individual pages.
 
 Missing or unknown claim types render no classification; the UI never infers
 one from the page topic.
-On wiki pages, the classification sits below the title, ahead of the summary.
 
 ## Related
 
+- [Inline claim markers](../../shortcodes/claim/) — the replacement
 - [Macro API](../../macros/claim-badge/)
 - [Content conventions](../../../contributing/content/)
 - [Live wiki example](https://www.wheelofheaven.world/wiki/elohim/)

@@ -276,3 +276,20 @@ blur(...)`. Two rules keep it rendering identically on every engine:
    `sass/themes/_init.scss` — the same mechanism the
    `prefers-reduced-transparency` override uses. Never hardcode a
    per-component opaque fallback.
+
+3. **Never put `backdrop-filter` on repeated or closed elements.** WebKit
+   promotes every backdrop-filter element to its own compositing layer,
+   even at `opacity: 0`. Past a budget iOS Safari silently drops **every**
+   blur on the page — navbar and FABs included. On library book pages the
+   per-paragraph action decks (759 in *The Book Which Tells the Truth*)
+   and closed commentary popovers did exactly that (found 2026-11-07 in
+   the iOS Simulator; desktop Chrome never shows it). Gate the blur on the
+   open state (`--selected`, `.is-open`), and share one element where a
+   page needs many (the claim notes do). The same rule bit search: locking
+   scroll by pinning `<body>` with `position: fixed; top: -scrollY` made
+   WebKit stop painting the fixed navbar (and the search field in it) —
+   lock the root element instead (`html:has(body.<state>) { overflow:
+   hidden }`), as the burger menu and reading list do.
+
+   Verify glass in the iOS Simulator (`xcrun simctl`), not in headless
+   Chrome or a WKWebView snapshot — neither renders the failure.

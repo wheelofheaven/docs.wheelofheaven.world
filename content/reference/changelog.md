@@ -8,6 +8,33 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-11-07 — One page frame, inline claims, and the knowledge graph
+
+A mobile-first pass over the whole site, prompted by reading on an iPhone.
+
+- **iOS glass fixed at the root.** On library pages Safari dropped every
+  blur (navbar and FABs) because ~900 hidden per-paragraph decks each
+  carried a backdrop-filter. Blur is now gated on the open state; the rule
+  joined the [glassmorphism invariants](../../contributing/dev/bifrost-theme/#glassmorphism-invariants).
+- **One page frame** for 27 page types — same title edge, start height and
+  headline everywhere; see [Page frame](../../components/visual-language/page-frame/).
+  The 404 page moved onto the base template.
+- **Breadcrumbs moved to the footer**, under the site description; every
+  interior page has one.
+- **Claim labels move from pages to assertions**: the page-header pill is
+  retired; the [`claim` shortcode](../../components/shortcodes/claim/)
+  labels individual sentences. `claim_type` stays as page metadata.
+- **Snackbar redesigned**: one compact receipt with View / Undo; the
+  duplicate English offline toast is gone.
+- **Search overlay** redesigned and fixed on iOS; compact contents row on
+  phones; side panels lose their fill and border.
+- **Map**: the Earth's lower band gains live Library and Datasets shelves,
+  label collisions fixed, site background colour.
+- **Knowledge graph** at [/graph/](https://www.wheelofheaven.world/graph/):
+  1,172 nodes and 5,879 links distilled from the corpus around a new topic
+  vocabulary; downloadable, and on Hugging Face as
+  `wheelofheaven/knowledge-graph`. See [Knowledge graph](../../components/interactive/graph-view/).
+
 ## 2026-10-31 — The reading grammar reaches the remaining reading pages
 
 An audit of every Bifrost template against the grammar found five page

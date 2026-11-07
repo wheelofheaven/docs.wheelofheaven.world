@@ -86,6 +86,25 @@ read-only SVG without JS.
 | Poster button | Toggles `.is-poster` on `.map-page`, persisted in `localStorage.mapPosterMode`. |
 | URL hash | `/map/#great-flood`, `/map/#age-of-aries`, `/map/#bible` etc. selects the matching entry on load and scrolls it into view. Listens to `hashchange`. |
 
+## Below the equator: shelves
+
+The Earth's lower band carries two generated rows (2026-11-07): the
+library's traditions with live book counts (from
+`data/library/catalog.json`; traditions with no books are skipped) and the
+open datasets (the `datasets` section). They flow-wrap across the chord of
+the disc and stay current without editing the map data. Labels:
+`i18n.shelves` (`library`, `texts`, `datasets`, `datasetsNote`).
+
+Label collisions are checked by measuring rendered text boxes in the SVG's
+own coordinates; fix them by moving the entry in its JSON file, keeping
+moves small so the poster composition holds.
+
+The map sits on the site's own background (`--color-background`), not on
+pure black or white.
+
+The graph mode that used to live here (`?view=graph`) moved to
+[its own page](../graph-view/); old links redirect.
+
 ## Poster mode
 
 The poster button (top-right of the control group, image icon) flips

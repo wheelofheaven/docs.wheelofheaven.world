@@ -81,3 +81,15 @@ Include a short desktop viewport such as 1440 × 600.
 - [Search controller](https://github.com/wheelofheaven/bifrost/blob/main/static/js/search.js)
 - [Search loader](https://github.com/wheelofheaven/bifrost/blob/main/static/js/search-loader.js)
 - [Dropdown layout](https://github.com/wheelofheaven/bifrost/blob/main/sass/layout/_navbar-dropdown.scss)
+
+## Overlay layout (2026-11-07)
+
+Desktop: one result column (section and path on a mono line, title,
+two-line snippet) with the section filters as a rail on the right. Phones:
+a full-height sheet under the navbar, filters on one swipeable row, the
+corner FABs hidden while it is open. Matches take a quiet tinted
+highlight. Opening search always brings the navbar (and its field) back
+into view, and scroll is locked on the root element — never by pinning
+`<body>`, which made iOS Safari stop painting the field after the reader
+had scrolled. Styles: `sass/layout/_search-grammar.scss`.
+

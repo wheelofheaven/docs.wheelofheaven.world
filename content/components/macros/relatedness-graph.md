@@ -155,5 +155,5 @@ Above the See also list on any wiki entry with `see_also`:
   surface).
 - [`/v1/graph/`](https://api.wheelofheaven.world/v1/graph/) — the API's
   machine-readable content graph this mirrors.
-- [/map/?view=graph](https://www.wheelofheaven.world/map/?view=graph) —
-  the whole graph, which this figure is a scoped view of.
+- [/graph/](https://www.wheelofheaven.world/graph/) — the site-wide
+  knowledge graph (pages, topics, claims, sources).

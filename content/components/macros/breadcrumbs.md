@@ -17,8 +17,13 @@ section → category → page) without per-template duplication.
 
 ## Public API
 
+Since 2026-11-07 the trail renders in the footer: call the macro inside the
+template's `trail` block and hand the result to `page_trail` (see
+[Breadcrumbs](../../chrome/breadcrumbs/)).
+
 ```tera
 {%/* import "macros/breadcrumbs.html" as breadcrumbs */%}
+{%/* block trail */%}{%/* set_global page_trail = breadcrumbs::wiki(page=page, lang=detected_lang) */%}{%/* endblock trail */%}
 
 {{ breadcrumbs::wiki(page=page, lang=detected_lang) }}
 {{ breadcrumbs::timeline(page=page, lang=detected_lang) }}
