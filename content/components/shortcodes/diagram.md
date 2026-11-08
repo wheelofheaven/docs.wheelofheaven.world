@@ -33,6 +33,21 @@ light/dark toggle** with no second asset.
 | `name`    | string | yes      | —       | Diagram id (matches `static/diagrams/{name}.svg`).         |
 | `alt`     | string | recommended | —    | Accessible label for the figure group.                     |
 | `caption` | string | no       | `""`    | Caption below the figure; rendered as inline markdown.     |
+| `hero`    | bool   | no       | `false` | Set the figure as the page's lead image (see below).       |
+
+## Hero diagrams
+
+`hero=true` makes the figure the page's defining image: a larger plate
+with a soft prism glow, and on phones it bleeds to the screen edge. Put
+a hero diagram first in the page body, directly under the header. Since
+2026-11 three wiki entries open this way, in every language:
+`great-year` on *Great Year*, `precession` on *Precession* and
+`wheel-of-heaven` on *Wheel of Heaven*. Use it only where the figure is
+the clearest statement of the entry; every other diagram stays inline.
+
+```markdown
+{{/* diagram(name="great-year", hero=true, alt="…", caption="…") */}}
+```
 
 ## Available diagrams
 
@@ -42,7 +57,7 @@ light/dark toggle** with no second asset.
 | `great-year`           | The ~25,772-yr cycle as a wheel of twelve zodiac Ages.      |
 | `wheel-of-heaven`      | The twelve precessional ages as phases of the project.     |
 | `epistemic-tiers`      | The four-tier content pyramid (direct → open questions).   |
-| `world-ages-timeline`  | The precessional-age framework as a horizontal timeline.   |
+| `world-ages-timeline`  | The precessional-age framework as a horizontal timeline; ships a vertical phone variant. |
 
 ## Localization
 
@@ -50,7 +65,7 @@ The shortcode detects the page language from its path (the same pattern
 as [`library`](../library/) / [`wiki`](../wiki/)) and loads
 `static/diagrams/{name}.{lang}.svg`, falling back to the bare
 `{name}.svg` (English) when a localized variant is absent. Every diagram
-ships in all nine site languages plus English (50 SVGs total).
+ships in all nine site languages plus English (60 SVGs total, phone variants included).
 
 The SVGs are **generated, not hand-edited per language**. Text lives in
 per-language string tables at
@@ -66,21 +81,68 @@ To change a label, edit the relevant `diagram-strings/*.json` and
 re-run the generator. To add a language, add a `{lang}.json` (copy
 `en.json`, translate the values) and re-run.
 
+## Visual language
+
+All five diagrams are one family (redesigned 2026-11):
+
+- **The ages carry the Bifrost rainbow.** The twelve precessional ages
+  take the reading grammar's pastel band in chronological order —
+  `--dg-age-0` (Capricorn, the project's opening) through `--dg-age-11`
+  (Aquarius, the present) — so an age has the same hue in every figure.
+  The band wraps pink → pink, closing around a wheel without a seam.
+  Dark theme uses the 300 pastels, light theme the 600 shades.
+- **One accent marks the present.** The theme accent (mint in dark,
+  mauve in light) is reserved for "now": the current age, the
+  Pisces|Aquarius marker, Polaris.
+- **Sibling wheels.** `great-year` and `wheel-of-heaven` share one
+  geometry in the generator: rainbow rim, tinted sectors, glyph + name
+  (+ gloss) stacked in each sector, the direction of the ages inside the
+  hub, rim years outside.
+- **Horizontal labels, no collisions**, and the grammar's one mono voice
+  for dates and figure notes.
+- **A plate, not a box**: a soft radial glow behind the figure, no
+  border. Round figures keep a fixed size instead of stretching to the
+  column.
+
+## Phone variants
+
+A wide figure can ship `static/diagrams/{name}-narrow.{lang}.svg`. The
+shortcode inlines both and a media query shows the narrow one below
+640px. `world-ages-timeline` uses this: twelve horizontal cells on
+desktop, a vertical list with each age's dates on phones.
+
+## RTL pages
+
+`:lang(he)` sets `direction: rtl` on every element, which would flip
+every SVG `text-anchor`. `_diagram.scss` pins the SVG and its text to
+`ltr`; Hebrew words inside a label still run right-to-left through the
+bidi algorithm.
+
 ## Theming
 
-Diagram internals use theme-aware helper classes so a single SVG works
-on both themes: `.dg-line` / `.dg-muted` (strokes → text colours),
-`.dg-accent` / `.dg-accent--fill` (the through-line, in the theme
-accent), `.dg-surface` (fills), `.dg-label` / `.dg-label--muted` /
-`.dg-label--accent` (text), `.dg-glyph` (zodiac glyphs, reused from the
-[`zodiac`](../../macros/zodiac/) macro), and `.dg-axis` (monospace
-technical captions). See `_diagram.scss`.
+Every stroke and fill inside the SVGs is a class resolved in
+`_diagram.scss`, so one SVG serves both themes: `.dg-age-{0–11}`
+(+ `.dg-age--now`) tint sectors and cells, `.dg-rim-*` / `.dg-bar-*` /
+`.dg-ink-*` carry the age hue on rims, bars and glyphs; `.dg-hair`,
+`.dg-muted-line`, `.dg-accent-line`, `.dg-axis-line` are strokes;
+`.dg-now` / `.dg-now-halo` the present marker; `.dg-label`,
+`.dg-label--muted`, `.dg-label--now`, `.dg-title` the text; `.dg-mono`
+the monospace notes; `.dg-glyph` the zodiac glyphs reused from the
+[`zodiac`](../../macros/zodiac/) macro.
+
+Don't give `.diagram__plate` a `position`: the reading pages' prism
+wash is a positioned overlay, and a positioned plate paints above it as
+a dark slab.
 
 ## Output
 
 ```html
-<figure class="diagram" role="group" aria-label="…">
-    <div class="diagram__canvas"><svg>…</svg></div>
+<figure class="diagram diagram--great-year diagram--hero" role="group" aria-label="…">
+    <div class="diagram__plate">
+        <div class="diagram__canvas"><svg>…</svg></div>
+        <!-- with a phone variant: diagram--has-narrow, plus
+             <div class="diagram__canvas diagram__canvas--narrow">…</div> -->
+    </div>
     <figcaption class="diagram__caption">…</figcaption>
 </figure>
 ```
