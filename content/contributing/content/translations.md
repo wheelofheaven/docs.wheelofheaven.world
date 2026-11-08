@@ -473,6 +473,15 @@ colon, star or point-médian forms, no slash forms and no doublets.
   such as `créateur·rices`, no doublets such as `lectrices et lecteurs`)
 - Non-breaking spaces before `:`, `;`, `?`, `!` and inside guillemets:
   `« texte »`
+- Prefer the original French spelling: **raëlien**, **raëlienne**,
+  **Raëlisme** (with the diaeresis, as the movement writes it), never
+  *raélien*
+- Cite Raël's books by their original French titles, not by a
+  back-translation of the English: *Le Livre qui dit la vérité*,
+  *Les Extra-terrestres m'ont emmené sur leur planète*,
+  *Accueillir les extra-terrestres*, *Le Message donné par les
+  extra-terrestres* (for *Intelligent Design: Message from the Designers*),
+  *La Géniocratie*, *La Méditation sensuelle*, *Oui au clonage humain*
 
 ### Spanish (es)
 
