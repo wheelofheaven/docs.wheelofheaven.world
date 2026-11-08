@@ -277,6 +277,7 @@ All six datasets are published under the
 
 | Dataset | HuggingFace |
 |---|---|
+| Knowledge Graph | [wheelofheaven/knowledge-graph](https://huggingface.co/datasets/wheelofheaven/knowledge-graph) |
 | Content Graph | [wheelofheaven/content-graph](https://huggingface.co/datasets/wheelofheaven/content-graph) |
 | Flood-Myth Concordance | [wheelofheaven/flood-myths](https://huggingface.co/datasets/wheelofheaven/flood-myths) |
 | Divine-Council Index | [wheelofheaven/divine-council-index](https://huggingface.co/datasets/wheelofheaven/divine-council-index) |
@@ -300,6 +301,7 @@ restores the second Dataset-Search listing without a DOI.
 
 | Dataset | Kaggle |
 |---|---|
+| Knowledge Graph | [zarazinsfuss/wheel-of-heaven-knowledge-graph](https://www.kaggle.com/datasets/zarazinsfuss/wheel-of-heaven-knowledge-graph) |
 | Content Graph | [zarazinsfuss/content-graph](https://www.kaggle.com/datasets/zarazinsfuss/content-graph) |
 | Flood-Myth Concordance | [zarazinsfuss/flood-myths](https://www.kaggle.com/datasets/zarazinsfuss/flood-myths) |
 | Divine-Council Index | [zarazinsfuss/divine-council-index](https://www.kaggle.com/datasets/zarazinsfuss/divine-council-index) |

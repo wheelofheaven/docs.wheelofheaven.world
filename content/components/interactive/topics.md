@@ -48,6 +48,16 @@ translation keys (`topicsKind*`, `topicKind*`, `topicSection*`,
 with `One`/`Few`/`Many`: the `topics::plural` macro picks the Russian 2–4
 form).
 
+### Neighbourhood figure
+
+Each topic page opens its member lists with the wiki mini-graph component
+(same 480×340 frame and `relatedness-graph__*` classes): the topic in the
+centre, its broader and narrower topics on an inner ring (accent-ringed
+nodes), its ten most-connected pages on an outer ring, the defining entry
+first. Positions are precomputed by `topic_orbit()` in the builder (Tera has
+no trigonometry) and stored as `orbit` in each topic's data; translated
+pages carry localized labels.
+
 ### Hand corrections
 
 A topic's `match` terms file pages automatically, so a generic term can
@@ -55,7 +65,10 @@ catch the wrong page. `topics.toml` takes two optional lists per topic:
 `exclude = ["/wiki/slug/", …]` drops a page a term caught by accident,
 `include = [...]` files a page the terms miss. The 2026-11-08 review
 removed 329 stray filings this way (for example *Ark of the Covenant*
-under *The Flood*) and narrowed 18 over-broad term lists.
+under *The Flood*) and narrowed 18 over-broad term lists. A third list,
+`source_tags`, files sources whose topic tag matches exactly
+(case-insensitive) — for a tag such as "Temple" that a whole-word term
+can't take without also catching "Second Temple Judaism".
 
 Membership comes from the builder's own page → topic filing (the
 vocabulary's `match` terms, and catalog traditions for library books),

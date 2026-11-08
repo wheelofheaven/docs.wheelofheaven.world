@@ -75,8 +75,13 @@ this page; the graph has its own search.
 Downloadable from the page (`wheel-of-heaven-graph.json`, CORS open), and
 on Hugging Face as
 [`wheelofheaven/knowledge-graph`](https://huggingface.co/datasets/wheelofheaven/knowledge-graph)
-(graph.json + nodes.jsonl + links.jsonl, CC0). The older page-only
-`content-graph` dataset is unchanged.
+and on Kaggle as
+[`zarazinsfuss/wheel-of-heaven-knowledge-graph`](https://www.kaggle.com/datasets/zarazinsfuss/wheel-of-heaven-knowledge-graph)
+(graph.json + nodes.jsonl + links.jsonl + topics.json, CC0). Both mirrors
+are refreshed by hand after a graph rebuild: regenerate the JSONL files from
+`static/graph/graph.json`, copy `data/graph/topics.json`, then `hf upload`
+and `kaggle datasets version`. The older page-only `content-graph` dataset
+is unchanged.
 
 ## Related
 
