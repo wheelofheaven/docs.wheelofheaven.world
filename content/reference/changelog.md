@@ -21,6 +21,12 @@ commit. For day-to-day commit history, use Git.
   see [Links to other content](../../contributing/dev/bifrost-theme/#links-to-other-content-fall-back-to-english).
 - **French spelling.** The French site writes *raëlien* and cites Raël's
   books by their original French titles.
+- **Diagrams redesigned** as one family on the site's rainbow, with hero
+  diagrams opening *Great Year*, *Precession* and *Wheel of Heaven*; see
+  [diagram](../../components/shortcodes/diagram/).
+- **Topic pages.** The graph's 57 topics became `/topics/` pages, linked
+  from the Knowledge menu, the footer, the graph and reading-page
+  sidebars; see [Topic pages](../../components/interactive/topics/).
 
 ## 2026-11-07 — One page frame, inline claims, and the knowledge graph
 

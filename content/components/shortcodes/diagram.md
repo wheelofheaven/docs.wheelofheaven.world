@@ -56,7 +56,6 @@ the clearest statement of the entry; every other diagram stays inline.
 | `precession`           | Axial-precession cone (Thuban → Polaris → Vega).            |
 | `great-year`           | The ~25,772-yr cycle as a wheel of twelve zodiac Ages.      |
 | `wheel-of-heaven`      | The twelve precessional ages as phases of the project.     |
-| `epistemic-tiers`      | The four-tier content pyramid (direct → open questions).   |
 | `world-ages-timeline`  | The precessional-age framework as a horizontal timeline; ships a vertical phone variant. |
 
 ## Localization
@@ -65,7 +64,7 @@ The shortcode detects the page language from its path (the same pattern
 as [`library`](../library/) / [`wiki`](../wiki/)) and loads
 `static/diagrams/{name}.{lang}.svg`, falling back to the bare
 `{name}.svg` (English) when a localized variant is absent. Every diagram
-ships in all nine site languages plus English (60 SVGs total, phone variants included).
+ships in all nine site languages plus English (50 SVGs total, phone variant included; the unused `epistemic-tiers` pyramid was retired 2026-11-08 because its tiers no longer matched the four claim labels).
 
 The SVGs are **generated, not hand-edited per language**. Text lives in
 per-language string tables at
@@ -83,7 +82,7 @@ re-run the generator. To add a language, add a `{lang}.json` (copy
 
 ## Visual language
 
-All five diagrams are one family (redesigned 2026-11):
+All diagrams are one family (redesigned 2026-11):
 
 - **The ages carry the Bifrost rainbow.** The twelve precessional ages
   take the reading grammar's pastel band in chronological order —

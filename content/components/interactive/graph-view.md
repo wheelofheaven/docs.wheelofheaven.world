@@ -21,8 +21,8 @@ drawn from the API's page-only content graph.
 
 ## The data: `static/graph/graph.json`
 
-`mise run graph` (part of `mise run build`) distils the graph; it writes no
-content files.
+`mise run graph` (part of `mise run build`) distils the graph. Since
+2026-11-08 it also writes the [topic pages](../topics/) data and stubs.
 
 | Nodes | From |
 |---|---|
@@ -82,3 +82,4 @@ on Hugging Face as
 
 - [Narrative map](../narrative-map/) — the poster view of the same corpus.
 - [Datasets reference](../../../reference/datasets/)
+- [Topic pages (/topics/)](../topics/) — the vocabulary as pages; topic nodes open them.
