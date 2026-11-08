@@ -178,6 +178,38 @@ grep -rhoE 'href="https://www\.wheelofheaven\.world/[^"#?]*"' public-dev --inclu
   | grep -vE '/"$' | grep -vE '\.[a-z0-9]{2,11}"$' | sort | uniq -c
 ```
 
+## Links to other content: fall back to English
+
+`get_url(path, lang)` always builds the translated address, whether or not
+that translation exists. A German page linking to an entry nobody has
+translated yet sent readers to `/de/wiki/graham-hancock/` — a 404. Any link
+whose target comes from content data (see-also, `canon_links`, references,
+"cited by" lists, library cards, map nodes, the `wiki` / `libref` /
+`library` / `scripture` shortcodes) goes through the `i18n_url` macro
+instead:
+
+```tera
+{% import "macros/i18n-url.html" as i18n_url %}
+<a href="{{ i18n_url::content(path=item_path, lang=detected_lang) | safe }}">…</a>
+{% set href = i18n_url::content(path="library/" ~ book ~ anchor, lang=detected_lang) %}
+```
+
+It links the translated page when `content/<lang>/<path>.md` (or
+`_index.md` / `index.md`) exists, the English page when only the English
+file exists, and keeps the translated address when neither file matches by
+name (a page whose `slug` differs from its file name, such as
+`council-of-eternals.md`). Tera has no page-exists test, so the macro uses
+`load_data(required=false)`, which Zola caches per path. The path may carry
+a leading/trailing slash and a `#anchor`; pass the anchor inside `path`,
+because a macro call cannot be concatenated with `~`.
+
+Navigation links to sections that exist in every language (home, `wiki/`,
+`articles/`, breadcrumbs) keep plain `get_url`.
+
+Two things the macro cannot see: aliases (a `{% wiki(slug=…) %}` pointing at
+an alias such as `planet-of-the-eternals` still 404s in other languages —
+link the canonical slug) and source ids with no generated stub page.
+
 ## JavaScript bundling & cache-busting
 
 The site does **not** serve the raw `static/js/*.js` sources — it serves

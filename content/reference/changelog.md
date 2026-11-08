@@ -8,6 +8,20 @@ This page records *project-level* changes — the structural shifts in
 infrastructure, framing, or editorial program that matter beyond a single
 commit. For day-to-day commit history, use Git.
 
+## 2026-11-08 — Inline claims in every language; English fallback for links
+
+- **Inline claim labels in all ten languages.** After English (211
+  markers), German got 116 and the other eight languages 915 on 710
+  pages, each matched to the English assertion and its core record. The
+  API exposes them as a `claims` field.
+- **Links fall back to English.** See-also, references, library cards,
+  "cited by" lists and the `wiki` / `libref` / `library` shortcodes used to
+  build the translated address even when no translation existed — about
+  100 broken targets per language. They now link the English page instead;
+  see [Links to other content](../../contributing/dev/bifrost-theme/#links-to-other-content-fall-back-to-english).
+- **French spelling.** The French site writes *raëlien* and cites Raël's
+  books by their original French titles.
+
 ## 2026-11-07 — One page frame, inline claims, and the knowledge graph
 
 A mobile-first pass over the whole site, prompted by reading on an iPhone.

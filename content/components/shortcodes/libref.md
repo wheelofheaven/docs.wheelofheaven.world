@@ -60,7 +60,8 @@ Two reasons:
 1. **Language-awareness.** The shortcode resolves the path via
    `get_url(..., lang=lang)`, so the same source line renders
    `/library/zephaniah/#c1p10` in English and `/de/library/zephaniah/#c1p10`
-   in German automatically. A raw markdown link hard-codes the English
+   in German automatically, and falls back to the English book page when
+   the book has no German edition. A raw markdown link hard-codes the English
    path forever.
 2. **Path centralisation.** If `/library/` ever moves or gets renamed,
    every reference still resolves.

@@ -8,7 +8,9 @@ weight = 10
 The `wiki` shortcode is the canonical way to link to a wiki entry
 from inside markdown. The shortcode is paired (takes a body, which is
 the visible label) and language-aware (resolves the right `/wiki/<slug>/`
-path for the page's current language).
+path for the page's current language, and falls back to the English entry
+when that language has no translation of it — see
+[Links to other content](../../../contributing/dev/bifrost-theme/#links-to-other-content-fall-back-to-english)).
 
 **Source:**
 [`themes/bifrost/templates/shortcodes/wiki.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/shortcodes/wiki.html)
