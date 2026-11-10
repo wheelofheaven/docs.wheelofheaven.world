@@ -132,10 +132,11 @@ wiki entry (links and bold stripped, wiki links captured).
 | CSV | `https://api.wheelofheaven.world/v1/datasets/prophets-and-religions.csv` |
 | JSON | `https://api.wheelofheaven.world/v1/datasets/prophets-and-religions.json` |
 
-Columns: `tradition`, `period`, `founder`, `authenticity`, `principal_content`,
-`woh_wiki`. Note the `authenticity` column is the **corpus's** assessment of the
-founding-contact claim (Canonical → Highly unlikely), not a neutral rating — the
-landing page says so explicitly. Landing page:
+Columns: `tradition`, `period`, `founder`, `comparative_tier`, `principal_content`,
+`woh_wiki`. Note the `comparative_tier` column (named `authenticity` until
+November 2026) is the **corpus's** own heuristic for organising comparison
+(Canonical → Highly unlikely; Mormonism not graded), not a neutral rating, not a
+canon ranking and not an authenticity verdict — the landing page says so explicitly. Landing page:
 [`/datasets/prophets-and-religions/`](https://www.wheelofheaven.world/datasets/prophets-and-religions/).
 
 ## Myth Index
