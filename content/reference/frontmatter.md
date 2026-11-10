@@ -171,6 +171,22 @@ etc.):
 | `kaggle_dataset` | string | URL of the book's dataset on Kaggle (`zarazinsfuss/<slug>`). Renders alongside `hf_dataset` (see above). |
 | `dataset_license` | string | The dataset's licence as shown to readers: `"CC0"`, `"CC BY 4.0"` or `"CC BY-SA 4.0"`. It follows the source text, so set it only once that licence is confirmed; when unset, the line reads "Available as a dataset on". |
 
+### Translated pages — freshness fields
+
+Every translated wiki, article, timeline and news page carries these in
+`[extra]`, written by `scripts/translation_audit.py` (www) — don't edit them by
+hand; re-run the script after a translation pass:
+
+| Field | Type | Notes |
+|---|---|---|
+| `translation_status` | string | `metadata_only`, `machine`, `ai_reviewed`, `human`, `en_only`. The script keeps an existing value and sets `ai_reviewed` on full translations that had none. |
+| `translation_updated` | string | `YYYY-MM-DD` of the translation's last real change. |
+| `source_updated` | string | `YYYY-MM-DD` of the English page's last real change. |
+| `translation_stale` | bool | English changed after the translation. |
+| `translation_sync` | int | Structural parity with the English, 0–100. |
+
+See [Macros → translation-badge](/components/macros/translation-badge/) for how they render.
+
 ### Article — `[extra]` additions
 
 (See universal fields above; Articles primarily use `summary`,
