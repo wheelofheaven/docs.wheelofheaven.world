@@ -54,11 +54,11 @@ the plain status pill as before.
 | `translation_updated` | Date of the translation's last real change (git; bookkeeping-only commits such as version bumps don't count). |
 | `source_updated` | Date of the English page's last real change. |
 | `translation_stale` | `true` when the English changed after the translation. |
-| `translation_sync` | Structural parity with the English, 0–100: the share of the English page's shortcodes and headings the translation carries. Measures structure, not prose. |
+| `translation_sync` | Structural parity with the English, 0–100: shortcodes (keyed by target — slug, book/chapter/verse, id, src) and headings shared by both, out of all that either has. Missing links and leftover sections from an older English both lower it. Measures structure, not prose. |
 
 The pill gets the `--lagging` modifier (dashed border, amber ring on the dot,
 a "may lag" suffix) when `translation_stale` is true **or** `translation_sync`
-is below 80. Both dates appear in the tooltip and the accessible label; the
+is below 95. Both dates appear in the tooltip and the accessible label; the
 percentage is exposed only as `data-translation-sync`.
 
 ## Render condition

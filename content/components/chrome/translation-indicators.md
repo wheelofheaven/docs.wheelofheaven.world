@@ -23,7 +23,7 @@ Small inline pill rendered next to article titles on non-English pages.
 | `metadata-only`   | `$yellow`   | Title + description translated; body is English. |
 | `machine`         | `$mauve`    | Body auto-translated, awaiting human pass.     |
 | `ai-reviewed`     | `$teal`     | AI-translated, independently reviewed.         |
-| `--lagging` (modifier) | dashed border, `$yellow` ring | English changed since, or structural parity < 80. |
+| `--lagging` (modifier) | dashed border, `$yellow` ring | English changed since, or structural parity < 95. |
 | `human`           | `$mint`     | Full human translation.                        |
 | `en-only`         | muted       | English fallback — no translation exists yet.  |
 
