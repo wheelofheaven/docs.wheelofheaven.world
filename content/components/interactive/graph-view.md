@@ -47,7 +47,7 @@ that match no topic — which is the vocabulary's to-do list.
 
 ## The topic vocabulary
 
-Modelled on raskell.io's `data/tags.toml`: one entry per slug, with `name`,
+Defined in `data/tags.toml`: one entry per slug, with `name`,
 `kind` (theme, tradition, figure, method, science, future), a one-sentence
 `description`, `broader` parents, an optional defining wiki `page`, and
 lower-case `match` phrases (whole-word). Add the entry, run `mise run
