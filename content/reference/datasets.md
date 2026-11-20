@@ -51,22 +51,69 @@ every build. English only — for per-language relatedness, use each page's own
 
 ## Flood-Myth Concordance
 
-A comparative table of eleven ancient flood traditions (Sumerian, *Atra-ḫasīs*,
-*Gilgamesh* XI, *Genesis*, *Qurʾān*, Deucalion, Berossus, *Śatapatha Brāhmaṇa*,
-the Aztec *Leyenda de los Soles*, the Andean Viracocha chronicles, and the Norse
-*Prose Edda*). Version 1.1.
+Version **1.2** compares eleven textual accounts through 88 observations,
+each carrying an evidence state, an inspected scope, edition references and
+notes. Composition, physical-witness, internal textual and event dates remain
+separate. The Andean row is now specifically Molina's account.
 
-| Format | URL |
+| Format | API file under `/v1/datasets/` |
 |---|---|
-| CSV | `https://api.wheelofheaven.world/v1/datasets/flood-myths.csv` |
-| JSON | `https://api.wheelofheaven.world/v1/datasets/flood-myths.json` (self-describing: `columns` + `rows`) |
+| Complete JSON | `flood-myths.json` |
+| Account table CSV | `flood-myths.csv` |
+| Observation CSV (88 rows) | `flood-myths-observations.csv` |
+| Chronology CSV (44 fields) | `flood-myths-chronology.csv` |
 
-Columns: `tradition`, `source_text`, `approx_date`, `survivor`,
-`flood_decreed_by`, `warned_by`, `cause`, `vessel`, `birds_released`,
-`landing_place`, `aftermath`, `woh_library` (link to the digitized text where
-one is published). Unlike the content graph, this is **hand-curated** —
-committed static files under `api/static/v1/datasets/`, not build-generated.
-Landing page: [`/datasets/flood-myths/`](https://www.wheelofheaven.world/datasets/flood-myths/).
+The JSON retains `columns` and `rows`, adding structured `observations` and
+`chronology` to each row, plus a source register, relationship records and
+state definitions. The account CSV preserves the original 13 columns in
+order, then appends scope, per-field state/reference/note columns and
+JSON-encoded chronology. `approx_date` now contains a qualified composition
+estimate or an explicit unresolved label. The original mixed dates survive
+only as unendorsed `legacy_date` values in JSON.
+
+Unknown observations have explicit labels in the account table and nulls
+with evidence states in the structured observations. Never interpret empty
+observation CSV values without their state. A textual attestation is not
+historical verification, and unrecorded relationships do not imply independence.
+
+### Regeneration
+
+The editable evidence record is
+`core/docs/research/flood-concordance/concordance.json`. From the API repo:
+
+```sh
+python3 scripts/build_flood_concordance.py
+python3 scripts/build_flood_concordance.py --check
+```
+
+This manually invoked projection validates core's record, then writes the
+four API files, identical copies under `www/static/datasets/`, and the marked
+account/source section in `www/content/datasets/flood-myths.md`. The surrounding
+page prose is edited by hand. The script requires the sibling core and www
+checkouts; deployment serves committed files without requiring core.
+`--core` and `--site` allow explicit checkout locations. Normal site builds
+do not regenerate this evidence package.
+
+The public page is
+[`/datasets/flood-myths/`](https://www.wheelofheaven.world/datasets/flood-myths/).
+Downloads are served from the same site as the page; API copies are byte-identical.
+Run the projection check before packaging mirror updates. The Myth Index's
+flood summaries are separately curated and must be reconciled when scope or
+content changes; motif classifications are not automatically re-audited.
+
+### Dataset page presentation
+
+Bifrost's `dataset-page.html` accepts an optional `extra.dataset_version`,
+rendered as `version` in Dataset JSON-LD. Download URLs may be absolute or
+site-relative; site-relative paths become absolute in JSON-LD through Zola's
+`get_url`, while the download links retain their same-origin behavior.
+
+Long account records use native `<details class="dataset__account">` and
+edition notes use `<details class="dataset__source">`, each with a descriptive
+`<summary>`. Their keyboard operation requires no JavaScript. Bifrost supplies
+spacing, borders, visible focus and long-reference wrapping; observation
+labels use a definition list. Scope and evidence-state text must remain
+visible when an account is opened, and citations must be real links.
 
 ## Divine-Council Index
 

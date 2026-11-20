@@ -127,6 +127,19 @@ Three gotchas:
   `literature`, `digital-humanities` are all invalid. The comparative datasets
   are published with `text, history` (usability ~0.59).
 
+## Flood concordance packages
+
+Before packaging version 1.2, run `python3 scripts/build_flood_concordance.py --check`
+in the API checkout. The flood package includes the account CSV, complete
+JSON, observation CSV and chronology CSV. Its Hugging Face card declares
+separate `default`, `observations` and `chronology` configurations and carries
+the source-access and uncertainty limits. Both platform packages state the
+dataset's own version rather than the generic distribution date.
+
+`--only flood-myths` replaces only that dataset's generated upload folders;
+it preserves other prepared packages. The same applies to `--only myth-index`.
+Packaging remains local. Uploading a new version is a separate release action.
+
 ## Updating a mirror
 
 When a source dataset changes (a regenerated graph, an edited CSV):
