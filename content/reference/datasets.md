@@ -117,22 +117,53 @@ visible when an account is opened, and citations must be real links.
 
 ## Divine-Council Index
 
-Seventeen attestations of the divine council — the assembly of divine beings that
-governs and decides — across twelve traditions (Ugaritic *Baal Cycle*; Hebrew
-*Psalm* 82, *1 Kings* 22, *Job*, *Deut* 32, *Isaiah* 6; Babylonian *Enūma Eliš*
-and *Atra-ḫasīs*; Sumerian *Enlil and Ninlil*; the *Book of the Watchers*; the
-Hurrian-Hittite *Song of Emergence*; Greek *Iliad*; Roman *Metamorphoses*;
-Egyptian *Contendings of Horus and Seth*; Norse *Völuspá*; Hindu *Mahābhārata*;
-and the Latter-day Saint premortal council). Version 1.1.
+Version 1.2 (2026-11-21). Sixteen passages, across eleven traditions, in
+which divine beings gather with a ruler: Ugaritic *Baal Cycle*; Hebrew
+*Psalm* 82, *1 Kings* 22, *Job* 1–2, *Deuteronomy* 32, *Isaiah* 6;
+Babylonian *Enūma Eliš* and *Atra-ḫasīs*; Sumerian *Enlil and Ninlil*; the
+*Book of the Watchers*; Greek *Iliad*; Roman *Metamorphoses*; Egyptian
+*Contendings of Horus and Seth*; Norse *Völuspá* and *Gylfaginning*; Hindu
+*Mahābhārata*; and the Latter-day Saint premortal council.
 
 | Format | URL |
 |---|---|
-| CSV | `https://api.wheelofheaven.world/v1/datasets/divine-council-index.csv` |
-| JSON | `https://api.wheelofheaven.world/v1/datasets/divine-council-index.json` |
+| Complete JSON | `https://api.wheelofheaven.world/v1/datasets/divine-council-index.json` |
+| Row CSV | `https://api.wheelofheaven.world/v1/datasets/divine-council-index.csv` |
+| Observation CSV (80 rows) | `https://api.wheelofheaven.world/v1/datasets/divine-council-index-observations.csv` |
 
-Columns: `tradition`, `source_text`, `reference`, `council_term` (in the
-original), `presiding_figure`, `members`, `function`, `woh_library`.
-Hand-curated static files under `api/static/v1/datasets/`. Landing page:
+Version 1.2 is the result of a source audit with independent review
+(`core/docs/research/divine-council-index/`). Every `reference`,
+`council_term`, `presiding_figure`, `members` and `function` value was
+checked against a named edition and carries an evidence state
+(`attested`, `qualified`, `not_stated`, `not_checked`), references and a
+note. Two columns are new:
+
+- `scene_type`: `assembly`, `court`, `throne_vision` or `allotment`. The
+  inclusion rule is a gathering of divine beings with a ruler, not
+  necessarily a deliberating council.
+- `deliberation`: whether the passage itself shows the members
+  deliberating (`attested`, `qualified`, `not_stated`, `explicitly_absent`,
+  `not_checked`), with a `deliberation_locator`.
+
+One 1.1 row was withdrawn: the Hurrian-Hittite *Song of Emergence* has no
+assembly (kingship passes by combat). The JSON lists it under `withdrawn`
+and keeps each row's 1.1 values under `legacy` for comparison. The first
+nine CSV columns keep their 1.1 names and order.
+
+### Regeneration
+
+From the API repo, with a sibling core checkout:
+
+```sh
+python3 scripts/build_divine_council_index.py
+python3 scripts/build_divine_council_index.py --check
+```
+
+The script reads `audit.json` (the reviewed observations) and
+`release-1.2.json` (the release decisions: withdrawals, scene types,
+deliberation, and the few cell values edited for publication) and writes
+the three files under `api/static/v1/datasets/`. The divine-council rows of
+the Myth Index are reconciled by hand. Landing page:
 [`/datasets/divine-council-index/`](https://www.wheelofheaven.world/datasets/divine-council-index/).
 
 ## Theomachy Cross-References
@@ -188,13 +219,13 @@ canon ranking and not an authenticity verdict — the landing page says so expli
 
 ## Myth Index
 
-A cross-cultural index of **75 myth-motif attestations across 9 families** —
+A cross-cultural index of **74 myth-motif attestations across 9 families** (version 1.2) —
 flood, divine council, theomachy, creation of humans, sky-descent, tower of
 Babel, giants, garden-paradise, immortality quest. One row per attestation,
 with named primary text, locator, summary, and **Thompson Motif-Index**
 cross-references. The flood / divine-council / theomachy rows unify the three
 specialized concordances (each row's `see_dataset` points at the table with
-the full per-family column depth); the other six families are new curation.
+the full per-family column depth); the other six families are new curation. Version 1.2 reconciles the divine-council rows with Divine-Council Index 1.2 (one row withdrawn); the flood rows follow Flood-Myth Concordance 1.2.
 
 | Format | URL |
 |---|---|
