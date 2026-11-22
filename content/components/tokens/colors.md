@@ -68,11 +68,46 @@ Standard gray ramp:
 
 ## Theme accents
 
-`--color-accent-primary` is the link and focus colour. In the dark theme
-it is `$mint` (`#98f5e1`). In the light theme it is `$mauve-700`
-(`#6649a8`), not the mid shade `$mauve-500`: the accent colours body links
-on white, where `$mauve-500` measures 3.2:1 against WCAG AA's 4.5:1.
-`$mauve-700` measures 6.8:1 on white and 6.2:1 on `$gray-100`.
+The accent is **ink on the rainbow**, in both themes.
+
+`--color-accent-primary` is the text ink: `$gray-100` in the dark theme and
+`$gray-900` in the light one. Until 2026-11 it was a hue (`$mint` on dark,
+`$mauve-700` on light); it no longer is, so nothing on the site reads as
+"the cyan" or "the purple". `--color-focus` and the `--color-badge-bg` /
+`--color-badge-text` pair follow the ink.
+
+What marks an accent is `--accent-rainbow`, a `linear-gradient` of the
+seven palette hues (pink, lavender, mauve, blue, cyan, mint, green). It
+uses the 300 band on dark and the 500 band on light, because the pastel
+band nearly vanishes as a 1–2px line on white. A gradient cannot be a
+`color`, so the rainbow is drawn wherever a **line** can carry it:
+
+| Use | How | Mixin |
+|---|---|---|
+| A link in running text | ink text, rainbow underline as a `background-image` | `grammar-rainbow-link` |
+| A rule on one edge of a box | `border-image` | `grammar-rainbow-rule` |
+| A ring on a rounded pill | band on `border-box` under a transparent border, fill on `padding-box` | (see `.aid-rows__tag--accent`) |
+| A wash on a button | translucent stops, ring at full strength | (see `.navbar__cta-split`) |
+
+Both mixins live in `sass/pages/_grammar.scss`. Prose links in every
+reading column (`a:not([class])`, `.wikilink`, `.glossary-term`,
+`.libref` inside `p`, `li`, `td`, `dd`, `blockquote`, `figcaption`) take
+`grammar-rainbow-link`; reference markers, pills, buttons and cards keep
+their own treatment.
+
+Two consequences to keep in mind when writing styles:
+
+- **A state that only changes `color` to the accent is now invisible**,
+  because the accent equals the text colour. Give hover, active and
+  current states a second cue: an underline, a border, a background, or
+  the rainbow rule.
+- **Do not use `var(--color-link)`.** No theme defines it, so the
+  declaration is dropped and the link inherits the text colour with no
+  underline. Use `grammar-rainbow-link`.
+
+Claim-label colours (direct, framework, inferred, speculative) are
+semantic, not accents, and are unchanged; see
+[claim-badge](../../chrome/claim-badge/).
 
 Over the landing page's video heroes the chrome borrows dark-theme
 tokens, and the accent there steps up to `$mauve-300` so it stays
