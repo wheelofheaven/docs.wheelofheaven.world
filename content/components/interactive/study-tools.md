@@ -31,8 +31,20 @@ Pointer taps do not leave a focus ring; keyboard focus remains visible.
 
 On phones up to 600px, selection uses a short 1px marker at 35% accent
 opacity, with no paragraph background fill. Audio playback keeps its
-distinct highlight. Paragraph numbers and speaker portraits remain in
-the narrow gutter, at their existing sizes.
+distinct highlight.
+
+On phones there is no number-and-portrait column beside the text (since
+2026-11). The paragraph number sits in the page margin, small and faint,
+and the speaker's portrait floats at the start of the speech, so only the
+first line is indented; narration and speech share one left edge and the
+left margin equals the right. The portrait is sized from the reader's font
+size (`--speaker-size`, 1.1 times `--reader-font-size`) with a top offset
+(`--speaker-drop`), which keeps it shorter than one line of text at every
+reader size. Keep that relation if you change either: a float taller than
+a line indents the second line as well. The rules are at the end of
+`sass/pages/_library.scss` and cover both single paragraphs and reading
+paragraphs (several reference units flowing as one). From 601px up the
+number and portrait stay beside the text.
 Book pages up to 900px use one layer of horizontal padding, owned by the
 article; phones use a 0.625rem inset. The shared `main` padding must not
 add another inset around the reader.
