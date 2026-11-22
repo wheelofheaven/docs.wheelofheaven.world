@@ -101,9 +101,10 @@ Two consequences to keep in mind when writing styles:
   because the accent equals the text colour. Give hover, active and
   current states a second cue: an underline, a border, a background, or
   the rainbow rule.
-- **Do not use `var(--color-link)`.** No theme defines it, so the
-  declaration is dropped and the link inherits the text colour with no
-  underline. Use `grammar-rainbow-link`.
+- **`--color-link` is an alias of the accent**, so it is the text ink.
+  Until 2026-11 no theme defined it and the page rules that asked for it
+  silently inherited the text colour. Colour alone does not mark a link:
+  use `grammar-rainbow-link`.
 
 Claim-label colours (direct, framework, inferred, speculative) are
 semantic, not accents, and are unchanged; see

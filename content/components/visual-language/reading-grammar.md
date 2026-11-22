@@ -95,3 +95,18 @@ BibTeX citation panel. See [Typography](@/components/tokens/typography.md).
 3. If the page insets its sections with a margin rather than padding, set `&::before { left: 0 }` on that section so the dash sits on the text edge.
 4. Buttons built on `glass-cloud-button` paint their clouds on `::before`/`::after`; set `content: none` on both when turning them into pills.
 5. Add the page to the scroll-spy's `PAGES` table if it has a contents list, and rebuild the bundle.
+
+## Text size on phones
+
+The rem base is raised on phones (19px, `base/_reset.scss`), because 17px
+read small at arm's length.
+The wiki, article and meta-page columns used to scale their body and lede
+up again on top of that, which put body text at 20px and ledes at 26px on
+a 390px screen and made long entries very long.
+Those columns now take `--grammar-body-size` and `--grammar-lede-size`,
+which on phones are `1rem` and `1.1875rem`: body text reads at the base
+size and the lede one step above it.
+From 769px up the variables are unset and the columns keep 1.0625rem and
+1.375rem.
+Change the phone sizes in one place, the `:root` block near the top of
+`sass/pages/_grammar.scss`; leave the rem base alone.

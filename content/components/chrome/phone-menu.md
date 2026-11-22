@@ -26,6 +26,30 @@ Keep the two in step if you change either: same stops, same size, same
 duration.
 `prefers-reduced-motion` holds both still.
 
+## Search
+
+Under Start here sits a search row, `.navbar__menu-search`.
+It carries `data-search-toggle`, the hook the floating search button and
+the desktop search icon already use, so it needs no script of its own;
+`navbar-mobile-toggle.js` only closes the menu first.
+
+## You are here
+
+The accent is the text ink, so an active item that merely changed colour
+would look like every other item.
+On phones the current item and the group that holds it
+(`.navbar__link--active`, `.navbar__menu-read--active`,
+`.navbar__dropdown-trigger--active`,
+`.navbar__dropdown-inline-link--active`) carry a short rainbow dash at the
+start of the row and a 700 weight.
+On the desktop bar the current section wears the rainbow as an underline.
+
+The sub-links get their active class in the template from `nav_path`:
+each link's `class` attribute appends
+`navbar__dropdown-inline-link--active` (and the link gets
+`aria-current="true"`) when `nav_path` starts with that link's path.
+When you add a sub-link, give it the same condition.
+
 ## Item icons
 
 Every item and sub-item carries a `.navbar__item-icon` in front of its
@@ -49,16 +73,26 @@ Use the section's registered icon where it has one (see the
 In a group header the icon goes before the label span, and the caret keeps
 the far edge with `margin-inline-start: auto`.
 
-## Groups in two columns
+## Groups
 
-An opened group (Knowledge, Community) sets its links in two columns,
-filled top to bottom (`column-count: 2`), so ten links fit a phone screen.
-The list must be `display: block` for that: a flex container ignores
+**Knowledge** holds ten links in four titled groups, two to a row:
+Explore (Map, Graph, Topics), Texts (Timeline, Library, Wiki), Reference
+(Sources, Datasets) and Media (Gallery, Listen).
+The phone list is `.navbar__dropdown-inline--grouped`, a two-column grid
+of `.navbar__dropdown-group`; the desktop panel uses
+`.navbar-dropdown__links--grouped` with `.navbar-dropdown__group`.
+The titles are the `navbarGroupExplore`, `navbarGroupTexts`,
+`navbarGroupReference` and `navbarGroupMedia` strings in the site's
+`config.toml`, present in every language: `trans()` fails the build on a
+missing key, so add a new group's title to all ten tables.
+
+**Community** is ungrouped: its links flow in two columns, filled top to
+bottom (`column-count: 2`).
+That list must be `display: block`, because a flex container ignores
 `column-count`.
+
 Sub-items use a smaller icon and tighter padding so a long label such as
 "Code of Conduct" still fits half the width; it may wrap to two lines.
-
-The desktop Knowledge panel does the same for the same reason.
 
 ## Two panes
 

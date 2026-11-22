@@ -38,3 +38,16 @@ defined inline.
 
 Scroll any long page; the button appears bottom-right. E.g.
 [/articles/](https://www.wheelofheaven.world/articles/).
+
+## Stepping aside while reading
+
+The floating buttons (search, back-to-top, the reader button) sit over the
+right edge of the text and used to cover the ends of lines.
+`static/js/fab-tuck.js` sets `body.fabs-tucked` while the page scrolls
+down and clears it on any scroll up, within 400px of the top and within
+240px of the end.
+`sass/components/_fab-tuck.scss` hides the buttons with `opacity` and
+`pointer-events` only: they are glass surfaces, and a transform on them
+risks WebKit dropping their backdrop blur.
+An expanded reader panel is never hidden, and keyboard focus landing on a
+hidden button brings them all back.
