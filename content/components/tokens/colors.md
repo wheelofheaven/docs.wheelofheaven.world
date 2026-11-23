@@ -125,6 +125,24 @@ Over the landing page's video heroes the chrome borrows dark-theme
 tokens, and the accent there steps up to `$mauve-300` so it stays
 visible on the footage (see `pages/_home.scss`).
 
+## Secondary text on the light theme
+
+`--color-text-muted` and `--color-text-subtle` carry dates, counts,
+labels and small print.
+On the light theme they were `$gray-600` and `$gray-500`, which measured
+3.95:1 on the tinted surfaces and 2.07:1 on white, against the 4.5:1
+minimum for body-size text.
+They are now two steps from `$gray-600` towards `$gray-700`
+(`color.mix`, 30% and 10%): muted passes on white, `$gray-100` and
+`$gray-200`; subtle passes on white and `$gray-100`.
+Do not put subtle text on `$gray-200` or darker surfaces, and do not
+lower either token's contrast further with `opacity`: two places that did
+(the reader's phone paragraph numbers, the footer's small print) fell
+below 2:1.
+
+The dark theme's pair (`$gray-400`, `$gray-500` on `$gray-950`) passes
+as it is.
+
 ## How to pick a hue
 
 Bifrost uses colour assignment by **role**, not by aesthetic preference.

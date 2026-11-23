@@ -51,3 +51,14 @@ down and clears it on any scroll up, within 400px of the top and within
 risks WebKit dropping their backdrop blur.
 An expanded reader panel is never hidden, and keyboard focus landing on a
 hidden button brings them all back.
+
+## Target sizes
+
+A standalone control needs at least 24 by 24 CSS pixels.
+The return links in note and reference lists and the index pages' view
+toggle were narrower and are brought up to size in
+`sass/components/_accent-states.scss`.
+Links inside a sentence are exempt, which covers the superscript note
+markers.
+The claim dots are 10px to look at but carry a 44px `::before` as their
+tap area; keep that if you restyle them.

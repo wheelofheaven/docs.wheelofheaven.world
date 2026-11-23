@@ -86,10 +86,15 @@ The titles are the `navbarGroupExplore`, `navbarGroupTexts`,
 `config.toml`, present in every language: `trans()` fails the build on a
 missing key, so add a new group's title to all ten tables.
 
-**Community** is ungrouped: its links flow in two columns, filled top to
-bottom (`column-count: 2`).
-That list must be `display: block`, because a flex container ignores
-`column-count`.
+**Community** has two titled groups side by side, Org (About, The
+Method, Press Kit, Docs) and Community (Code of Conduct, Contributing,
+Discussions, FAQ, Follow us on X).
+Their titles reuse the desktop panel's `navbarResourcesOrg` and
+`navbarResourcesCommunity` strings.
+
+An ungrouped sub-list (none at present) flows in two columns, filled top
+to bottom (`column-count: 2`); such a list must be `display: block`,
+because a flex container ignores `column-count`.
 
 Sub-items use a smaller icon and tighter padding so a long label such as
 "Code of Conduct" still fits half the width; it may wrap to two lines.

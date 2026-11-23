@@ -73,3 +73,7 @@ Without the script, and from 769px up, every list is open and the
 headings are plain headings again.
 A new group needs nothing: any heading with that class followed by a list
 is picked up.
+
+The project description above the lists is clamped to three lines on
+phones and opens the same way (`role="button"`, `aria-expanded` on
+`.footer__muted`). The full text stays in the markup.
