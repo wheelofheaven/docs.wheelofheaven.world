@@ -95,3 +95,22 @@ BibTeX citation panel. See [Typography](@/components/tokens/typography.md).
 3. If the page insets its sections with a margin rather than padding, set `&::before { left: 0 }` on that section so the dash sits on the text edge.
 4. Buttons built on `glass-cloud-button` paint their clouds on `::before`/`::after`; set `content: none` on both when turning them into pills.
 5. Add the page to the scroll-spy's `PAGES` table if it has a contents list, and rebuild the bundle.
+
+## Text size
+
+The body face has a low x-height: its lowercase letters are 0.46 of the
+font size, against about 0.51 for the system faces on phones and
+desktops. At the same nominal size it reads roughly a tenth smaller,
+which is why the rem base is raised (17px on desktop, 19px on phones,
+`base/_reset.scss`) and why the reading columns scale up again from
+there.
+
+The wiki, article and meta-page columns take their sizes from
+`--grammar-body-size` (default 1.0625rem) and `--grammar-lede-size`
+(default 1.375rem). Change a size by setting those variables near the top
+of `sass/pages/_grammar.scss`, not by editing each page grammar.
+
+A step down on phones was tried in 2026-11 to shorten long pages and
+withdrawn the same week, after the founder reported the face reading
+small at the existing sizes. Do not reduce these sizes to save scroll
+length; shorten the page instead.

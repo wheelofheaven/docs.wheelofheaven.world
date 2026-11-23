@@ -59,3 +59,27 @@ Hugging Face yellow (`#ffd21e`) on hover.
 hover tint — Telegram (blue), YouTube (red), Open Collective (blue), Hugging Face
 (yellow). **X and GitHub stay monochrome**: they're black-and-white brands, so a
 brand-colour hover would be arbitrary; they keep only the background + lift.
+
+## Folding on phones
+
+Up to 768px each of the footer's link lists folds under its heading.
+`static/js/footer-fold.js` adds `.footer--folds` to the footer and turns
+each `.footer__col-title` that is followed by a `ul` into a toggle
+(`role="button"`, `aria-expanded`, `aria-controls`); the rules are at the
+end of `sass/layout/_footer.scss`.
+All lists start closed, which takes the phone footer from about 3,600px
+to about 1,700px.
+Without the script, and from 769px up, every list is open and the
+headings are plain headings again.
+A new group needs nothing: any heading with that class followed by a list
+is picked up.
+
+The project description above the lists is clamped to three lines on
+phones and opens on tap (`.footer__muted--open`). It is deliberately not
+given a button role: its accessible name would be the whole paragraph,
+and the clamp is visual only, so assistive technology reads the full text
+either way.
+
+The fold arrow is drawn with physical borders (`border-right`,
+`border-bottom`). With logical borders the rotated arrow turned sideways
+on right-to-left pages.
