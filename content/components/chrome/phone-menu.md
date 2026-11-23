@@ -107,3 +107,13 @@ The pane that is not showing is therefore `visibility: hidden`, with a
 That also takes its controls out of the tab order.
 Do not replace it with `overflow: hidden` on the panes wrapper: the main
 pane needs to scroll.
+
+## Descriptions
+
+Read, Articles and Newsroom carry one quiet line under the label
+(`.navbar__item-desc` inside `.navbar__item-text`), shown only in the
+phone menu.
+Articles and Newsroom use their existing `navbarArticlesDesc` and
+`navbarNewsDesc` strings; Read joins the three section names it leads to
+(`navbarReadBook`, `navbarReadWiki`, `navbarReadSources`), so no string
+had to be added.

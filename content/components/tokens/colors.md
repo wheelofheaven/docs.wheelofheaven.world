@@ -95,12 +95,20 @@ reading column (`a:not([class])`, `.wikilink`, `.glossary-term`,
 `grammar-rainbow-link`; reference markers, pills, buttons and cards keep
 their own treatment.
 
+`--accent-rainbow-wash` is the same band made translucent (30% on dark,
+26% on light), for fills: the Start-here item, the install prompt, the
+notification call-to-action, the glossary tooltip label and the category
+rail use it under a full-strength `--accent-rainbow` ring.
+
 Two consequences to keep in mind when writing styles:
 
 - **A state that only changes `color` to the accent is now invisible**,
   because the accent equals the text colour. Give hover, active and
   current states a second cue: an underline, a border, a background, or
-  the rainbow rule.
+  the rainbow rule. The 23 older titles and links that had no second cue
+  are collected in `sass/components/_accent-states.scss`, where they take
+  a hairline underline; new hover states carry their own cue and are not
+  added to that list.
 - **`--color-link` is an alias of the accent**, so it is the text ink.
   Until 2026-11 no theme defined it and the page rules that asked for it
   silently inherited the text colour. Colour alone does not mark a link:
@@ -108,7 +116,10 @@ Two consequences to keep in mind when writing styles:
 
 Claim-label colours (direct, framework, inferred, speculative) are
 semantic, not accents, and are unchanged; see
-[claim-badge](../../chrome/claim-badge/).
+[claim-badge](../../chrome/claim-badge/). The same holds for the mint
+dispatch and article chips, which mark a content type and are mint so as
+to stay distinct from the claim labels, and for the translation badges,
+whose colours mark the review tier.
 
 Over the landing page's video heroes the chrome borrows dark-theme
 tokens, and the accent there steps up to `$mauve-300` so it stays

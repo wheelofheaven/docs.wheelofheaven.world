@@ -58,3 +58,12 @@ navbar's `:has()` override keeps it fixed regardless.
 
 - [Macros → `translation-badge`](../../macros/translation-badge/) — the macro that renders the badge.
 - [Contributing → Translations](../../../contributing/content/translations/) — the editorial side of translation status.
+
+## The notice on phones
+
+The "translation in progress" card (`.notification-card--translation`)
+appears on every page of the nine translated languages until dismissed.
+Up to 767px it is a strip: the text is clamped to two small lines beside
+the "read in English" link and the close button, about 56px tall, where
+it used to take about 150px above the navbar.
+The full sentence stays in the markup.
