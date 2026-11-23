@@ -75,5 +75,11 @@ A new group needs nothing: any heading with that class followed by a list
 is picked up.
 
 The project description above the lists is clamped to three lines on
-phones and opens the same way (`role="button"`, `aria-expanded` on
-`.footer__muted`). The full text stays in the markup.
+phones and opens on tap (`.footer__muted--open`). It is deliberately not
+given a button role: its accessible name would be the whole paragraph,
+and the clamp is visual only, so assistive technology reads the full text
+either way.
+
+The fold arrow is drawn with physical borders (`border-right`,
+`border-bottom`). With logical borders the rotated arrow turned sideways
+on right-to-left pages.

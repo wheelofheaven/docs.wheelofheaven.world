@@ -122,3 +122,11 @@ Articles and Newsroom use their existing `navbarArticlesDesc` and
 `navbarNewsDesc` strings; Read joins the three section names it leads to
 (`navbarReadBook`, `navbarReadWiki`, `navbarReadSources`), so no string
 had to be added.
+
+## Right to left
+
+The menu mirrors on right-to-left pages without special rules, because
+its spacing uses logical properties. The one exception is the "onward"
+arrow on Start here (and on the landing page's chip), which is a literal
+arrow character and is flipped with `transform: scaleX(-1)` under
+`[dir="rtl"]`.

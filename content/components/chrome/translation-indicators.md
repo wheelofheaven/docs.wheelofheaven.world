@@ -67,3 +67,10 @@ Up to 767px it is a strip: the text is clamped to two small lines beside
 the "read in English" link and the close button, about 56px tall, where
 it used to take about 150px above the navbar.
 The full sentence stays in the markup.
+
+## Badge label contrast
+
+Each badge carries its review tier's hue on the border and the dot.
+On the light theme the label itself reads in `--color-text-muted`: as
+text on white the tier hues measured between 2.4:1 and 3.9:1, under the
+4.5:1 minimum. The dark theme's lighter shades pass and are unchanged.

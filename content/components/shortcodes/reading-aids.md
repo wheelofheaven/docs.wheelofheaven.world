@@ -64,7 +64,7 @@ A short passage word by word: the original script, a transliteration, a
 gloss and a grammatical note under each word.
 
 ```markdown
-{%/* interlinear(lang="he", dir="rtl", caption="Genesis 1:26, opening words.") */%}
+{%/* interlinear(script="he", dir="rtl", caption="Genesis 1:26, opening words.") */%}
 וַיֹּאמֶר | vayyomer | and said | verb, singular
 אֱלֹהִים | Elohim | Elohim | noun, plural in form | *
 {%/* end */%}
@@ -72,9 +72,16 @@ gloss and a grammatical note under each word.
 
 | Argument | Required | |
 |---|---|---|
-| `lang` | yes | BCP 47 code of the original script |
+| `script` | yes | BCP 47 code of the original words, such as `he`. It becomes the `lang` attribute on each word, so screen readers switch voice. |
 | `dir` | no | `rtl` lays the words out right to left (default `ltr`) |
 | `caption` | no | a line under the strip, inline markdown |
+
+The argument is `script`, not `lang`: Zola defines `lang` itself inside
+every shortcode (the page's language), and an argument of that name is
+silently shadowed. Do not name any shortcode argument `lang`.
+
+Glosses and notes take `dir="auto"`, so on a right-to-left page they
+follow their own script.
 
 Each line is `original | transliteration | gloss | note | *`.
 The trailing `*` marks the words the surrounding prose is about; they take
@@ -113,6 +120,8 @@ Each line is `label | text | tag | icon`; only the first two are required.
 | `icon` | a [section mark](../../chrome/section-mark/): `timeline`, `wiki`, `library`, `articles`, `map`, `news`, `sources`, `datasets` |
 
 On phones the label sits above the text; from 768px they share a row.
+The icon is placed inside the `<dt>`, because a `<dl>` group may contain
+only `<dt>` and `<dd>`; it is positioned in the row's leading pad.
 
 ## compare
 
