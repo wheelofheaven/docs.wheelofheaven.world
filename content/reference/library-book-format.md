@@ -410,6 +410,30 @@ writing. Rebuild any tracked single-file book bundle after chapter edits.
 Existing recordings may require regeneration after text moves between reference
 units: keeping IDs preserves the targets, but does not update audio timestamps.
 
+## Interlinear fields
+
+The reader's interlinear always shows the **original script** on top and a
+transliteration beneath, word by word. It reads these verse fields:
+
+| Field | Holds |
+| --- | --- |
+| `text` | The original script (Hebrew, Greek, Geʿez, Coptic, Avestan, Arabic, …). |
+| `translit` | A Latin transliteration with **the same number of space-separated words** as `text`, so each word pairs with its transliteration. For `lines`/`segments`/`tablets` cuneiform books it is the source transliteration. |
+| `cuneiform` + `cuneiform_confidence` | Unicode cuneiform back-rendered from `translit` (`full` / `partial` / `low`); the reader badges partial and low lines. |
+| `he` | Legacy Hebrew original (Shiʿur Qomah); `text` is preferred. |
+| `text_lang` | The line's own language in books that mix witnesses (1 Enoch, Jubilees, Daniel). It sets the line's `lang` and direction; otherwise the book's language applies. |
+
+Right-to-left lines (`he`, `hbo`, `arc`, `ar`, `arb`, `fa`, `syr`, `sam`, `ave`) put
+`dir="rtl"` on the original block, so the word row itself runs right to left; the
+transliteration under each word stays left to right.
+
+Generators in data-library `scripts/`: `fill_translit.py` fills any missing
+`translit` from `text` (`hebrew_translit.py` for pointed Hebrew, SBL academic;
+`script_translit.py` for Geʿez, Coptic and Greek, and for rendering an
+avesta.org transliteration into Avestan script); `translit_to_cuneiform.py`
+back-renders cuneiform. Books carrying generated material say so in
+`_meta.interlinearNote`.
+
 ## Speaker types
 
 - `Narrator` — narrative text

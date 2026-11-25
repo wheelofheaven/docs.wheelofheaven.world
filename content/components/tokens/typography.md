@@ -152,6 +152,23 @@ bidi-isolated like inline Hebrew. Provenance, subset ranges and checksums live i
 `static/fonts/vendor/cairo/` and `static/fonts/vendor/noto-naskh-arabic/` in Bifrost.
 Native-reader review of a full Hidden Words chapter at reading size is still owed.
 
+### Coptic, Avestan and Geʿez: library originals
+
+Few systems ship these scripts, so the library interlinear self-hosts one face for each, all on
+the citation layer (`$font-family-citation`, after Noto Naskh Arabic):
+
+| Script | Used by | Face | `unicode-range` |
+| --- | --- | --- | --- |
+| Coptic | Gospel of Thomas | **Noto Sans Coptic** | U+2C80–2CFF, U+03E2–03EF |
+| Avestan | Vendidad | **Noto Sans Avestan** | U+10B00–10B3F |
+| Geʿez | 1 Enoch, Jubilees | **Noto Serif Ethiopic** | U+1200–139F, U+2D80–2DDF, U+AB00–AB2F |
+
+Each file loads only on pages containing its script. In the interlinear, every non-cuneiform
+original (`:lang(he|hbo|arc|grc|el|gez|cop|ave|syr|vi|ar|…)`) reads in the citation font at
+reading size; only cuneiform and Ugaritic keep `$font-family-cuneiform`. Provenance and
+checksums live in `static/fonts/vendor/noto-sans-coptic/`, `noto-sans-avestan/` and
+`noto-serif-ethiopic/` in Bifrost.
+
 ### Japanese body face
 
 On 25 October 2026 the Japanese body face changed from Zen Kaku Gothic New to **Noto Sans JP**
