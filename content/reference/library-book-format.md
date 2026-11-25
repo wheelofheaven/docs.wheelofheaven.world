@@ -421,7 +421,14 @@ transliteration beneath, word by word. It reads these verse fields:
 | `translit` | A Latin transliteration with **the same number of space-separated words** as `text`, so each word pairs with its transliteration. For `lines`/`segments`/`tablets` cuneiform books it is the source transliteration. |
 | `cuneiform` + `cuneiform_confidence` | Unicode cuneiform back-rendered from `translit` (`full` / `partial` / `low`); the reader badges partial and low lines. |
 | `he` | Legacy Hebrew original (Shiʿur Qomah); `text` is preferred. |
+| `original` | The original-language text in **public-domain editions**, whose `text` is a translation (ASV Genesis, KJV Matthew). Added by `scripts/add_pd_originals.py` from the Westminster Leningrad Codex and SBLGNT, aligned to the English verse numbering. |
 | `text_lang` | The line's own language in books that mix witnesses (1 Enoch, Jubilees, Daniel). It sets the line's `lang` and direction; otherwise the book's language applies. |
+
+Whether `text` is the original is decided per book: `_meta.primaryLang ==
+_meta.originalLang`. When they differ, `text` stays the reading line and only
+`original` (or `he`) feeds the interlinear; `_meta.originalText`
+(`edition`, `license`, `licenseUrl`, `url`) is credited in the Licensing panel.
+Pages with no original-script block hide the interlinear control.
 
 Right-to-left lines (`he`, `hbo`, `arc`, `ar`, `arb`, `fa`, `syr`, `sam`, `ave`) put
 `dir="rtl"` on the original block, so the word row itself runs right to left; the
