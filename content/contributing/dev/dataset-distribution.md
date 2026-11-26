@@ -158,7 +158,10 @@ are published as HuggingFace datasets by a **separate** packager,
 data-library repo root). Per book it emits a verse-aligned parallel corpus:
 
 - **`<slug>.jsonl`** — one row per verse: `ref`, `chapter`, `verse`, `original`
-  (source script), `original_license`, `original_lang`, `transliteration`, `english` (WoH
+  (source script), `original_license`, `original_lang`, `original_attestation`
+  (`complete-witness` / `fragment-with-reconstruction` / `reconstruction` /
+  `composite-reconstruction`), `transliteration`, `cuneiform` +
+  `cuneiform_confidence` (back-rendered, cuneiform books only), `english` (WoH
   translation), `reference_english` (an aligned public-domain reference
   translation — empty where none exists), `reference_version`,
   `reference_license`, `commentary`, `glossary_refs`, `witness_primary`,
@@ -193,7 +196,8 @@ and chapter files and matches them against `SOURCE_LICENSES`:
 |---|---|---|
 | SBLGNT (New Testament Greek) | CC BY 4.0 | Greek kept, edition credited on the card, `original_license` filled |
 | Perseus and Open Greek and Latin editions (Theogony; Tobit and Wisdom if published) | CC BY-SA 4.0 | Same, with the share-alike term stated |
-| ETCSL (Sumerian poems, King List) | CC0 | No open licence exists, so `original` and `transliteration` are blank and the card points to ETCSL |
+| Coptic Scriptorium (Gospel of Thomas) | CC BY 4.0 | Coptic kept, Dilley's edition credited |
+| ETCSL (Sumerian poems, King List) | CC0 | No open licence exists, so `original`, `transliteration` and `cuneiform` are blank and the card points to ETCSL |
 
 Older versions stay in each platform's history after a re-upload. Add any new
 source edition to the table before publishing a book from it, and set the page's
@@ -209,8 +213,9 @@ supported). The Raëlian canon is © International
 Raëlian Movement (not CC0) and excluded by the license gate. Each card gets an
 honest **review-status** line (`signed off` / `reviewed per chapter` /
 `pending verification` / `draft`) via `review_status()` — never claiming a
-sign-off a book lacks. **20 books live** (5,771 aligned verses). Upload the same
-way:
+sign-off a book lacks. **48 books live** (10,311 aligned verses, 2026-11-25); card
+language tags list every original language present in the rows; `verse` is always a
+string. Upload the same way:
 
 ```
 hf upload wheelofheaven/<slug> scripts/dist-hf/<slug> --repo-type=dataset
@@ -233,6 +238,14 @@ Two Kaggle gotchas: titles must be 6–50 chars and subtitles 20–80 (the packa
 auto-fits both), and Kaggle caps category-tags — passing more than a few *valid*
 tags trips "exceeded the max category limit" (which still creates the dataset,
 minus tags), so the keyword set is pinned to `nlp`, `translation`, `text`.
+
+**Consolidated corpus.** A full run also writes `woh-parallel-corpus`
+([HuggingFace](https://huggingface.co/datasets/wheelofheaven/woh-parallel-corpus),
+Kaggle `zarazinsfuss/woh-parallel-corpus`): every book's rows with a `book` column,
+one HuggingFace config per book plus a default `all`, a book table on the card, and
+CC BY-SA 4.0 as the collection licence (the most restrictive source licence; each
+row keeps its own `original_license`). One page gathers the downloads, likes and
+citations the 48 small datasets would otherwise split.
 
 **Reciprocal links.** Each `-woh` book's `/library/<slug>/` reader page links back
 to its datasets via `[extra] hf_dataset` and `[extra] kaggle_dataset` fields
