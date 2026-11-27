@@ -12,6 +12,7 @@ label per page mislabelled most of them.
 
 **Source:**
 [`templates/shortcodes/claim.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/shortcodes/claim.html)
+(markup in the shared macro [`macros/claim.html`](https://github.com/wheelofheaven/bifrost/blob/main/templates/macros/claim.html) `inline`, also used by the [Genesis reader](../../interactive/genesis-reader/))
 · [`static/js/claim-notes.js`](https://github.com/wheelofheaven/bifrost/blob/main/static/js/claim-notes.js)
 · [`sass/components/_claim-inline.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_claim-inline.scss)
 
@@ -56,4 +57,5 @@ rendered.
 ## Related
 
 - [Claim badge legend](../../chrome/claim-badge/)
+- [Genesis four-lens reader](../../interactive/genesis-reader/) — the same marker on every Reading and Meaning segment
 - [Research core](../../../architecture/research-core/)
