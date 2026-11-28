@@ -24,7 +24,7 @@ that fits before you start writing — they're not interchangeable.
 | A book to the Library | [Library Book](@/contributing/content/library-book.md) | `data-library/` (catalog + chapter JSON) |
 | A translation of an existing English page into another site language | [Translations (i18n localisation)](@/contributing/content/translations.md) | `data-content/{lang}/{section}/{slug}.md` |
 | An original English translation of a religious/mythological source text (Hebrew, Greek, Akkadian, etc.) through the WoH lens | [Source-Text Translation](@/contributing/content/source-text-translation/_index.md) | `data-library/{book-slug}-woh/` (source + chapter JSON + glossary entries) |
-| The Reading and Meaning lenses of a Genesis chapter for the [/genesis/](https://www.wheelofheaven.world/genesis/) reader | [Genesis Lenses](@/contributing/content/genesis-lenses.md) | `data-library/genesis-woh/lenses/chapter-{N}.json` |
+| The Reading and Meaning lenses and passage notes of a Genesis chapter for the [Genesis four-lens reader](https://www.wheelofheaven.world/library/genesis-woh/lenses/) | [Genesis Lenses](@/contributing/content/genesis-lenses.md) | `data-library/genesis-woh/lenses/chapter-{N}.json` |
 
 The decision behind *which* texts enter the Library at all — the
 20 traditions, the original-language-first rule, the Edition vs
