@@ -55,6 +55,68 @@ Data moved from `schemaVersion` 1 to 2 (`readings` → `meaning`,
 - [`static/js/genesis-lens.js`](https://github.com/wheelofheaven/bifrost/blob/main/static/js/genesis-lens.js) is bundled by `scripts/bundle.js` into `js/dist/genesis.bundle.js`. Only `genesis-chapter.html` loads it, not the core bundle.
 - [`tools/gen_diagrams.py`](https://github.com/wheelofheaven/bifrost/blob/main/tools/gen_diagrams.py) builds `creation-week` and `creation-week-narrow`.
 
+## Entry points
+
+Since 2026-11-28 (bifrost `38e4310`) the reader is linked from the library
+and the navbar, not only from its own URL.
+
+| Where | What | Template |
+|---|---|---|
+| Library book page, header | A "Read in four lenses" pill (`.library-book__lenses` > `.lens-entry`) under the subtitle | `templates/library-book.html` |
+| Library book page, sidebar actions | The same link as a secondary button (`.library-book__btn--secondary.library-book__lenses-btn`) | `templates/library-book.html` |
+| Library book page, each chapter head | A small pill "Chapter N in four lenses" (`.lens-entry--small.library-book__chapter-lenses`) linking to `lenses/N/` | `templates/library-book.html` |
+| `/library/` | A "Read in four lenses" row (`#library-lenses`, `.library-lenses`) under the header: book title, stable chapter range, and a one-line lede | `templates/library-section.html` |
+| `/library/` cards | A "Four lenses" badge (`.lens-badge`) on the featured card, and a linked badge (`.lens-badge--link`) on the catalog card | `templates/library-section.html` |
+| Navbar, desktop | A "Genesis in Four Lenses" item in the Read dropdown (`.navbar-dropdown__link--lenses`) | `templates/partials/navbar.html` |
+| Navbar, phone | The same entry under Read in the burger menu (`.navbar__menu-read--lenses.mobile-only`, `aria-current` on the reader) | `templates/partials/navbar.html` |
+
+The filter script on `/library/` hides the `#library-lenses` row while
+filters are active, as it does the featured row.
+
+### Data-driven rule
+
+The library entry points are data-driven. A book gets them when
+`data/library/{slug}/lenses/_lenses.json` exists and has **at least one row
+with `status: "stable"`**. Only stable chapters get a chapter link, and the
+range on the `/library/` row runs from the first to the last stable chapter.
+The reader lives at `library/{slug}/lenses/`. The two navbar entries are the
+exception: they point at `library/genesis-woh/lenses/` directly.
+
+All links go through `i18n_url::content`, so in the other languages they
+lead to the English reader until it is translated. `base.html` imports
+`macros/i18n-url.html` as `i18n_url`, because a macro called in an included
+partial (here the navbar) resolves against the base template, not the
+partial's own imports.
+
+### Styles
+
+[`sass/components/_lens-entry.scss`](https://github.com/wheelofheaven/bifrost/blob/main/sass/components/_lens-entry.scss)
+holds the shared styles:
+
+- `.lens-mark`: the reader's mark, a short vertical rainbow bar (as on the
+  index's four-lens chapters);
+- `.lens-entry` (`__arrow`, `--small`): the pill link, built on the grammar
+  pill;
+- `.library-book__lenses`, `.library-book__chapter-lenses`,
+  `.library-book__lenses-btn`: placement on the book page;
+- `.lens-badge` (`--link`): the card badge, one line in list view;
+- `.library-lenses` (`__title`, `__list`, `__link`, `__name`, `__arrow`):
+  the `/library/` row.
+
+### Strings
+
+The keys live in the www `config.toml`. They are **English in every
+language** until the reader is translated.
+
+| Key | English |
+|---|---|
+| `navbarReadLenses` | Genesis in Four Lenses |
+| `navbarReadLensesDesc` | Every verse in the Hebrew, a literal translation, a decoded reading and its meaning. |
+| `libraryLensesRead` | Read in four lenses |
+| `libraryLensesChapter` | Chapter `%n%` in four lenses (`%n%` is the chapter number) |
+| `libraryLensesBadge` | Four lenses |
+| `libraryLensesLede` | the `%lang%`, a literal translation, a decoded reading and the meaning of each verse (`%lang%` is the original language, "Ancient" dropped) |
+
 ## Data flow
 
 ```
